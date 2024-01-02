@@ -31,6 +31,7 @@ public sealed class ScalingViewport : Control, IViewportControl {
     private readonly List<CopyPixelsDelegate<Rgba32>> _queuedScreenshots = new();
 
     public int CurrentRenderScale => _curRenderScale;
+    public event Action<ScreenCoordinates>? AfterDrawEvent;
 
     /// <summary>
     ///     The eye to render.
@@ -137,6 +138,7 @@ public sealed class ScalingViewport : Control, IViewportControl {
         _viewport.RenderScreenOverlaysBelow(handle, this, drawBoxGlobal);
         handle.DrawTextureRect(_viewport.RenderTarget.Texture, drawBox);
         _viewport.RenderScreenOverlaysAbove(handle, this, drawBoxGlobal);
+        AfterDrawEvent?.Invoke(_inputManager.MouseScreenPosition);
     }
 
     public void Screenshot(CopyPixelsDelegate<Rgba32> callback) {

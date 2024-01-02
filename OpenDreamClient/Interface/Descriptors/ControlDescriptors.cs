@@ -41,7 +41,8 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
     public string? Macro { get; private set; }
     [DataField("on-close")]
     public string? OnClose { get; private set; }
-
+    [DataField("on-status")]
+    public string? OnStatusCommand;
     public readonly List<ControlDescriptor> ControlDescriptors;
 
     public WindowDescriptor(string id, List<ControlDescriptor>? controlDescriptors = null) {

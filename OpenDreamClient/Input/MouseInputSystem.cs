@@ -32,6 +32,25 @@ namespace OpenDreamClient.Input {
             CommandBinds.Unregister<MouseInputSystem>();
         }
 
+
+        public EntityUid? HandleViewportHover(ScalingViewport viewport, ScreenCoordinates hoverpos){
+            UIBox2i viewportBox = viewport.GetDrawBox();
+            if (!viewportBox.Contains((int)hoverpos.Position.X, (int)hoverpos.Position.Y))
+                return null; // Hover was outside of the viewport
+
+            Vector2 screenLocPos = (hoverpos.Position - viewportBox.TopLeft) / viewportBox.Size * viewport.ViewportSize;
+
+            var screenLocY = viewport.ViewportSize.Y - screenLocPos.Y; // Flip the Y
+            ScreenLocation screenLoc = new ScreenLocation((int) screenLocPos.X, (int) screenLocY, 32); // TODO: icon_size other than 32
+
+            MapCoordinates mapCoords = viewport.ScreenToMap(hoverpos.Position);
+            RendererMetaData? entity = GetEntityUnderMouse(screenLocPos);
+            if (entity == null || entity.ClickUid == EntityUid.Invalid) //nothing or turf
+                return null;
+            else
+                return entity.ClickUid;
+        }
+
         public bool HandleViewportClick(ScalingViewport viewport, GUIBoundKeyEventArgs args) {
             UIBox2i viewportBox = viewport.GetDrawBox();
             if (!viewportBox.Contains((int)args.RelativePixelPosition.X, (int)args.RelativePixelPosition.Y))
