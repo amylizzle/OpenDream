@@ -1,4 +1,5 @@
 ﻿/client
+	var/dontmergeme = 1
 	var/list/verbs = null
 	var/list/screen = null
 	var/list/images = null
