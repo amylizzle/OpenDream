@@ -1,4 +1,5 @@
 ﻿/client
+	var/test
 	var/list/verbs = null
 	var/list/screen = null
 	var/list/images = null
