@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Content.Server.GameTicking;
-using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
@@ -45,12 +43,6 @@ public sealed partial class TestPair
         (Client, ClientLogHandler) = await PoolManager.GenerateClient(settings, testOut);
         (Server, ServerLogHandler) = await PoolManager.GenerateServer(settings, testOut);
         ActivateContext(testOut);
-
-        if (!settings.UseDummyTicker)
-        {
-            var gameTicker = Server.ResolveDependency<IEntityManager>().System<GameTicker>();
-            await Server.WaitPost(() => gameTicker.RestartRound());
-        }
 
         if (settings.ShouldBeConnected)
         {

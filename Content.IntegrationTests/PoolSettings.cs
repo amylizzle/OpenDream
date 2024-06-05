@@ -82,10 +82,6 @@ public sealed class PoolSettings
     /// </summary>
     public bool Dirty { get; init; }
 
-    /// <summary>
-    /// Set this to the path of a map to have the given server/client pair load the map.
-    /// </summary>
-    public string Map { get; init; } = PoolManager.TestMap;
 
     /// <summary>
     /// Overrides the test name detection, and uses this in the test history instead

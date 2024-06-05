@@ -40,7 +40,6 @@ namespace Content.IntegrationTests;
 /// </summary>
 public static partial class PoolManager
 {
-    public const string TestMap = "Empty";
     private static int _pairId;
     private static readonly object PairLock = new();
     private static bool _initialized;
@@ -380,16 +379,6 @@ we are just going to end this here to save a lot of time. This is the exception 
         }
     }
 
-    /// <summary>
-    /// Creates a map, a grid, and a tile, and gives back references to them.
-    /// </summary>
-    /// <param name="pairTracker">A pairTracker</param>
-    /// <returns>A TestMapData</returns>
-    [Obsolete("use TestPair.CreateMap")]
-    public static async Task<TestMapData> CreateTestMap(TestPair pairTracker)
-    {
-        return await pairTracker.CreateTestMap();
-    }
 
     /// <summary>
     /// Runs a server/client pair in sync

@@ -1,5 +1,5 @@
 ﻿//Tests that /proc/range() is iterating along the correct, wonky path
-/proc/test_range()
+/proc/RunTest()
 	//Test that it goes in the right order
 	var/list/correctCoordinates = list(
 		list(3,3),

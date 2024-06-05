@@ -1,9 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using Content.Server.GameTicking;
-using Content.Server.Mind.Components;
-using Content.Shared.CCVar;
-using Content.Shared.GameTicking;
 using Robust.Client;
 using Robust.Server.Player;
 using Robust.Shared.Exceptions;
@@ -32,11 +28,12 @@ public sealed partial class TestPair : IAsyncDisposable
 
     private async Task OnCleanDispose()
     {
-        if (TestMap != null)
-        {
-            await Server.WaitPost(() => Server.EntMan.DeleteEntity(TestMap.MapUid));
-            TestMap = null;
-        }
+        //TODO does this need to clear the map?
+        //if (TestMap != null)
+        //{
+        //    await Server.WaitPost(() => Server.EntMan.DeleteEntity(TestMap.MapUid));
+        //    TestMap = null;
+       // }
 
         var usageTime = Watch.Elapsed;
         Watch.Restart();
