@@ -42,6 +42,9 @@ public sealed class DMTests : ContentUnitTest {
         _dreamMan.OnException += OnException;
     }
 
+    /// <summary>
+    /// Compile the test code and return the path to the JSON, or null if it failed to compile
+    /// </summary>
     private static string? Compile(string sourceFile) {
         bool successfulCompile = DMCompiler.DMCompiler.Compile(new() {
             Files = new() { sourceFile }
@@ -50,6 +53,9 @@ public sealed class DMTests : ContentUnitTest {
         return successfulCompile ? Path.ChangeExtension(sourceFile, "json") : null;
     }
 
+    /// <summary>
+    /// Delete the passed file
+    /// </summary>
     private static void Cleanup(string? compiledFile) {
         if (!File.Exists(compiledFile))
             return;
