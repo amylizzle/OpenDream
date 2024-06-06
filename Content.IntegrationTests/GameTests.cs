@@ -23,7 +23,7 @@ namespace Content.IntegrationTests {
     public sealed class GameTests : ContentIntegrationTest {
         private const string TestProject = "DMProject";
         private const string InitializeEnvironment = "./environment.dme";
-        private const string TestsDirectory = "Tests";
+        private const string TestsDirectory = "IntegrationTests";
 
 
         [Dependency] private readonly DreamManager _dreamMan = default!;
