@@ -4,17 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Content.Client.IoC;
-using Content.Client.Parallax.Managers;
 using Content.IntegrationTests.Pair;
-using Content.IntegrationTests.Tests;
-using Content.IntegrationTests.Tests.Destructible;
-using Content.IntegrationTests.Tests.DeviceNetwork;
-using Content.IntegrationTests.Tests.Interaction.Click;
-using Content.Server.GameTicking;
-using Content.Server.Mind.Components;
-using Content.Shared.CCVar;
-using Content.Shared.GameTicking;
 using Robust.Client;
 using Robust.Client.State;
 using Robust.Server;
@@ -63,8 +53,8 @@ public static partial class PoolManager
             },
             ContentAssemblies = new[]
             {
-                typeof(Shared.Entry.EntryPoint).Assembly,
-                typeof(Server.Entry.EntryPoint).Assembly,
+                typeof(OpenDreamShared.EntryPoint).Assembly,
+                typeof(OpenDreamRuntime.EntryPoint).Assembly,
                 typeof(PoolManager).Assembly
             }
         };
@@ -77,10 +67,6 @@ public static partial class PoolManager
         {
             var entSysMan = IoCManager.Resolve<IEntitySystemManager>();
             var compFactory = IoCManager.Resolve<IComponentFactory>();
-            entSysMan.LoadExtraSystemType<ResettingEntitySystemTests.TestRoundRestartCleanupEvent>();
-            entSysMan.LoadExtraSystemType<InteractionSystemTests.TestInteractionSystem>();
-            entSysMan.LoadExtraSystemType<DeviceNetworkTestSystem>();
-            entSysMan.LoadExtraSystemType<TestDestructibleListenerSystem>();
             IoCManager.Resolve<ILogManager>().GetSawmill("loc").Level = LogLevel.Error;
             IoCManager.Resolve<IConfigurationManager>()
                 .OnValueChanged(RTCVars.FailureLogLevel, value => logHandler.FailureLevel = value, true);
@@ -146,8 +132,8 @@ public static partial class PoolManager
             ContentStart = true,
             ContentAssemblies = new[]
             {
-                typeof(Shared.Entry.EntryPoint).Assembly,
-                typeof(Client.Entry.EntryPoint).Assembly,
+                typeof(OpenDreamShared.EntryPoint).Assembly,
+                typeof(OpenDreamClient.EntryPoint).Assembly,
                 typeof(PoolManager).Assembly
             }
         };
@@ -169,18 +155,7 @@ public static partial class PoolManager
 
         options.BeforeStart += () =>
         {
-            IoCManager.Resolve<IModLoader>().SetModuleBaseCallbacks(new ClientModuleTestingCallbacks
-            {
-                ClientBeforeIoC = () =>
-                {
-                    // do not register extra systems or components here -- they will get cleared when the client is
-                    // disconnected. just use reflection.
-                    IoCManager.Register<IParallaxManager, DummyParallaxManager>(true);
-                    IoCManager.Resolve<ILogManager>().GetSawmill("loc").Level = LogLevel.Error;
-                    IoCManager.Resolve<IConfigurationManager>()
-                        .OnValueChanged(RTCVars.FailureLogLevel, value => logHandler.FailureLevel = value, true);
-                }
-            });
+
         };
 
         SetDefaultCVars(options);
@@ -346,10 +321,10 @@ public static partial class PoolManager
         {
             // If the _poolFailureReason is not null, we can assume at least one test failed.
             // So we say inconclusive so we don't add more failed tests to search through.
-            Assert.Inconclusive(@"
+            Assert.Inconclusive($@"
 In a different test, the pool manager had an exception when trying to create a server/client pair.
 Instead of risking that the pool manager will fail at creating a server/client pairs for every single test,
-we are just going to end this here to save a lot of time. This is the exception that started this:\n {0}", _poolFailureReason);
+we are just going to end this here to save a lot of time. This is the exception that started this:\n {_poolFailureReason}");
         }
 
         if (_dead)
@@ -366,7 +341,7 @@ we are just going to end this here to save a lot of time. This is the exception 
         {
             var id = Interlocked.Increment(ref _pairId);
             var pair = new TestPair(id);
-            await pair.Initialize(poolSettings, testOut, _testPrototypes);
+            await pair.Initialize(poolSettings, testOut);
             pair.Use();
             await pair.RunTicksSync(5);
             await pair.SyncTicks(targetDelta: 1);
@@ -478,6 +453,5 @@ we are just going to end this here to save a lot of time. This is the exception 
             throw new InvalidOperationException("Already initialized");
 
         _initialized = true;
-        DiscoverTestPrototypes(assembly);
     }
 }

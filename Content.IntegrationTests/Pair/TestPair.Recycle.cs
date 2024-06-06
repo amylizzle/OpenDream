@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using OpenDreamRuntime;
 using Robust.Client;
 using Robust.Server.Player;
 using Robust.Shared.Exceptions;
@@ -109,7 +110,7 @@ public sealed partial class TestPair : IAsyncDisposable
         Watch.Restart();
         await testOut.WriteLineAsync($"Recycling...");
 
-        var gameTicker = Server.System<GameTicker>();
+        var manager = Server.ResolveDependency<DreamManager>();
         var cNetMgr = Client.ResolveDependency<IClientNetManager>();
 
         await RunTicksSync(1);
@@ -123,16 +124,6 @@ public sealed partial class TestPair : IAsyncDisposable
         }
         Assert.That(cNetMgr.IsConnected, Is.False);
 
-        // Move to pre-round lobby. Required to toggle dummy ticker on and off
-        if (gameTicker.RunLevel != GameRunLevel.PreRoundLobby)
-        {
-            await testOut.WriteLineAsync($"Recycling: {Watch.Elapsed.TotalMilliseconds} ms: Restarting server.");
-            Assert.That(gameTicker.DummyTicker, Is.False);
-            Server.CfgMan.SetCVar(CCVars.GameLobbyEnabled, true);
-            await Server.WaitPost(() => gameTicker.RestartRound());
-            await RunTicksSync(1);
-        }
-
         //Apply Cvars
         await testOut.WriteLineAsync($"Recycling: {Watch.Elapsed.TotalMilliseconds} ms: Setting CVar ");
         await PoolManager.SetupCVars(Client, settings);
@@ -141,7 +132,7 @@ public sealed partial class TestPair : IAsyncDisposable
 
         // Restart server.
         await testOut.WriteLineAsync($"Recycling: {Watch.Elapsed.TotalMilliseconds} ms: Restarting server again");
-        await Server.WaitPost(() => gameTicker.RestartRound());
+        await Server.WaitPost(() => manager.Shutdown());
         await RunTicksSync(1);
 
         // Connect client
@@ -160,18 +151,9 @@ public sealed partial class TestPair : IAsyncDisposable
     public void ValidateSettings(PoolSettings settings)
     {
         var cfg = Server.CfgMan;
-        Assert.That(cfg.GetCVar(CCVars.AdminLogsEnabled), Is.EqualTo(settings.AdminLogsEnabled));
-        Assert.That(cfg.GetCVar(CCVars.GameLobbyEnabled), Is.EqualTo(settings.InLobby));
-        Assert.That(cfg.GetCVar(CCVars.GameDummyTicker), Is.EqualTo(settings.UseDummyTicker));
-
         var entMan = Server.ResolveDependency<EntityManager>();
-        var ticker = entMan.System<GameTicker>();
-        Assert.That(ticker.DummyTicker, Is.EqualTo(settings.UseDummyTicker));
 
         var expectPreRound = settings.InLobby | settings.DummyTicker;
-        var expectedLevel = expectPreRound ? GameRunLevel.PreRoundLobby : GameRunLevel.InRound;
-        Assert.That(ticker.RunLevel, Is.EqualTo(expectedLevel));
-
         var baseClient = Client.ResolveDependency<IBaseClient>();
         var netMan = Client.ResolveDependency<INetManager>();
         Assert.That(netMan.IsConnected, Is.Not.EqualTo(!settings.ShouldBeConnected));
@@ -185,30 +167,5 @@ public sealed partial class TestPair : IAsyncDisposable
         Assert.That(sPlayer.Sessions.Count(), Is.EqualTo(1));
         var session = sPlayer.Sessions.Single();
         Assert.That(cPlayer.LocalPlayer?.Session.UserId, Is.EqualTo(session.UserId));
-
-        if (ticker.DummyTicker)
-            return;
-
-        var status = ticker.PlayerGameStatuses[session.UserId];
-        var expected = settings.InLobby
-            ? PlayerGameStatus.NotReadyToPlay
-            : PlayerGameStatus.JoinedGame;
-
-        Assert.That(status, Is.EqualTo(expected));
-
-        if (settings.InLobby)
-        {
-            Assert.Null(session.AttachedEntity);
-            return;
-        }
-
-        Assert.NotNull(session.AttachedEntity);
-        Assert.That(entMan.EntityExists(session.AttachedEntity));
-        Assert.That(entMan.HasComponent<MindContainerComponent>(session.AttachedEntity));
-        var mindCont = entMan.GetComponent<MindContainerComponent>(session.AttachedEntity!.Value);
-        Assert.NotNull(mindCont.Mind);
-        Assert.Null(mindCont.Mind?.VisitingEntity);
-        Assert.That(mindCont.Mind!.OwnedEntity, Is.EqualTo(session.AttachedEntity!.Value));
-        Assert.That(mindCont.Mind.UserId, Is.EqualTo(session.UserId));
     }
 }

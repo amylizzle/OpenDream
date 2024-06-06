@@ -58,7 +58,7 @@ namespace Content.IntegrationTests {
 
             // Set compiled json path by default.
             if (!options.CVarOverrides.ContainsKey(OpenDreamCVars.JsonPath.Name))
-                options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = SetupCompileDm.CompiledProject;
+                throw new ArgumentException("JSON CVar must be set for a unit test");
 
             options.ContentStart = true;
 

@@ -105,9 +105,6 @@ public sealed class PoolSettings
             return false;
 
         // Check that certain settings match.
-        return !ShouldBeConnected == !nextSettings.ShouldBeConnected
-               && UseDummyTicker == nextSettings.UseDummyTicker
-               && Map == nextSettings.Map
-               && InLobby == nextSettings.InLobby;
+        return !ShouldBeConnected == !nextSettings.ShouldBeConnected;
     }
 }

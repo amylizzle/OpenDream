@@ -33,7 +33,7 @@ public sealed partial class TestPair
         Id = id;
     }
 
-    public async Task Initialize(PoolSettings settings, TextWriter testOut, List<string> testPrototypes)
+    public async Task Initialize(PoolSettings settings, TextWriter testOut)
     {
         if (_initialized)
             throw new InvalidOperationException("Already initialized");
