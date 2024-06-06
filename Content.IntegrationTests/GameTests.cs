@@ -24,6 +24,7 @@ namespace Content.IntegrationTests {
         private const string TestProject = "DMProject";
         private const string InitializeEnvironment = "./environment.dme";
         private const string TestsDirectory = "IntegrationTests";
+        private const string CompilerPath = "../";
 
 
         [Dependency] private readonly DreamManager _dreamMan = default!;
@@ -93,11 +94,21 @@ namespace Content.IntegrationTests {
         /// <summary>
         /// Compile the test code and return the path to the JSON, or null if it failed to compile
         /// </summary>
-        private static string? Compile(string sourceFile) {
-            bool successfulCompile = DMCompiler.DMCompiler.Compile(new() {
-                Files = new() { sourceFile }
-            });
+        private static string? Compile(string compilerPath, string sourceFile) {
 
+            System.Diagnostics.Process compileProcess = new System.Diagnostics.Process();
+            //settings up parameters for the install process
+            compileProcess.StartInfo.FileName = compilerPath;
+            compileProcess.StartInfo.Arguments = $"{InitializeEnvironment} {sourceFile} --output={Path.ChangeExtension(sourceFile, "json")}";
+            compileProcess.StartInfo.RedirectStandardOutput = true;
+            compileProcess.StartInfo.RedirectStandardError = true;
+            compileProcess.Start();
+
+            compileProcess.WaitForExit();
+            // Check for sucessful completion
+            bool successfulCompile = (compileProcess.ExitCode == 0) ? true : false;
+            string output = compileProcess.StandardOutput.ReadToEnd();
+            TestContext.WriteLine(output);
             return successfulCompile ? Path.ChangeExtension(sourceFile, "json") : null;
         }
 
@@ -120,7 +131,7 @@ namespace Content.IntegrationTests {
             string initialDirectory = Directory.GetCurrentDirectory();
             TestContext.WriteLine($"--- TEST {sourceFile} | Flags: {testFlags}");
             try {
-                string? compiledFile = Compile(Path.Join(initialDirectory, TestsDirectory, sourceFile));
+                string? compiledFile = Compile(Path.Join(initialDirectory, CompilerPath, "DMCompiler"), Path.Join(initialDirectory, TestsDirectory, sourceFile));
                 if (testFlags.HasFlag(DMTestFlags.CompileError)) {
                     Assert.That(compiledFile, Is.Null, "Expected an error during DM compilation");
                     Cleanup(compiledFile);

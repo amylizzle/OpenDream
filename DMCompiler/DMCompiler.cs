@@ -56,7 +56,7 @@ public static class DMCompiler {
 
         if (successfulCompile) {
             //Output file is the first file with the extension changed to .json
-            string outputFile = Path.ChangeExtension(settings.Files[0], "json");
+            string outputFile = settings.outputFile ?? Path.ChangeExtension( settings.Files[0], "json");
             List<DreamMapJson> maps = ConvertMaps(preprocessor.IncludedMaps);
 
             if (ErrorCount > 0) {
@@ -364,6 +364,7 @@ public struct DMCompilerSettings {
     // These are the default DM_VERSION and DM_BUILD values. They're strings because that's what the preprocessor expects (seriously)
     public string DMVersion = "515";
     public string DMBuild = "1633";
+    public string? outputFile = null;
 
     public DMCompilerSettings() {
     }

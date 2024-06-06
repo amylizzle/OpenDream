@@ -74,6 +74,7 @@ internal static class Program {
         Console.WriteLine("--verbose                 : Show verbose output during compile");
         Console.WriteLine("--notices-enabled         : Show notice output during compile");
         Console.WriteLine("--pragma-config [file].dm : Configure the error/warning/notice/ignore level of compiler messages");
+        Console.WriteLine("--output [file].json      : Specify the name of the output compiled JSON");
     }
 
     private static bool TryParseArguments(string[] args, out DMCompilerSettings settings) {
@@ -141,6 +142,18 @@ internal static class Program {
 
                     settings.DMVersion = split[0];
                     settings.DMBuild = split[1];
+                    break;
+                }
+                case "output":{
+                   if(arg.Value is null) {
+                        if(skipBad) {
+                            DMCompiler.ForcedWarning("Compiler arg 'output' requires a value, skipping and using the first passed filename instead");
+                            continue;
+                        }
+                        Console.WriteLine("Compiler arg 'output' requires a value");
+                        return false;
+                    }
+                    settings.outputFile = arg.Value;
                     break;
                 }
                 case null: { // Value-only argument
