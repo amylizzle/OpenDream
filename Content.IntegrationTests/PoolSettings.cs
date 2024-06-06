@@ -88,6 +88,8 @@ public sealed class PoolSettings
     /// </summary>
     public string? TestName { get; set; }
 
+    public string JsonPath = string.Empty;
+
     /// <summary>
     /// Tries to guess if we can skip recycling the server/client pair.
     /// </summary>

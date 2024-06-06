@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using OpenDreamRuntime;
 using OpenDreamRuntime.Objects;
+using OpenDreamShared;
 using Robust.Shared.Asynchronous;
 using Robust.Shared.IoC;
 using Robust.Shared.Timing;
@@ -27,8 +29,6 @@ namespace Content.IntegrationTests {
         private const string CompilerPath = "../";
 
 
-        [Dependency] private readonly DreamManager _dreamMan = default!;
-        [Dependency] private readonly DreamObjectTree _objectTree = default!;
         [Dependency] private readonly ITaskManager _taskManager = default!;
 
         /// <summary>
@@ -36,7 +36,16 @@ namespace Content.IntegrationTests {
         /// </summary>
         [Test]
         public async Task NoRuntimesTest() {
-            var (client, server) = await StartConnectedServerClientPair();
+            //ServerIntegrationOptions options = new();
+            //options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = Path.ChangeExtension(InitializeEnvironment, "json");
+            PoolSettings settings = new() {
+                    JsonPath = Path.ChangeExtension(InitializeEnvironment, "json"),
+                    Dirty = true
+                };
+            await using var pair = await PoolManager.GetServerClient(settings);
+            var client = pair.Client;
+            var server = pair.Server;
+            //var (client, server) = await StartConnectedServerClientPair(serverOptions:options);
             await RunTicksSync(client, server, 1000);
             Assert.That(server.IsAlive);
             var manager = server.ResolveDependency<DreamManager>();
@@ -130,6 +139,7 @@ namespace Content.IntegrationTests {
         public async Task TestFiles(string sourceFile, DMTestFlags testFlags) {
             string initialDirectory = Directory.GetCurrentDirectory();
             TestContext.WriteLine($"--- TEST {sourceFile} | Flags: {testFlags}");
+
             try {
                 string? compiledFile = Compile(Path.Join(initialDirectory, CompilerPath, "DMCompiler"), Path.Join(initialDirectory, TestsDirectory, sourceFile));
                 if (testFlags.HasFlag(DMTestFlags.CompileError)) {
@@ -138,15 +148,24 @@ namespace Content.IntegrationTests {
                     TestContext.WriteLine($"--- PASS {sourceFile}");
                     return;
                 }
-
                 Assert.That(compiledFile is not null && File.Exists(compiledFile), "Failed to compile DM source file");
+                PoolSettings settings = new() {
+                    JsonPath = compiledFile!,
+                    Dirty = true
+                };
+                await using var pair = await PoolManager.GetServerClient(settings);
 
-                /// REWRITE FROM HERE
 
-                Assert.That(_dreamMan.LoadJson(compiledFile), $"Failed to load {compiledFile}");
-                _dreamMan.StartWorld();
+                var server = pair.Server;
 
-                (bool successfulRun, DreamValue? returned, Exception? exception) = await RunTest();
+                var dreamManager = server.ResolveDependency<DreamManager>();
+                Assert.That(dreamManager, Is.Not.Null, "DreamManager is null");
+
+                Assert.That(dreamManager.LoadJson(compiledFile), $"Failed to load {compiledFile}");
+                dreamManager.PreInitialize(compiledFile);
+                dreamManager.StartWorld();
+
+                (bool successfulRun, DreamValue? returned, Exception? exception) = await RunTest(dreamManager);
 
                 if (testFlags.HasFlag(DMTestFlags.NoReturn)) {
                     Assert.That(returned.HasValue, Is.False, "proc returned unexpectedly");
@@ -169,20 +188,23 @@ namespace Content.IntegrationTests {
 
                 Cleanup(compiledFile);
                 TestContext.WriteLine($"--- PASS {sourceFile}");
+                await pair.CleanReturnAsync();
             } finally {
                 // Restore the original CurrentDirectory, since loading a compiled JSON changes it.
                 Directory.SetCurrentDirectory(initialDirectory);
+
+
             }
         }
 
-        private async Task<(bool Success, DreamValue? Returned, Exception? except)> RunTest() {
-            var prev = _dreamMan.LastDMException;
+        private async Task<(bool Success, DreamValue? Returned, Exception? except)> RunTest(DreamManager dreamManager) {
+            var prev = dreamManager.LastDMException;
 
             DreamValue? retValue = null;
             Task<DreamValue> callTask = null!;
 
             DreamThread.Run("RunTest", async (state) => {
-                if (_objectTree.TryGetGlobalProc("RunTest", out DreamProc? proc)) {
+                if (dreamManager.TryGetGlobalProc("RunTest", out DreamProc? proc)) {
                     callTask = state.Call(proc, null, null);
                     retValue = await callTask;
                     return DreamValue.Null;
@@ -197,7 +219,7 @@ namespace Content.IntegrationTests {
 
             // Tick until our inner call has finished
             while (!callTask.IsCompleted) {
-                _dreamMan.Update();
+                dreamManager.Update();
                 _taskManager.ProcessPendingTasks();
 
                 if (watch.Elapsed.TotalMilliseconds > 500) {
@@ -205,8 +227,8 @@ namespace Content.IntegrationTests {
                 }
             }
 
-            bool retSuccess = _dreamMan.LastDMException == prev; // Works because "null == null" is true in this language.
-            return (retSuccess, retValue, _dreamMan.LastDMException);
+            bool retSuccess = dreamManager.LastDMException == prev; // Works because "null == null" is true in this language.
+            return (retSuccess, retValue, dreamManager.LastDMException);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Content.IntegrationTests.Pair;
+using OpenDreamShared;
 using Robust.Client;
 using Robust.Client.State;
 using Robust.Server;
@@ -73,6 +74,7 @@ public static partial class PoolManager
         };
 
         SetDefaultCVars(options);
+        options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = poolSettings.JsonPath;
         var server = new RobustIntegrationTest.ServerIntegrationInstance(options);
         await server.WaitIdleAsync();
         await SetupCVars(server, poolSettings);
