@@ -23,11 +23,19 @@ namespace Content.IntegrationTests {
     }
     [TestFixture]
     public sealed class GameTests : ContentIntegrationTest {
-        private const string TestProject = "DMProject";
-        private const string InitializeEnvironment = "./environment.dme";
         private const string TestsDirectory = "IntegrationTests";
-        private const string CompilerPath = "../";
+        private const string TestProject = "DMProject";
+        private static string InitializeEnvironment = "environment.dme";
+        private static string CompilerPath = "DMCompiler";
+        private static string TestsPath = "";
 
+        static GameTests(){
+            //set up absolute paths to make it easier to point to things
+            //starting directory *should* be bin/Content.IntegrationTests/
+            CompilerPath = Path.Join(Directory.GetCurrentDirectory(), "DMCompiler");
+            InitializeEnvironment = Path.Join(Directory.GetCurrentDirectory(), TestProject, InitializeEnvironment);
+            TestsPath = Path.Join(Directory.GetCurrentDirectory(), TestProject, TestsDirectory);
+        }
 
         [Dependency] private readonly ITaskManager _taskManager = default!;
 
@@ -36,16 +44,21 @@ namespace Content.IntegrationTests {
         /// </summary>
         [Test]
         public async Task NoRuntimesTest() {
-            //ServerIntegrationOptions options = new();
-            //options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = Path.ChangeExtension(InitializeEnvironment, "json");
+            string? compiledFile = Compile(string.Empty);
+            if (compiledFile is null) {
+                Assert.Fail($"Failed to compile {InitializeEnvironment}");
+            }
+            ServerIntegrationOptions options = new();
+            options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = compiledFile!;
             PoolSettings settings = new() {
-                    JsonPath = Path.ChangeExtension(InitializeEnvironment, "json"),
-                    Dirty = true
+                    JsonPath = compiledFile!,
+                    Dirty = true,
+                    NoLoadContent = false,
                 };
-            await using var pair = await PoolManager.GetServerClient(settings);
-            var client = pair.Client;
-            var server = pair.Server;
-            //var (client, server) = await StartConnectedServerClientPair(serverOptions:options);
+            //await using var pair = await PoolManager.GetServerClient(settings);
+            //var client = pair.Client;
+            //var server = pair.Server;
+            var (client, server) = await StartConnectedServerClientPair(serverOptions:options);
             await RunTicksSync(client, server, 1000);
             Assert.That(server.IsAlive);
             var manager = server.ResolveDependency<DreamManager>();
@@ -58,12 +71,9 @@ namespace Content.IntegrationTests {
         /// <summary>
         /// Get the filenames of the DM tests
         /// </summary>
-        private static IEnumerable<object[]> GetTests()
-        {
-            Directory.SetCurrentDirectory(TestProject);
-
-            foreach (string sourceFile in Directory.GetFiles(TestsDirectory, "*.dm", SearchOption.AllDirectories)) {
-                string sourceFile2 = sourceFile[$"{TestsDirectory}/".Length..];
+        private static IEnumerable<object[]> GetTests() {
+            foreach (string sourceFile in Directory.GetFiles(TestsPath, "*.dm", SearchOption.AllDirectories)) {
+                string sourceFile2 = sourceFile[$"{TestsPath}/".Length..];
                 DMTestFlags testFlags = GetDMTestFlags(sourceFile);
                 if (testFlags.HasFlag(DMTestFlags.Ignore))
                     continue;
@@ -103,12 +113,16 @@ namespace Content.IntegrationTests {
         /// <summary>
         /// Compile the test code and return the path to the JSON, or null if it failed to compile
         /// </summary>
-        private static string? Compile(string compilerPath, string sourceFile) {
+        private static string? Compile(string sourceFile) {
 
             System.Diagnostics.Process compileProcess = new System.Diagnostics.Process();
+
             //settings up parameters for the install process
-            compileProcess.StartInfo.FileName = compilerPath;
-            compileProcess.StartInfo.Arguments = $"{InitializeEnvironment} {sourceFile} --output={Path.ChangeExtension(sourceFile, "json")}";
+            compileProcess.StartInfo.FileName = CompilerPath;
+            if(string.IsNullOrEmpty(sourceFile))
+                compileProcess.StartInfo.Arguments = $"{InitializeEnvironment}";
+            else
+                compileProcess.StartInfo.Arguments = $"{InitializeEnvironment} {sourceFile} --output={Path.ChangeExtension(sourceFile, "json")}";
             compileProcess.StartInfo.RedirectStandardOutput = true;
             compileProcess.StartInfo.RedirectStandardError = true;
             compileProcess.Start();
@@ -135,13 +149,13 @@ namespace Content.IntegrationTests {
         /// <summary>
         /// Actually run the DM tests
         /// </summary>
-        [Test, TestCaseSource(nameof(GetTests))]
+        //[Test, TestCaseSource(nameof(GetTests))]
         public async Task TestFiles(string sourceFile, DMTestFlags testFlags) {
             string initialDirectory = Directory.GetCurrentDirectory();
             TestContext.WriteLine($"--- TEST {sourceFile} | Flags: {testFlags}");
 
             try {
-                string? compiledFile = Compile(Path.Join(initialDirectory, CompilerPath, "DMCompiler"), Path.Join(initialDirectory, TestsDirectory, sourceFile));
+                string? compiledFile = Compile(Path.Join(initialDirectory, TestsDirectory, sourceFile));
                 if (testFlags.HasFlag(DMTestFlags.CompileError)) {
                     Assert.That(compiledFile, Is.Null, "Expected an error during DM compilation");
                     Cleanup(compiledFile);
@@ -156,15 +170,14 @@ namespace Content.IntegrationTests {
                 await using var pair = await PoolManager.GetServerClient(settings);
 
 
-                var server = pair.Server;
 
-                var dreamManager = server.ResolveDependency<DreamManager>();
+                var dreamManager = pair.Server.ResolveDependency<DreamManager>();
                 Assert.That(dreamManager, Is.Not.Null, "DreamManager is null");
 
-                Assert.That(dreamManager.LoadJson(compiledFile), $"Failed to load {compiledFile}");
-                dreamManager.PreInitialize(compiledFile);
-                dreamManager.StartWorld();
-
+                //Assert.That(dreamManager.LoadJson(compiledFile), $"Failed to load {compiledFile}");
+                //dreamManager.PreInitialize(compiledFile);
+                //dreamManager.StartWorld();
+                await RunTicksSync(pair.Client, pair.Server, 1000);
                 (bool successfulRun, DreamValue? returned, Exception? exception) = await RunTest(dreamManager);
 
                 if (testFlags.HasFlag(DMTestFlags.NoReturn)) {

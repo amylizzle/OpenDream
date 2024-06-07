@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Content.IntegrationTests.Pair;
+using OpenDreamRuntime;
 using OpenDreamShared;
 using Robust.Client;
 using Robust.Client.State;
@@ -75,6 +76,8 @@ public static partial class PoolManager
 
         SetDefaultCVars(options);
         options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = poolSettings.JsonPath;
+        options.ContentStart = true;
+
         var server = new RobustIntegrationTest.ServerIntegrationInstance(options);
         await server.WaitIdleAsync();
         await SetupCVars(server, poolSettings);
@@ -456,4 +459,7 @@ we are just going to end this here to save a lot of time. This is the exception 
 
         _initialized = true;
     }
+}
+
+internal class ServerContentIntegrationOption {
 }

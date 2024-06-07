@@ -340,6 +340,10 @@ namespace OpenDreamRuntime {
 
             WorldInstance.SpawnProc("Error", usr: null, new DreamValue(obj));
         }
+
+        public bool TryGetGlobalProc(string name, out DreamProc? proc) {
+            return _objectTree.TryGetGlobalProc(name, out proc);
+        }
     }
 
     public enum RefType : uint {
