@@ -48,17 +48,18 @@ namespace Content.IntegrationTests {
             if (compiledFile is null) {
                 Assert.Fail($"Failed to compile {InitializeEnvironment}");
             }
-            ServerIntegrationOptions options = new();
-            options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = compiledFile!;
             PoolSettings settings = new() {
                     JsonPath = compiledFile!,
                     Dirty = true,
                     NoLoadContent = false,
                 };
-            //await using var pair = await PoolManager.GetServerClient(settings);
-            //var client = pair.Client;
-            //var server = pair.Server;
-            var (client, server) = await StartConnectedServerClientPair(serverOptions:options);
+            await using var pair = await PoolManager.GetServerClient(settings);
+            var client = pair.Client;
+            var server = pair.Server;
+            //ServerIntegrationOptions options = new();
+            //options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = compiledFile!;
+            //var (client, server) = await StartConnectedServerClientPair(serverOptions:options);
+
             await RunTicksSync(client, server, 1000);
             Assert.That(server.IsAlive);
             var manager = server.ResolveDependency<DreamManager>();

@@ -52,6 +52,9 @@ namespace OpenDreamRuntime {
                         break;
                     }
 
+            if(string.IsNullOrEmpty(_configManager.GetCVar<string>(OpenDreamCVars.JsonPath)))
+                throw new InvalidOperationException("No JSON path was provided");
+
             _prototypeManager.LoadDirectory(new ResPath("/Resources/Prototypes"));
 
             _serverInfoManager.Initialize();
@@ -62,7 +65,10 @@ namespace OpenDreamRuntime {
 
             int debugAdapterPort = _configManager.GetCVar(OpenDreamCVars.DebugAdapterLaunched);
             if (debugAdapterPort == 0) {
-                _dreamManager.PreInitialize(_configManager.GetCVar<string>(OpenDreamCVars.JsonPath));
+                Logger.GetSawmill("hacky").Debug("test");
+                foreach(var cvar in _configManager.GetRegisteredCVars())
+                    Logger.GetSawmill("hacky").Debug($"{cvar} = {_configManager.GetCVar(cvar)}");
+                _dreamManager.PreInitialize(_configManager.GetCVar(OpenDreamCVars.JsonPath));
                 _dreamManager.StartWorld();
             } else {
                 // The debug manager is responsible for running _dreamManager.PreInitialize() and .StartWorld()
