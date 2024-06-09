@@ -222,7 +222,7 @@ internal sealed class DreamViewOverlay : Overlay {
             else
                 current.Plane = icon.Appearance.Plane;
 
-            current.Layer = (icon.Appearance.Layer < 0) ? parentIcon.Layer : icon.Appearance.Layer; //FLOAT_LAYER
+            current.Layer = (icon.Appearance.Layer < 0) ? parentIcon.Layer + icon.Appearance.Layer + 1 : icon.Appearance.Layer; //FLOAT_LAYER
 
             if (current.BlendMode == BlendMode.Default)
                 current.BlendMode = parentIcon.BlendMode;
