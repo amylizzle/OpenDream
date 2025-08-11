@@ -99,6 +99,11 @@ public sealed class DreamObjectMob : DreamObjectMovable {
 
                 Sight = (SightFlags)sight;
                 break;
+            case "verbs":
+                base.SetVar(varName, value);
+                if(Connection?.Client is not null)
+                    VerbSystem?.UpdateClientVerbs(Connection.Client);
+                break;
             default:
                 base.SetVar(varName, value);
                 break;

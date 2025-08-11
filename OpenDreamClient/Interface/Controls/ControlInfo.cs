@@ -11,6 +11,7 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Input;
 using Robust.Shared.Network;
 using Robust.Shared.Utility;
+using System.Collections;
 
 namespace OpenDreamClient.Interface.Controls;
 
@@ -321,16 +322,26 @@ public sealed class ControlInfo : InterfaceControl {
     public void RefreshVerbs(ClientVerbSystem verbSystem) {
         IEnumerable<(int, ClientObjectReference, VerbSystem.VerbInfo)> verbs = verbSystem.GetExecutableVerbs();
 
+        HashSet<string> removeCategories = new(_verbPanels.Keys);
         foreach (var (_, _, verb) in verbs) {
             var category = verb.GetCategoryOrDefault(VerbPanel.DefaultVerbPanel);
+            removeCategories.Remove(category);
 
             if (!HasVerbPanel(category)) {
                 CreateVerbPanel(category);
             }
         }
 
+        foreach (string key in removeCategories) {
+            _verbPanels.Remove(key);
+        }
+
         foreach (var panel in _verbPanels) {
             _verbPanels[panel.Key].RefreshVerbs(verbs);
+        }
+
+        if (removeCategories.Count > 0) { //if a panel was removed
+            SortPanels();
         }
     }
 
