@@ -87,7 +87,6 @@
 	OT.Move(Dir=NORTH)
 	OT.color = "blue"
 	ASSERT(length(OT.overlays) == 3)
-	OT.overlays.Cut()
 	OT.UpdateOverlay(perm, "perm1")
 	
 
