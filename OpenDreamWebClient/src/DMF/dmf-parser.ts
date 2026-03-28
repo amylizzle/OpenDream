@@ -157,7 +157,7 @@ export class DMFParser {
     private Menu(): MenuDescriptor | null {
         if (this.Check(TokenType.Menu)) {
             const menuIdToken = this.Current();
-            this.Consume(TokenType.Value, "Expected a menu id");
+            this.Consume(TokenType.Value, `Expected a menu id but got ${menuIdToken.Type} ${menuIdToken.Text}`);
             this.Newline();
 
             const menu = new MenuDescriptor(menuIdToken.Text);
@@ -192,24 +192,25 @@ export class DMFParser {
     }
 
     private Advance(): Token {
-        if (this._tokenQueue.length > 0) {
-            return this._tokenQueue.shift()!;
+        this._currentToken = (this._tokenQueue.length > 0) ? this._tokenQueue.shift()! : this.lexer.NextToken();
+        while (this._currentToken.Type == TokenType.Error) {
+            this.Error(this._currentToken.Text);
+            this._currentToken = (this._tokenQueue.length > 0) ? this._tokenQueue.shift()! : this.lexer.NextToken();
         }
-        this._currentToken = this.lexer.NextToken();
-        return this._currentToken;
+
+        return this.Current();        
     }
 
     private Check(type: TokenType|TokenType[]): boolean {
         if (Array.isArray(type)) {
-            if (type.includes(this._currentToken.Type)) {
-                this.Advance();
-                return true;
+            if (!type.includes(this._currentToken.Type)) {
+                return false;
             }
-        } else if (this._currentToken.Type === type) {
-            this.Advance();
-            return true;
+        } else if (this._currentToken.Type != type) {
+            return false;
         }
-        return false;
+        this.Advance();
+        return true;
     }
 
     private Consume(type: TokenType, message: string): void {
