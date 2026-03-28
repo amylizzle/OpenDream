@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Threading;
 using OpenDreamRuntime.Objects.Types;
 using SharedAppearanceSystem = OpenDreamShared.Rendering.SharedAppearanceSystem;
+using System.Linq;
 
 namespace OpenDreamRuntime.Rendering;
 
@@ -136,6 +137,17 @@ public sealed class ServerAppearanceSystem : SharedAppearanceSystem {
 
     public void Flick(DreamObjectAtom atom, int iconId, string? iconState) {
         RaiseNetworkEvent(new FlickEvent(_dreamManager.GetClientReference(atom), iconId, iconState));
+    }
+
+    public ImmutableAppearance[] GetImmutableAppearances() {
+        lock (_lock) {
+            return _idToAppearance.Values.Select(proxy => {
+                if (proxy.TryGetTarget(out var immutableAppearance))
+                    return immutableAppearance;
+                else
+                    return null;
+                }).Where(x => x != null).ToArray()!;
+        }
     }
 }
 

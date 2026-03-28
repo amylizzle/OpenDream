@@ -3,14 +3,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenDreamRuntime;
+using OpenDreamRuntime.Map;
+using OpenDreamRuntime.Rendering;
+using OpenDreamRuntime.Resources;
 using OpenDreamShared;
 using OpenDreamShared.Network.Messages;
 using Robust.Shared.Configuration;
 using Robust.Shared.Console;
 using Robust.Shared.Enums;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 
@@ -381,5 +387,113 @@ public sealed class HotReloadResourceCommand : IConsoleCommand {
         DreamManager dreamManager = IoCManager.Resolve<DreamManager>();
         shell.WriteLine($"Reloading {args[0]}");
         dreamManager.HotReloadResource(args[0]);
+    }
+}
+
+internal sealed class UintArrayConverter : JsonConverter<uint[,]> {
+    public override uint[,]? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        if (reader.TokenType != JsonTokenType.StartArray)
+            throw new JsonException("Expected start of array");
+
+        var rows = new List<uint[]>();
+        while (reader.Read() && reader.TokenType != JsonTokenType.EndArray) {
+            if (reader.TokenType != JsonTokenType.StartArray)
+                throw new JsonException("Expected start of inner array");
+
+            var row = new List<uint>();
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndArray) {
+                if (reader.TokenType == JsonTokenType.Number) {
+                    row.Add(reader.GetUInt32());
+                }
+            }
+            rows.Add(row.ToArray());
+        }
+
+        if (rows.Count == 0)
+            return new uint[0, 0];
+
+        var result = new uint[rows.Count, rows[0].Length];
+        for (int i = 0; i < rows.Count; i++) {
+            for (int j = 0; j < rows[i].Length; j++) {
+                result[i, j] = rows[i][j];
+            }
+        }
+        return result;
+    }
+
+    public override void Write(Utf8JsonWriter writer, uint[,]? value, JsonSerializerOptions options) {
+        if (value == null) {
+            writer.WriteNullValue();
+            return;
+        }
+
+        writer.WriteStartArray();
+        for (int i = 0; i < value.GetLength(0); i++) {
+            writer.WriteStartArray();
+            for (int j = 0; j < value.GetLength(1); j++) {
+                writer.WriteNumberValue(value[i, j]);
+            }
+            writer.WriteEndArray();
+        }
+        writer.WriteEndArray();
+    }
+}
+
+public sealed class DumpDataCommand : IConsoleCommand {
+    public string Command => "dumpdata";
+    public string Description => "Dump all ImmutableAppearances, Entities, and DreamResources to JSON files";
+    public string Help => "";
+    public bool RequireServerOrSingleplayer => true;
+
+    public void Execute(IConsoleShell shell, string argStr, string[] args) {
+        if(!shell.IsLocal) {
+            shell.WriteError("You cannot use this command as a client. Execute it on the server console.");
+            return;
+        }
+
+        if (args.Length != 0) {
+            shell.WriteError("This command does not take any arguments!");
+            return;
+        }
+
+        var entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
+        var appearanceSystem = entitySystemManager.GetEntitySystem<ServerAppearanceSystem>();
+
+
+
+        // Dump entities
+        var entityManager = IoCManager.Resolve<IEntityManager>();
+
+        var entities = entityManager.GetEntities().Select(e => new {
+            EntityId = e.ToString(),
+            Transform = entityManager.TryGetComponent<TransformComponent>(e, out var t) ? t.WorldPosition : Vector2.NaN,
+            Sprite = entityManager.TryGetComponent<DMISpriteComponent>(e, out var s) ? appearanceSystem.AddAppearance(s.Appearance!).MustGetId() : 0
+        }).ToList();
+        var entitiesJson = JsonSerializer.Serialize(entities, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+        File.WriteAllText("entities.json", entitiesJson);
+        shell.WriteLine($"Dumped {entities.Count} entities to entities.json");
+
+        var dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
+        // Dump resources - index is ID
+        var resources = dreamResourceManager.GetAllResources().Where(r => r is IconResource).ToList();
+        var resourcesJson = JsonSerializer.Serialize(resources, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+        File.WriteAllText("resources.json", resourcesJson);
+        shell.WriteLine($"Dumped {resources.Count} resources to resources.json");
+
+        var dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
+        // Dump map tile IDs
+        var tiles = dreamMapManager.GetMapAsTileIds(0);
+        var mapOptions = new JsonSerializerOptions { WriteIndented = true, IncludeFields = true };
+        mapOptions.Converters.Add(new UintArrayConverter());
+        var mapJson = JsonSerializer.Serialize(tiles, mapOptions);
+        File.WriteAllText("tileids.json", mapJson);
+        shell.WriteLine($"Dumped map to tileids.json");
+
+        // Dump appearances
+        var appearances = appearanceSystem.GetImmutableAppearances();
+        var appearancesJson = JsonSerializer.Serialize(appearances, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+        File.WriteAllText("appearances.json", appearancesJson);
+        shell.WriteLine($"Dumped {appearances.Length} appearances to appearances.json");
+
     }
 }

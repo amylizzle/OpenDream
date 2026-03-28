@@ -239,6 +239,8 @@ public sealed class DreamResourceManager {
         }
     }
 
+    public IEnumerable<DreamResource> GetAllResources() => _resourceCache;
+
     public bool DeleteFile(string filePath) {
         try {
             File.Delete(filePath);

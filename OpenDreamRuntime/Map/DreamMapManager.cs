@@ -448,6 +448,15 @@ public sealed partial class DreamMapManager : IDreamMapManager {
             yield return mob;
         }
     }
+
+    public uint[,] GetMapAsTileIds(int Z) {
+        var tileRefs = _mapSystem.GetAllTiles(_levels[Z].Grid.Owner, _levels[Z].Grid);
+        uint[,] result = new uint[_levels[Z].Cells.GetLength(0), _levels[Z].Cells.GetLength(1)];
+        foreach(var tile in tileRefs) {
+            result[tile.X-1, tile.Y-1] = (uint)tile.Tile.TypeId;
+        }
+        return result;
+    }
 }
 
 public interface IDreamMapManager {
@@ -519,7 +528,7 @@ public interface IDreamMapManager {
     public void SetZLevels(int levels);
     public void SetWorldSize(Vector2i size);
     public EntityUid GetZLevelEntity(int z);
-
+    public uint[,] GetMapAsTileIds(int Z);
     public IEnumerable<DreamObjectMob> GetMobsInRange((int X, int Y, int Z) loc, int distance);
 
     public IEnumerable<AtomDirection> CalculateSteps((int X, int Y, int Z) loc, (int X, int Y, int Z) dest, int distance);

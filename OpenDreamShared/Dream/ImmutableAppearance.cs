@@ -26,6 +26,7 @@ namespace OpenDreamShared.Dream;
 [Serializable, NetSerializable]
 public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
     private uint? _registeredId;
+    public uint? Id => _registeredId;
 
     [ViewVariables] public readonly string Name = MutableAppearance.Default.Name;
     [ViewVariables] public readonly string? Desc = MutableAppearance.Default.Desc;
