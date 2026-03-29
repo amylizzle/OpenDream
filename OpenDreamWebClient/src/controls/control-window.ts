@@ -29,51 +29,21 @@ import { ControlChild } from './control-child';
 import { DMFPropertySize } from '../DMF/dmf-property';
 import type { DreamWebInterfaceManager } from '../dream-interface-manager';
 
-
-type BrowserWindowType = 'main' | 'popup' | 'pane';
-
 export class ControlWindow extends InterfaceControl {
     public childControls: InterfaceControl[] = [];
     private menuContainer?: HTMLElement;
-    private canvas?: HTMLElement;
     private resizeObserver?: ResizeObserver;
     private currentStatus = '';
-    private isUIElementCreated = false;
     private popupWindow?: Window;
     private paneElement?: HTMLElement;
-    private windowType: BrowserWindowType = 'pane';
+    private isUIElementCreated = false;
 
     // Reference to interface manager for commands
     private interfaceManager: DreamWebInterfaceManager;
+    public get InterfaceManager():DreamWebInterfaceManager { return this.interfaceManager; } // Expose as public property for child controls to access if needed
 
     public get descriptor(): WindowDescriptor {
         return this._descriptor as WindowDescriptor;
-    }
-
-    get title(): string {
-        return this.descriptor.title?.value || '';
-    }
-
-    get isPaneMode(): boolean {
-        return this.descriptor.is_pane?.value ?? false;
-    }
-
-    get isVisible(): boolean {
-        return this.descriptor.is_visible?.value ?? true;
-    }
-
-    get id(): string {
-        return this.descriptor.id.value;
-    }
-
-    get size(): { x: number; y: number } {
-        const sizeValue = this.descriptor.size;
-        return { x: sizeValue?.x ?? 0, y: sizeValue?.y ?? 0 };
-    }
-
-    get pos(): { x: number; y: number } {
-        const posValue = this.descriptor.pos;
-        return { x: posValue?.x ?? 0, y: posValue?.y ?? 0 };
     }
 
     constructor(descriptor: WindowDescriptor, interfaceManager: DreamWebInterfaceManager){
@@ -98,6 +68,7 @@ export class ControlWindow extends InterfaceControl {
 
         // Menu container
         this.menuContainer = document.createElement('div');
+        this.menuContainer.id = `${this.id}-menu`;
         this.menuContainer.style.display = 'flex';
         this.menuContainer.style.padding = '0';
         this.menuContainer.style.backgroundColor = '#fff';
@@ -106,13 +77,14 @@ export class ControlWindow extends InterfaceControl {
         container.appendChild(this.menuContainer);
 
         // Canvas - layout container for child controls
-        this.canvas = document.createElement('div');
-        this.canvas.style.flex = '1';
-        this.canvas.style.position = 'relative';
-        this.canvas.style.overflow = 'auto';
+        this.paneElement = document.createElement('div');
+        this.paneElement.id = `${this.id}-pane`;
+        this.paneElement.style.flex = '1';
+        this.paneElement.style.position = 'relative';
+        this.paneElement.style.overflow = 'auto';
         const bgColor = this.descriptor.background_color?.value || '#f0f0f0';
-        this.canvas.style.backgroundColor = bgColor;
-        container.appendChild(this.canvas);
+        this.paneElement.style.backgroundColor = bgColor;
+        container.appendChild(this.paneElement);
 
         this.isUIElementCreated = true;
         this.updateElementDescriptor();
@@ -135,7 +107,7 @@ export class ControlWindow extends InterfaceControl {
         }
 
         // Update window attributes if not in pane mode
-        if (!this.isPaneMode && this.isUIElementCreated) {
+        if (!this.descriptor.is_pane.value && this.isUIElementCreated) {
             this.updateWindowAttributes();
         }
 
@@ -144,7 +116,7 @@ export class ControlWindow extends InterfaceControl {
             const macroSet = this.interfaceManager?.MacroSets?.get(
                 this.descriptor.macro?.value
             );
-            macroSet?.setActive?.();
+            macroSet?.setActive();
         }
     }
 
@@ -240,13 +212,16 @@ export class ControlWindow extends InterfaceControl {
     }
 
     public createWindow(): Window | null {
+        if(this.descriptor.is_visible.value === false) {
+            return null;
+        }
         if (this.popupWindow && !this.popupWindow.closed) {
             return this.popupWindow;
         }
 
         // Determine window dimensions
-        let width = this.size.x || Math.floor(window.innerWidth * 0.8);
-        let height = this.size.y || Math.floor(window.innerHeight * 0.8);
+        let width = this.descriptor.size.x || Math.floor(window.innerWidth * 0.8);
+        let height = this.descriptor.size.y || Math.floor(window.innerHeight * 0.8);
 
         // Open popup window
         const popupWindow = window.open(
@@ -261,7 +236,7 @@ export class ControlWindow extends InterfaceControl {
         }
 
         // Initialize popup window
-        popupWindow.document.title = this.title;
+        popupWindow.document.title = this.descriptor.title.asRaw();
 
         // Add styles
         const style = popupWindow.document.createElement('style');
@@ -288,31 +263,23 @@ export class ControlWindow extends InterfaceControl {
         popupWindow.addEventListener('beforeunload', onBeforeUnload);
 
         this.popupWindow = popupWindow;
-        this.windowType = 'popup';
         this.updateWindowAttributes();
         return popupWindow;
     }
 
     private updateWindowAttributes(): void {
-        if (!this.popupWindow && !this.paneElement && this.windowType !== 'main') {
-            if (!this.isPaneMode && this.isVisible) {
-                this.createWindow();
-            }
-            return;
-        }
-
         // Update title
         if (this.popupWindow?.document) {
-            this.popupWindow.document.title = this.title;
+            this.popupWindow.document.title = this.descriptor.title.asRaw();
         }
 
         // Update visibility
         if (this.popupWindow?.document.body) {
-            this.popupWindow.document.body.style.display = this.isVisible
+            this.popupWindow.document.body.style.display = this.descriptor.is_visible.toString()
                 ? 'block'
                 : 'none';
         } else if (this.paneElement) {
-            this.paneElement.style.display = this.isVisible ? 'block' : 'none';
+            this.paneElement.style.display = this.descriptor.is_visible.value ? 'block' : 'none';
         }
 
         // Update background color
@@ -421,24 +388,22 @@ export class ControlWindow extends InterfaceControl {
         }
 
         // Add to canvas
-        if (this.canvas) {
+        if (this.paneElement) {
             const element = control.createUIElement();
-            if (element instanceof HTMLElement) {
-                this.canvas.appendChild(element);
-            }
+            this.paneElement.appendChild(element);        
         }
     }
 
     public updateAnchors(): void {
-        if (!this.canvas) return;
+        if (!this.paneElement) return;
 
-        let windowSize = { x: this.size.x, y: this.size.y };
+        let windowSize = { x: this.descriptor.size.x, y: this.descriptor.size.y };
 
         if (windowSize.x === 0) {
-            windowSize.x = this.canvas.clientWidth;
+            windowSize.x = this.paneElement.clientWidth;
         }
         if (windowSize.y === 0) {
-            windowSize.y = this.canvas.clientHeight;
+            windowSize.y = this.paneElement.clientHeight;
         }
 
         for (const control of this.childControls) {
@@ -469,9 +434,9 @@ export class ControlWindow extends InterfaceControl {
             const offset1X = controlPos.x - (anchorToX * (a1.x ?? 0)) / 100;
             const offset1Y = controlPos.y - (anchorToY * (a1.y ?? 0)) / 100;
             const left =
-                (this.canvas.clientWidth * (a1.x ?? 0)) / 100 + offset1X;
+                (this.paneElement.clientWidth * (a1.x ?? 0)) / 100 + offset1X;
             const top =
-                (this.canvas.clientHeight * (a1.y ?? 0)) / 100 + offset1Y;
+                (this.paneElement.clientHeight * (a1.y ?? 0)) / 100 + offset1Y;
 
             element.style.left = `${Math.max(left, 0)}px`;
             element.style.top = `${Math.max(top, 0)}px`;
@@ -491,11 +456,11 @@ export class ControlWindow extends InterfaceControl {
                         (((controlPos )?.y ?? 0) + ((controlSize )?.y ?? 0)) -
                         (anchorToY * (a2.y ?? 0)) / 100;
                     const width =
-                        (this.canvas.clientWidth * (a2.x ?? 0)) / 100 +
+                        (this.paneElement.clientWidth * (a2.x ?? 0)) / 100 +
                         offset2X -
                         left;
                     const height =
-                        (this.canvas.clientHeight * (a2.y ?? 0)) / 100 +
+                        (this.paneElement.clientHeight * (a2.y ?? 0)) / 100 +
                         offset2Y -
                         top;
 
@@ -520,8 +485,8 @@ export class ControlWindow extends InterfaceControl {
 
             case 'inner-size':
                 return new DMFPropertySize(
-                    this.canvas?.clientWidth ?? 0,
-                    this.canvas?.clientHeight ?? 0
+                    this.paneElement?.clientWidth ?? 0,
+                    this.paneElement?.clientHeight ?? 0
                 );
 
             case 'outer-size':
