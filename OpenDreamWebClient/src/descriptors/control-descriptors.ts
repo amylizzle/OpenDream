@@ -1,43 +1,49 @@
 import { DMFPropertyBool, DMFPropertyColor, DMFPropertyNum, DMFPropertyPos, DMFPropertySize, DMFPropertyString } from '../DMF/dmf-property';
 
-export class ElementDescriptor {
+export abstract class ElementDescriptor {
     public id: DMFPropertyString;
     public name: DMFPropertyString = new DMFPropertyString('');
 
     constructor(attributesOrId: Map<string, string> | string | undefined ) {
         if(attributesOrId === undefined)
-            this.id = new DMFPropertyString("randomstring")
+            this.id = new DMFPropertyString("");
         else if (typeof attributesOrId === "string")
             this.id = new DMFPropertyString(attributesOrId);
         else if (attributesOrId instanceof Map) {
-            const id = attributesOrId.get("id") || "randomstring";
+            const id = attributesOrId.get("id") || ""
             this.id = new DMFPropertyString(id);
-            // Populate other attributes by iterating over map and swapping from kebab case to snake case
-            attributesOrId.forEach((value, key) => {
-                const snakeKey = key.replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
-                if (snakeKey in this) {
-                    //get the property type and asign the value accordingly
-                    const prop = (this as any)[snakeKey];
-                    if (prop instanceof DMFPropertyString) {
-                        (this as any)[snakeKey] = new DMFPropertyString(value);
-                    } else if (prop instanceof DMFPropertyNum) {
-                        (this as any)[snakeKey] = new DMFPropertyNum(parseFloat(value));
-                    } else if (prop instanceof DMFPropertyBool) {
-                        (this as any)[snakeKey] = new DMFPropertyBool(value.toLowerCase() === "true");
-                    } else if (prop instanceof DMFPropertyColor) {
-                        (this as any)[snakeKey] = new DMFPropertyColor(value);
-                    } else if (prop instanceof DMFPropertyPos) {
-                        const [x, y] = value.split(',').map(Number);
-                        (this as any)[snakeKey] = new DMFPropertyPos(x, y);
-                    } else if (prop instanceof DMFPropertySize) {
-                        const [width, height] = value.split(',').map(Number);
-                        (this as any)[snakeKey] = new DMFPropertySize(width, height);
-                    }
-                }
-            });
+            this.name = new DMFPropertyString(attributesOrId.get("name") || id);
+            //all subclasses MUST call setAttributes in their constructor after populating their own properties
+            //because subclass properties are not defined in the superclass constructor
         } else {
             throw new Error("Invalid constructor argument for ElementDescriptor");
         }
+    }
+
+    protected setAttributes(attributes: Map<string, string>): void {
+        // Populate other attributes by iterating over map and swapping from kebab case to underscore case
+        attributes.forEach((value, key) => {
+            const underscoreKey = key.replace("-", "_").toLowerCase();
+            if (underscoreKey in this) {
+                //get the property type and asign the value accordingly
+                const prop = (this as any)[underscoreKey];
+                if (prop instanceof DMFPropertyString) {
+                    (this as any)[underscoreKey] = new DMFPropertyString(value);
+                } else if (prop instanceof DMFPropertyNum) {
+                    (this as any)[underscoreKey] = new DMFPropertyNum(value);
+                } else if (prop instanceof DMFPropertyBool) {
+                    (this as any)[underscoreKey] = new DMFPropertyBool(value);
+                } else if (prop instanceof DMFPropertyColor) {
+                    (this as any)[underscoreKey] = new DMFPropertyColor(value);
+                } else if (prop instanceof DMFPropertyPos) {
+                    (this as any)[underscoreKey] = new DMFPropertyPos(value);
+                } else if (prop instanceof DMFPropertySize) {
+                    (this as any)[underscoreKey] = new DMFPropertySize(value);
+                } else
+                    console.error(`Unknown property type ${prop} for attribute ${key} in descriptor`,this);
+            } else
+                console.warn(`Unknown attribute ${key} for element descriptor`,this);
+        });
     }
 
     public CreateCopy(id: string): ElementDescriptor {
@@ -54,8 +60,8 @@ export class ElementDescriptor {
 export abstract class ControlDescriptor extends ElementDescriptor {
     public pos: DMFPropertyPos = new DMFPropertyPos(0, 0);
     public size: DMFPropertySize = new DMFPropertySize(0, 0);
-    public anchor1?: DMFPropertyPos;
-    public anchor2?: DMFPropertyPos;
+    public anchor1: DMFPropertyPos = new DMFPropertyPos(NaN, NaN);
+    public anchor2: DMFPropertyPos = new DMFPropertyPos(NaN, NaN);
     public is_visible: DMFPropertyBool = new DMFPropertyBool(true);
     public is_transparent: DMFPropertyBool = new DMFPropertyBool(false);
     public border: DMFPropertyString = new DMFPropertyString('none');
@@ -73,6 +79,8 @@ export abstract class ControlDescriptor extends ElementDescriptor {
     public font_style: DMFPropertyString = new DMFPropertyString('');
     public on_size: DMFPropertyString = new DMFPropertyString('');
     public type: DMFPropertyString = new DMFPropertyString('');
+
+    //abstract class, so no need for constructor
 }
 
 export class WindowDescriptor extends ControlDescriptor {
@@ -99,36 +107,38 @@ export class WindowDescriptor extends ControlDescriptor {
 
     public ControlDescriptors: ControlDescriptor[] = [];
 
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }
+
     public CreateChildDescriptor(attributes: Map<string, string>): ControlDescriptor | null {
         const elementType = attributes.get("type");
         if (!elementType) return null;
 
         if (elementType === "MAIN") {
-            console.log("Creating main window descriptor with attributes:", attributes);
             attributes.delete("name");
             attributes.set("name", this.name.value);
 
             attributes.forEach((value, key) => {
-                const snakeKey = key.replace("-", "_").toLowerCase();
-                console.log(`Processing attribute ${key} (mapped to ${snakeKey}) with value ${value} for main window descriptor`, this);
-                if (snakeKey in this) {
+                const underscoreKey = key.replace("-", "_").toLowerCase();
+                if (underscoreKey in this) {
                     //get the property type and asign the value accordingly
-                    // WRONG! this doesn't work 
-                    const prop = (this as any)[snakeKey];
-                    console.log(`Processing attribute ${key} (mapped to ${snakeKey}) with value ${value} for main window descriptor`, prop);
+                    const prop = (this as any)[underscoreKey];
                     if (prop instanceof DMFPropertyString) {
-                        (this as any)[snakeKey] = new DMFPropertyString(value);
+                        (this as any)[underscoreKey] = new DMFPropertyString(value);
                     } else if (prop instanceof DMFPropertyNum) {
-                        (this as any)[snakeKey] = new DMFPropertyNum(value);
+                        (this as any)[underscoreKey] = new DMFPropertyNum(value);
                     } else if (prop instanceof DMFPropertyBool) {
-                        (this as any)[snakeKey] = new DMFPropertyBool(value);
-                        console.log(`Setting boolean property ${snakeKey} to ${(this as any)[snakeKey].value}`);
+                        (this as any)[underscoreKey] = new DMFPropertyBool(value);
                     } else if (prop instanceof DMFPropertyColor) {
-                        (this as any)[snakeKey] = new DMFPropertyColor(value);
+                        (this as any)[underscoreKey] = new DMFPropertyColor(value);
                     } else if (prop instanceof DMFPropertyPos) {
-                        (this as any)[snakeKey] = new DMFPropertyPos(value);
+                        (this as any)[underscoreKey] = new DMFPropertyPos(value);
                     } else if (prop instanceof DMFPropertySize) {
-                        (this as any)[snakeKey] = new DMFPropertySize(value);
+                        (this as any)[underscoreKey] = new DMFPropertySize(value);
                     }
                 } else
                     console.warn(`Unknown attribute ${key} for main window descriptor`,this);
@@ -220,6 +230,13 @@ export class ControlDescriptorMap extends ControlDescriptor {
     public zoom_mode: DMFPropertyString = new DMFPropertyString("normal");
     public on_show: DMFPropertyString = new DMFPropertyString("");
     public on_hide: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorChild extends ControlDescriptor {
     public lock: DMFPropertyString = new DMFPropertyString("none");
@@ -228,6 +245,13 @@ export class ControlDescriptorChild extends ControlDescriptor {
     public show_splitter: DMFPropertyBool = new DMFPropertyBool(true);
     public left: DMFPropertyString = new DMFPropertyString("");
     public right: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorOutput extends ControlDescriptor {
     public legacy_size: DMFPropertyBool = new DMFPropertyBool(false);
@@ -237,6 +261,13 @@ export class ControlDescriptorOutput extends ControlDescriptor {
     public visited_color: DMFPropertyColor = new DMFPropertyColor('purple');
     public image: DMFPropertyString = new DMFPropertyString("");
     public enable_http_images: DMFPropertyBool = new DMFPropertyBool(false);
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorInfo extends ControlDescriptor {
     public multi_line: DMFPropertyBool = new DMFPropertyBool(true);
@@ -251,6 +282,13 @@ export class ControlDescriptorInfo extends ControlDescriptor {
     public tab_font_style: DMFPropertyString = new DMFPropertyString("");
     public on_show: DMFPropertyString = new DMFPropertyString("");
     public on_hide: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorInput extends ControlDescriptor {
     public multi_line: DMFPropertyBool = new DMFPropertyBool(false);
@@ -258,6 +296,13 @@ export class ControlDescriptorInput extends ControlDescriptor {
     public no_command: DMFPropertyBool = new DMFPropertyBool(false);
     public text: DMFPropertyString = new DMFPropertyString("");
     public command: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorButton extends ControlDescriptor {
     public is_flat: DMFPropertyBool = new DMFPropertyBool(false);
@@ -267,6 +312,13 @@ export class ControlDescriptorButton extends ControlDescriptor {
     public text: DMFPropertyString = new DMFPropertyString("");
     public image: DMFPropertyString = new DMFPropertyString("");
     public command: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorBrowser extends ControlDescriptor {
     public show_history: DMFPropertyBool = new DMFPropertyBool(false);
@@ -275,6 +327,13 @@ export class ControlDescriptorBrowser extends ControlDescriptor {
     public auto_format: DMFPropertyBool = new DMFPropertyBool(true);
     public on_show: DMFPropertyString = new DMFPropertyString("");
     public on_hide: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorLabel extends ControlDescriptor {
     public text: DMFPropertyString = new DMFPropertyString("");
@@ -283,6 +342,13 @@ export class ControlDescriptorLabel extends ControlDescriptor {
     public image: DMFPropertyString = new DMFPropertyString("");
     public image_mode: DMFPropertyString = new DMFPropertyString("stretch");
     public keep_aspect: DMFPropertyBool = new DMFPropertyBool(false);
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorGrid extends ControlDescriptor {
     public cells: DMFPropertySize = new DMFPropertySize(0,0);
@@ -298,12 +364,26 @@ export class ControlDescriptorGrid extends ControlDescriptor {
     public show_names: DMFPropertyBool = new DMFPropertyBool(true);
     public small_icons: DMFPropertyBool = new DMFPropertyBool(false);
     public enable_http_images: DMFPropertyBool = new DMFPropertyBool(false);
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorTab extends ControlDescriptor {
     public multi_line: DMFPropertyBool = new DMFPropertyBool(true);
     public current_tab: DMFPropertyString = new DMFPropertyString("");
     public on_tab: DMFPropertyString = new DMFPropertyString("");
     public tabs: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }
 export class ControlDescriptorBar extends ControlDescriptor {
     public width: DMFPropertyNum = new DMFPropertyNum(10);
@@ -314,4 +394,11 @@ export class ControlDescriptorBar extends ControlDescriptor {
     public is_slider: DMFPropertyBool = new DMFPropertyBool(false);
     public value: DMFPropertyNum = new DMFPropertyNum(0);
     public on_change: DMFPropertyString = new DMFPropertyString("");
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }

@@ -22,6 +22,9 @@ import { ControlLabel } from './control-label';
 import { ControlMap } from './control-map';
 import { ControlOutput } from './control-output';
 import { ControlTab } from './control-tab';
+import { ControlBrowser } from './control-browser'; 
+import { ControlGrid } from './control-grid';
+import { ControlChild } from './control-child';
 
 import { DMFPropertySize } from '../DMF/dmf-property';
 import type { DreamWebInterfaceManager } from '../dream-interface-manager';
@@ -43,20 +46,20 @@ export class ControlWindow extends InterfaceControl {
     // Reference to interface manager for commands
     private interfaceManager: DreamWebInterfaceManager;
 
-    get windowDescriptor(): WindowDescriptor {
-        return this.descriptor as WindowDescriptor;
+    public get descriptor(): WindowDescriptor {
+        return this._descriptor as WindowDescriptor;
     }
 
     get title(): string {
-        return this.windowDescriptor.title?.value || '';
+        return this.descriptor.title?.value || '';
     }
 
     get isPaneMode(): boolean {
-        return this.windowDescriptor.is_pane?.value ?? false;
+        return this.descriptor.is_pane?.value ?? false;
     }
 
     get isVisible(): boolean {
-        return this.windowDescriptor.is_visible?.value ?? true;
+        return this.descriptor.is_visible?.value ?? true;
     }
 
     get id(): string {
@@ -107,21 +110,21 @@ export class ControlWindow extends InterfaceControl {
         this.canvas.style.flex = '1';
         this.canvas.style.position = 'relative';
         this.canvas.style.overflow = 'auto';
-        const bgColor = this.windowDescriptor.background_color?.value || '#f0f0f0';
+        const bgColor = this.descriptor.background_color?.value || '#f0f0f0';
         this.canvas.style.backgroundColor = bgColor;
         container.appendChild(this.canvas);
 
         this.isUIElementCreated = true;
+        this.updateElementDescriptor();
         this.createChildControls();
         return container;
     }
-
 
     protected updateElementDescriptor(): void {
         // Update menu container
         if (this.menuContainer) {
             this.menuContainer.innerHTML = '';
-            const menu = this.interfaceManager.Menus.get("menu")!;
+            const menu = this.interfaceManager.Menus.get(this.descriptor.menu.asRaw());
             if (menu?.menus) {
                 // Rebuild menu from menu structure
                 this.buildMenuBar(this.menuContainer, menu.menus);
@@ -137,9 +140,9 @@ export class ControlWindow extends InterfaceControl {
         }
 
         // Set active macro if default
-        if (this.windowDescriptor.is_default?.value) {
+        if (this.descriptor.is_default?.value) {
             const macroSet = this.interfaceManager?.MacroSets?.get(
-                this.windowDescriptor.macro?.value
+                this.descriptor.macro?.value
             );
             macroSet?.setActive?.();
         }
@@ -275,9 +278,9 @@ export class ControlWindow extends InterfaceControl {
 
         // Add event listener for close
         const onBeforeUnload = () => {
-            if (this.windowDescriptor.on_close?.value) {
+            if (this.descriptor.on_close?.value) {
                 this.interfaceManager?.RunCommand(
-                    this.windowDescriptor.on_close.value
+                    this.descriptor.on_close.value
                 );
             }
             this.popupWindow = undefined;
@@ -293,7 +296,6 @@ export class ControlWindow extends InterfaceControl {
     private updateWindowAttributes(): void {
         if (!this.popupWindow && !this.paneElement && this.windowType !== 'main') {
             if (!this.isPaneMode && this.isVisible) {
-                console.log(`Creating window: ${this.id} visible: ${this.isVisible}`);
                 this.createWindow();
             }
             return;
@@ -314,7 +316,7 @@ export class ControlWindow extends InterfaceControl {
         }
 
         // Update background color
-        const bgColor = this.windowDescriptor.background_color?.value || '#f0f0f0';
+        const bgColor = this.descriptor.background_color?.value || '#f0f0f0';
         if (this.popupWindow?.document.body) {
             this.popupWindow.document.body.style.backgroundColor = bgColor;
         } else if (this.paneElement) {
@@ -323,7 +325,7 @@ export class ControlWindow extends InterfaceControl {
     }
 
     public createChildControls(): void {
-        const controlDescriptors = this.windowDescriptor.ControlDescriptors || [];
+        const controlDescriptors = this.descriptor.ControlDescriptors || [];
         for (const descriptor of controlDescriptors) {
             this.addChild(descriptor);
         }
@@ -337,10 +339,40 @@ export class ControlWindow extends InterfaceControl {
 
         // Create control based on descriptor type
         let control: InterfaceControl;
-        switch (descriptor.type.asRaw()) {
+        switch (descriptor.constructor) {
             // Add cases for different control types here, e.g.:
-            case 'button':
-                control = new ControlButton(descriptor, this);
+            case ControlDescriptorChild:
+                control = new ControlChild(descriptor as ControlDescriptorChild, this);
+                break;
+            case ControlDescriptorInput:
+                control = new ControlInput(descriptor as ControlDescriptorInput, this);
+                break;
+            case ControlDescriptorButton:
+                control = new ControlButton(descriptor as ControlDescriptorButton, this);
+                break;
+            case ControlDescriptorOutput:
+                control = new ControlOutput(descriptor as ControlDescriptorOutput, this);
+                break;
+            case ControlDescriptorInfo:
+                control = new ControlInfo(descriptor as ControlDescriptorInfo, this);
+                break;
+            case ControlDescriptorMap:
+                control = new ControlMap(descriptor as ControlDescriptorMap, this);
+                break;   
+            case ControlDescriptorBrowser:
+                control = new ControlBrowser(descriptor as ControlDescriptorBrowser, this); 
+                break;             
+            case ControlDescriptorLabel:
+                control = new ControlLabel(descriptor as ControlDescriptorLabel, this);
+                break;
+            case ControlDescriptorGrid:
+                control = new ControlGrid(descriptor as ControlDescriptorGrid, this);
+                break;
+            case ControlDescriptorTab:  
+                control = new ControlTab(descriptor as ControlDescriptorTab, this);
+                break;
+            case ControlDescriptorBar:
+                control = new ControlBar(descriptor as ControlDescriptorBar, this);
                 break;
             default:
                 console.warn(`Unknown control type: ${descriptor.type}. Skipping.`);
@@ -349,14 +381,14 @@ export class ControlWindow extends InterfaceControl {
         
         // Handle out-of-order components - auto-sort by position
         const curPos = descriptor.pos || { x: 0, y: 0 };
-        const curX = (curPos as any)?.x ?? 0;
-        const curY = (curPos as any)?.y ?? 0;
+        const curX = (curPos )?.x ?? 0;
+        const curY = (curPos )?.y ?? 0;
 
         if (this.childControls.length > 0) {
             const lastControl = this.childControls[this.childControls.length - 1];
             const lastPos = lastControl.descriptor?.pos || { x: 0, y: 0 };
-            const prevX = (lastPos as any)?.x ?? 0;
-            const prevY = (lastPos as any)?.y ?? 0;
+            const prevX = (lastPos )?.x ?? 0;
+            const prevY = (lastPos )?.y ?? 0;
 
             if (prevX > curX || prevY > curY) {
                 console.warn(
@@ -370,8 +402,8 @@ export class ControlWindow extends InterfaceControl {
                         x: 0,
                         y: 0
                     };
-                    const checkX = (childPos as any)?.x ?? 0;
-                    const checkY = (childPos as any)?.y ?? 0;
+                    const checkX = (childPos )?.x ?? 0;
+                    const checkY = (childPos )?.y ?? 0;
 
                     if (checkX <= curX && checkY <= curY) {
                         insertIndex = i + 1;
@@ -404,7 +436,7 @@ export class ControlWindow extends InterfaceControl {
         const canvasHeight = this.canvas.clientHeight;
 
         // Set this control's anchor position
-        (control as any).anchorPosition = {
+        (control ).anchorPosition = {
             x: canvasWidth,
             y: canvasHeight
         };
@@ -413,18 +445,18 @@ export class ControlWindow extends InterfaceControl {
         for (const child of this.childControls) {
             const childSize = child.descriptor?.size;
             if (childSize) {
-                if ((childSize as any)?.x === 0) {
-                    const currentAnchor = (child as any).anchorPosition || { x: 0, y: 0 };
-                    (child as any).anchorPosition = {
-                        x: canvasWidth + (childSize as any).x,
+                if ((childSize )?.x === 0) {
+                    const currentAnchor = (child ).anchorPosition || { x: 0, y: 0 };
+                    (child ).anchorPosition = {
+                        x: canvasWidth + (childSize ).x,
                         y: currentAnchor.y
                     };
                 }
-                if ((childSize as any)?.y === 0) {
-                    const currentAnchor = (child as any).anchorPosition || { x: 0, y: 0 };
-                    (child as any).anchorPosition = {
+                if ((childSize )?.y === 0) {
+                    const currentAnchor = (child ).anchorPosition || { x: 0, y: 0 };
+                    (child ).anchorPosition = {
                         x: currentAnchor.x,
-                        y: canvasHeight + (childSize as any).y
+                        y: canvasHeight + (childSize ).y
                     };
                 }
             }
@@ -454,12 +486,12 @@ export class ControlWindow extends InterfaceControl {
                 x: 0,
                 y: 0
             };
-            const anchor1 = (control.descriptor as any)?.anchor1;
-            const anchor2 = (control.descriptor as any)?.anchor2;
+            const anchor1 = (control.descriptor )?.anchor1;
+            const anchor2 = (control.descriptor )?.anchor2;
 
             if (!anchor1?.value) continue;
 
-            const anchorPos = (control as any).anchorPosition || {
+            const anchorPos = (control ).anchorPosition || {
                 x: windowSize.x,
                 y: windowSize.y
             };
@@ -470,8 +502,8 @@ export class ControlWindow extends InterfaceControl {
             if (anchorToY === 0) anchorToY = windowSize.y;
 
             const a1 = anchor1.value;
-            const offset1X = ((controlPos as any)?.x ?? 0) - (anchorToX * (a1.x ?? 0)) / 100;
-            const offset1Y = ((controlPos as any)?.y ?? 0) - (anchorToY * (a1.y ?? 0)) / 100;
+            const offset1X = ((controlPos )?.x ?? 0) - (anchorToX * (a1.x ?? 0)) / 100;
+            const offset1Y = ((controlPos )?.y ?? 0) - (anchorToY * (a1.y ?? 0)) / 100;
             const left =
                 (this.canvas.clientWidth * (a1.x ?? 0)) / 100 + offset1X;
             const top =
@@ -489,10 +521,10 @@ export class ControlWindow extends InterfaceControl {
                     );
                 } else {
                     const offset2X =
-                        (((controlPos as any)?.x ?? 0) + ((controlSize as any)?.x ?? 0)) -
+                        (((controlPos )?.x ?? 0) + ((controlSize )?.x ?? 0)) -
                         (anchorToX * (a2.x ?? 0)) / 100;
                     const offset2Y =
-                        (((controlPos as any)?.y ?? 0) + ((controlSize as any)?.y ?? 0)) -
+                        (((controlPos )?.y ?? 0) + ((controlSize )?.y ?? 0)) -
                         (anchorToY * (a2.y ?? 0)) / 100;
                     const width =
                         (this.canvas.clientWidth * (a2.x ?? 0)) / 100 +
@@ -593,7 +625,7 @@ export class ControlWindow extends InterfaceControl {
 
         this.currentStatus = status;
 
-        const onStatusCommand = this.windowDescriptor.on_status?.value;
+        const onStatusCommand = this.descriptor.on_status?.value;
         if (!onStatusCommand) {
             return;
         }

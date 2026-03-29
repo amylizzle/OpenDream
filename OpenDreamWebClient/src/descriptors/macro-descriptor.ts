@@ -4,6 +4,13 @@ import { ElementDescriptor } from './control-descriptors';
 export class MacroSetDescriptor extends ElementDescriptor {
     public macros: MacroDescriptor[] = [];
 
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }
+
     public CreateChildDescriptor(attributes: Map<string, string>): MacroDescriptor | null {
         const child = new MacroDescriptor(attributes);
         // Populate attributes if needed
@@ -22,4 +29,11 @@ export class MacroSetDescriptor extends ElementDescriptor {
 
 export class MacroDescriptor extends ElementDescriptor {
     public command: DMFPropertyString = new DMFPropertyString('');
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }

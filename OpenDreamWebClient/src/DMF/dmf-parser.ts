@@ -177,9 +177,9 @@ export class DMFParser {
 
             var attributes = this.Attributes();
 
-            if (hasId) attributes.set("id", elementIdToken.Text);
-            else attributes.set("id", attributes.get("name") ?? "nothin");
 
+            if (hasId) attributes.set("id", elementIdToken.Text);
+            else attributes.set("id", attributes.get("name") ?? "");
             menu.CreateChildDescriptor(attributes);
             return true;
         }

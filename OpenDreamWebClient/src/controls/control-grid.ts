@@ -1,20 +1,17 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import { ControlDescriptorGrid } from '../descriptors/control-descriptors';
 
 export class ControlGrid extends InterfaceControl {
-    public rows = 0;
-    public columns = 0;
+    public get descriptor(): ControlDescriptorGrid {
+        return this._descriptor as ControlDescriptorGrid;
+    }
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    constructor(descriptor: ControlDescriptorGrid, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
-    }
-
-    public setCell(row: number, col: number, value: any): void {
-        // placeholder
+    public createUIElement(): HTMLElement {
+        return document.createElement('div');
     }
 }
 

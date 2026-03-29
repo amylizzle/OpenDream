@@ -24,6 +24,10 @@ export class InterfaceMenu extends InterfaceElement {
 
     private pauseMenuCreation: boolean;
 
+    public get descriptor(): MenuDescriptor {
+        return this._descriptor as MenuDescriptor;
+    }
+
     constructor(descriptor: MenuDescriptor, private interfaceManager: any) {
         super(descriptor);
         this.pauseMenuCreation = true;
@@ -38,9 +42,9 @@ export class InterfaceMenu extends InterfaceElement {
 
     public setGroupChecked(group: string, id: string): void {
         for (const menuElement of this.menuElementsById.values()) {
-            if ((menuElement.descriptor as any).group?.value === group) {
-                (menuElement.descriptor as any).isChecked = new DMFPropertyBool(
-                    menuElement.descriptor.id.value === id
+            if (menuElement.descriptor.group.asRaw() === group) {
+                menuElement.descriptor.is_checked = new DMFPropertyBool(
+                    menuElement.descriptor.id.asRaw() === id
                 );
             }
         }
@@ -48,8 +52,7 @@ export class InterfaceMenu extends InterfaceElement {
 
     public addChild(descriptor: MenuElementDescriptor): void {
         let element: MenuElement;
-        const categoryValue = descriptor.category?.value || "";
-
+        const categoryValue = descriptor.category.asRaw();
         if (!categoryValue) {
             element = new MenuElement(descriptor, this);
         } else {
@@ -85,7 +88,7 @@ export class InterfaceMenu extends InterfaceElement {
         this.menus = [];
 
         for (const menuElement of this.menuElementsById.values()) {
-            const categoryValue = (menuElement.descriptor as any).category?.value || "";
+            const categoryValue = menuElement.descriptor.category?.asRaw() || "";
             if (categoryValue) {
                 // We only want the root-level menus here
                 continue;
@@ -110,28 +113,12 @@ export class InterfaceMenu extends InterfaceElement {
 export class MenuElement extends InterfaceElement {
     public children: MenuElement[] = [];
 
+    public get descriptor(): MenuElementDescriptor {
+        return this._descriptor as MenuElementDescriptor;
+    }
+
     constructor(descriptor: MenuElementDescriptor, private parentMenu: InterfaceMenu) {
         super(descriptor);
-    }
-
-    get category(): string {
-        return (this.descriptor as any).category?.value || "";
-    }
-
-    get command(): string {
-        return (this.descriptor as any).command?.value || "";
-    }
-
-    get group(): string {
-        return (this.descriptor as any).group?.value || "";
-    }
-
-    get canCheck(): boolean {
-        return (this.descriptor as any).canCheck?.value ?? false;
-    }
-
-    get isChecked(): boolean {
-        return (this.descriptor as any).isChecked?.value ?? false;
     }
 
     public createMenuEntry(): MenuEntry {
@@ -155,8 +142,8 @@ export class MenuElement extends InterfaceElement {
             return { text: "" } as MenuSeparator;
         }
 
-        if (this.canCheck) {
-            if (this.isChecked) {
+        if (this.descriptor.can_check.value) {
+            if (this.descriptor.is_checked.value) {
                 text += " ☑";
             }
         }
@@ -164,16 +151,16 @@ export class MenuElement extends InterfaceElement {
         const menuButton: MenuButton = {
             text: text,
             onPressed: () => {
-                if (this.canCheck) {
-                    if (this.group) {
-                        this.parentMenu.setGroupChecked(this.group, this.id);
+                if (this.descriptor.can_check.value) {
+                    if (this.descriptor.group.asRaw()) {
+                        this.parentMenu.setGroupChecked(this.descriptor.group.asRaw(), this.id);
                     } else {
-                        (this.descriptor as any).isChecked = new DMFPropertyBool(!this.isChecked);
+                        this.descriptor.is_checked = new DMFPropertyBool(!this.descriptor.is_checked.value);
                     }
                 }
                 this.parentMenu["createMenu"]?.();
-                if (this.command) {
-                    this.parentMenu["interfaceManager"]?.RunCommand(this.command);
+                if (this.descriptor.command.asRaw()) {
+                    this.parentMenu["interfaceManager"]?.RunCommand(this.descriptor.command.asRaw());
                 }
             }
         };
@@ -183,11 +170,8 @@ export class MenuElement extends InterfaceElement {
 
     public addChild(descriptor: MenuElementDescriptor): void {
         // Set the child's category to this element
-        const updatedDescriptor = new MenuElementDescriptor(
-            new Map(Array.from((descriptor as any).constructor.prototype || []))
-        );
-        (updatedDescriptor as any).category = new DMFPropertyString(this.descriptor.name.value);
-
+        const updatedDescriptor = descriptor.CreateCopy(descriptor.id.asRaw()) as MenuElementDescriptor;
+        updatedDescriptor.category = new DMFPropertyString(this.descriptor.id.asRaw());
         // Pass this on to the parent menu
         this.parentMenu.addChild(updatedDescriptor);
     }

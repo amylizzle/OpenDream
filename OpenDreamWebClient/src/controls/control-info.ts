@@ -1,19 +1,17 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import { ControlDescriptorInfo } from '../descriptors/control-descriptors';
 
 export class ControlInfo extends InterfaceControl {
-    public text = '';
+    public get descriptor(): ControlDescriptorInfo {
+        return this._descriptor as ControlDescriptorInfo;
+    }
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    constructor(descriptor: ControlDescriptorInfo, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
-    }
-
-    public setText(text: string): void {
-        this.text = text;
+    public createUIElement(): HTMLElement {
+        return document.createElement('div');
     }
 }
 

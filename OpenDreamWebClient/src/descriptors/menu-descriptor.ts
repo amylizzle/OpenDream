@@ -5,6 +5,13 @@ import { ElementDescriptor } from './control-descriptors';
 export class MenuDescriptor extends ElementDescriptor {
     public elements: MenuElementDescriptor[] = [];
 
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }
+
     public CreateCopy(id: string): ElementDescriptor {
         const copy = new MenuDescriptor(id);
         Object.assign(copy, this);
@@ -24,4 +31,15 @@ export class MenuDescriptor extends ElementDescriptor {
 export class MenuElementDescriptor extends ElementDescriptor {
     public command: DMFPropertyString = new DMFPropertyString('');
     public category: DMFPropertyString = new DMFPropertyString('');
+    public can_check:DMFPropertyBool = new DMFPropertyBool(false);
+    public is_checked: DMFPropertyBool = new DMFPropertyBool(false);
+    public group: DMFPropertyString = new DMFPropertyString('');
+    public index: DMFPropertyNum = new DMFPropertyNum(0);
+
+    constructor(attributesOrId: Map<string, string> | string | undefined ) {
+        super(attributesOrId);
+        if (attributesOrId instanceof Map) {
+            this.setAttributes(attributesOrId);
+        }
+    }    
 }

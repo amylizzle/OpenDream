@@ -1,20 +1,18 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
-
+import { ControlDescriptorBar } from '../descriptors/control-descriptors';
 export class ControlBar extends InterfaceControl {
-    public isOpen = false;
+    public get descriptor(): ControlDescriptorBar {
+        return this._descriptor as ControlDescriptorBar;
+    }
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    constructor(descriptor: ControlDescriptorBar, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        // TODO: create and return actual DOM or canvas control element
-        return null;
-    }
-
-    public toggle(): void {
-        this.isOpen = !this.isOpen;
+    public createUIElement(): HTMLElement {
+        const barElement = document.createElement('div');
+        barElement.classList.add('control-bar');
+        return barElement;
     }
 }
 

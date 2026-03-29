@@ -1,17 +1,17 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import { ControlDescriptorChild } from '../descriptors/control-descriptors';
 
 export class ControlChild extends InterfaceControl {
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    public get descriptor(): ControlDescriptorChild {
+        return this._descriptor as ControlDescriptorChild;
+    }
+
+    constructor(descriptor: ControlDescriptorChild, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
-    }
-
-    public addChild(descriptor: ControlDescriptor): void {
-        // Child-specific behavior may support nested controls
+    public createUIElement(): HTMLElement {
+        return document.createElement('div');
     }
 }
 

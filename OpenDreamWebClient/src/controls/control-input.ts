@@ -1,23 +1,17 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import { ControlDescriptorInput } from '../descriptors/control-descriptors';
 
 export class ControlInput extends InterfaceControl {
-    public value = '';
+    public get descriptor(): ControlDescriptorInput {
+        return this._descriptor as ControlDescriptorInput;
+    }
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    constructor(descriptor: ControlDescriptorInput, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
-    }
-
-    public setValue(value: string): void {
-        this.value = value;
-    }
-
-    public getValue(): string {
-        return this.value;
+    public createUIElement(): HTMLElement{
+        return document.createElement('input');
     }
 }
 

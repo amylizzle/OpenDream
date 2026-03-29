@@ -1,19 +1,17 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import { ControlDescriptorTab } from '../descriptors/control-descriptors';
 
 export class ControlTab extends InterfaceControl {
-    public selectedIndex = 0;
+    public get descriptor(): ControlDescriptorTab {
+        return this._descriptor as ControlDescriptorTab;
+    }
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    constructor(descriptor: ControlDescriptorTab, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
-    }
-
-    public select(index: number): void {
-        this.selectedIndex = index;
+    public createUIElement(): HTMLElement {
+        return document.createElement('div');
     }
 }
 

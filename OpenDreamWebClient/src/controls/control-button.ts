@@ -1,15 +1,18 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import { ControlDescriptorButton } from '../descriptors/control-descriptors';
 
 export class ControlButton extends InterfaceControl {
-    public label = '';
+    public get descriptor(): ControlDescriptorButton {
+        return this._descriptor as ControlDescriptorButton;
+    }
+    
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+    constructor(descriptor: ControlDescriptorButton, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
+    public createUIElement(): HTMLElement {
+        return document.createElement('button');
     }
 
     public click(): void {

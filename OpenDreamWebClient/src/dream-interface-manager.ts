@@ -34,7 +34,6 @@ export class DreamWebInterfaceManager {
         if (parser.Errors.length > 0) {
             console.error('DMF parsing errors:', parser.Errors)
         }   
-        console.dir(this.InterfaceDescriptor)
 
         this.LoadInterface();
     }
@@ -62,7 +61,7 @@ export class DreamWebInterfaceManager {
             const window = new ControlWindow(windowDescriptor, this)
             this.Windows.set(window.id, window)
 
-            if (windowDescriptor.is_default) {
+            if (windowDescriptor.is_default.value) {
                 this.DefaultWindow = window
             }
         }

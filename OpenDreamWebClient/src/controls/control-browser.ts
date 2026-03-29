@@ -1,19 +1,18 @@
 import { InterfaceControl } from './interface-control';
-import { ControlDescriptor } from '../descriptors/control-descriptors';
+import {  ControlDescriptorBrowser } from '../descriptors/control-descriptors';
 
 export class ControlBrowser extends InterfaceControl {
-    public url = '';
+    public get descriptor(): ControlDescriptorBrowser {
+        return this._descriptor as ControlDescriptorBrowser;
+    }
 
-    constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
+
+    constructor(descriptor: ControlDescriptorBrowser, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): unknown {
-        return null;
-    }
-
-    public navigate(url: string): void {
-        this.url = url;
+    public createUIElement(): HTMLElement {
+        return document.createElement('iframe');
     }
 }
 

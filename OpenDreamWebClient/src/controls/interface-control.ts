@@ -1,15 +1,18 @@
+import { InterfaceElement } from './interface-element';
 import { ControlDescriptor } from '../descriptors/control-descriptors';
 
-export abstract class InterfaceControl {
-    public descriptor: ControlDescriptor;
+
+export abstract class InterfaceControl extends InterfaceElement {
+
+
     public windowControl?: ControlWindow;
 
     constructor(descriptor: ControlDescriptor, windowControl?: ControlWindow) {
-        this.descriptor = descriptor;
+        super(descriptor);
         this.windowControl = windowControl;
     }
 
-    public abstract createUIElement(): unknown;
+    public abstract createUIElement(): HTMLElement;
 
     protected updateElementDescriptor(): void {
         // TODO: Implementation in derived controls
