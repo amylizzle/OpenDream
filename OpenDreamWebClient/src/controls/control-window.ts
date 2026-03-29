@@ -429,42 +429,6 @@ export class ControlWindow extends InterfaceControl {
         }
     }
 
-    public updateAnchorPosition(control: InterfaceControl): void {
-        if (!this.canvas) return;
-
-        const canvasWidth = this.canvas.clientWidth;
-        const canvasHeight = this.canvas.clientHeight;
-
-        // Set this control's anchor position
-        (control ).anchorPosition = {
-            x: canvasWidth,
-            y: canvasHeight
-        };
-
-        // Update anchor position for controls with size 0
-        for (const child of this.childControls) {
-            const childSize = child.descriptor?.size;
-            if (childSize) {
-                if ((childSize )?.x === 0) {
-                    const currentAnchor = (child ).anchorPosition || { x: 0, y: 0 };
-                    (child ).anchorPosition = {
-                        x: canvasWidth + (childSize ).x,
-                        y: currentAnchor.y
-                    };
-                }
-                if ((childSize )?.y === 0) {
-                    const currentAnchor = (child ).anchorPosition || { x: 0, y: 0 };
-                    (child ).anchorPosition = {
-                        x: currentAnchor.x,
-                        y: canvasHeight + (childSize ).y
-                    };
-                }
-            }
-        }
-
-        this.updateAnchors();
-    }
-
     public updateAnchors(): void {
         if (!this.canvas) return;
 
@@ -481,7 +445,7 @@ export class ControlWindow extends InterfaceControl {
             const element = control.createUIElement() as HTMLElement;
             if (!(element instanceof HTMLElement)) continue;
 
-            const controlPos = control.descriptor?.pos || { x: 0, y: 0 };
+            const controlPos = control.descriptor.pos || { x: 0, y: 0 };
             const controlSize = control.descriptor?.size || {
                 x: 0,
                 y: 0
@@ -489,9 +453,9 @@ export class ControlWindow extends InterfaceControl {
             const anchor1 = (control.descriptor )?.anchor1;
             const anchor2 = (control.descriptor )?.anchor2;
 
-            if (!anchor1?.value) continue;
+            if (isNaN(anchor1.x) || isNaN(anchor1.y)) continue;
 
-            const anchorPos = (control ).anchorPosition || {
+            const anchorPos = control.anchorPosition || {
                 x: windowSize.x,
                 y: windowSize.y
             };
@@ -501,9 +465,9 @@ export class ControlWindow extends InterfaceControl {
             if (anchorToX === 0) anchorToX = windowSize.x;
             if (anchorToY === 0) anchorToY = windowSize.y;
 
-            const a1 = anchor1.value;
-            const offset1X = ((controlPos )?.x ?? 0) - (anchorToX * (a1.x ?? 0)) / 100;
-            const offset1Y = ((controlPos )?.y ?? 0) - (anchorToY * (a1.y ?? 0)) / 100;
+            const a1 = anchor1.vector;
+            const offset1X = controlPos.x - (anchorToX * (a1.x ?? 0)) / 100;
+            const offset1Y = controlPos.y - (anchorToY * (a1.y ?? 0)) / 100;
             const left =
                 (this.canvas.clientWidth * (a1.x ?? 0)) / 100 + offset1X;
             const top =
@@ -513,8 +477,8 @@ export class ControlWindow extends InterfaceControl {
             element.style.top = `${Math.max(top, 0)}px`;
             element.style.position = 'absolute';
 
-            if (anchor2?.value) {
-                const a2 = anchor2.value;
+            if (!isNaN(anchor2.x) && !isNaN(anchor2.y)) {
+                const a2 = anchor2.vector;
                 if (a2.x < a1.x || a2.y < a1.y) {
                     console.warn(
                         `Invalid anchor2 for control ${control.descriptor?.id.value}. Ignoring.`
