@@ -243,7 +243,6 @@ export class DMFParser {
             attributes.set(winset.winSet.attribute, winset.winSet.value);
             winset = this.TryGetAttribute();
         }
-        console.dir(attributes);
         return attributes;
     }
 

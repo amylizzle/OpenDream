@@ -209,8 +209,11 @@ export class DMFPropertyVec2 implements IDMFProperty {
 export class DMFPropertySize implements IDMFProperty {
     private _value: DMFPropertyVec2;
 
-    constructor(x: number|string, y: number|undefined){
-        this._value = new DMFPropertyVec2(x, y);
+    constructor(x: number, y: number);
+    constructor(value: string);
+    constructor(value: Vector2i);
+    constructor(value: any, y?: number) {
+        this._value = new DMFPropertyVec2(value, y);
         this._value.delim = 'x';
     }
 

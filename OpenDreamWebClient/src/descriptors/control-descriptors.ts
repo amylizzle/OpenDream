@@ -104,30 +104,35 @@ export class WindowDescriptor extends ControlDescriptor {
         if (!elementType) return null;
 
         if (elementType === "MAIN") {
+            console.log("Creating main window descriptor with attributes:", attributes);
             attributes.delete("name");
             attributes.set("name", this.name.value);
 
             attributes.forEach((value, key) => {
-                const snakeKey = key.replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
+                const snakeKey = key.replace("-", "_").toLowerCase();
+                console.log(`Processing attribute ${key} (mapped to ${snakeKey}) with value ${value} for main window descriptor`, this);
                 if (snakeKey in this) {
                     //get the property type and asign the value accordingly
+                    // WRONG! this doesn't work 
                     const prop = (this as any)[snakeKey];
+                    console.log(`Processing attribute ${key} (mapped to ${snakeKey}) with value ${value} for main window descriptor`, prop);
                     if (prop instanceof DMFPropertyString) {
                         (this as any)[snakeKey] = new DMFPropertyString(value);
                     } else if (prop instanceof DMFPropertyNum) {
-                        (this as any)[snakeKey] = new DMFPropertyNum(parseFloat(value));
+                        (this as any)[snakeKey] = new DMFPropertyNum(value);
                     } else if (prop instanceof DMFPropertyBool) {
-                        (this as any)[snakeKey] = new DMFPropertyBool(value.toLowerCase() === "true");
+                        (this as any)[snakeKey] = new DMFPropertyBool(value);
+                        console.log(`Setting boolean property ${snakeKey} to ${(this as any)[snakeKey].value}`);
                     } else if (prop instanceof DMFPropertyColor) {
                         (this as any)[snakeKey] = new DMFPropertyColor(value);
                     } else if (prop instanceof DMFPropertyPos) {
-                        const [x, y] = value.split(',').map(Number);
-                        (this as any)[snakeKey] = new DMFPropertyPos(x, y);
+                        (this as any)[snakeKey] = new DMFPropertyPos(value);
                     } else if (prop instanceof DMFPropertySize) {
-                        const [width, height] = value.split(',').map(Number);
-                        (this as any)[snakeKey] = new DMFPropertySize(width, height);
+                        (this as any)[snakeKey] = new DMFPropertySize(value);
                     }
-                }
+                } else
+                    console.warn(`Unknown attribute ${key} for main window descriptor`,this);
+
             });
             return this;
         }
