@@ -102,7 +102,9 @@ export class DreamWebInterfaceManager {
 
     }
 
-    RunCommand(fullCommand: string, isRepeating?: boolean): void {}
+    RunCommand(fullCommand: string, isRepeating?: boolean): void {
+        console.log('RunCommand:', fullCommand, 'Repeating:', isRepeating);
+    }
     StopRepeatingCommand(command: string): void {}
     WinSet(controlId: string | null, winsetParams: string): void {}
     WinGet(controlId: string, queryValue: string, forceJson?: boolean, forceSnowflake?: boolean): string { return ""}
