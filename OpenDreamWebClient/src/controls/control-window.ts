@@ -106,6 +106,14 @@ export class ControlWindow extends InterfaceControl {
             }
         }
 
+        // Determine window dimensions
+        let width = this.descriptor.size.x == 0 ? '100%' : `${this.descriptor.size.x}px`;
+        let height = this.descriptor.size.y == 0 ? '100%' : `${this.descriptor.size.y}px`;
+
+        if (this.paneElement) {
+            this.paneElement.style.width = width;
+            this.paneElement.style.height = height;
+        }
         // Update window attributes if not in pane mode
         if (!this.descriptor.is_pane.value && this.isUIElementCreated) {
             this.updateWindowAttributes();

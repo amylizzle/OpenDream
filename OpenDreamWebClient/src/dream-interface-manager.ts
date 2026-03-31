@@ -8,6 +8,7 @@ import { InterfaceDescriptor } from "./descriptors/interface-descriptor";
 import { InterfaceMenu } from "./controls/interface-menu";
 import { InterfaceMacroSet } from "./controls/interface-macro";
 import { InterfaceElement } from "./controls/interface-element";
+import { InterfaceControl } from "./controls/interface-control";
 
 
 export class DreamWebInterfaceManager {
@@ -33,7 +34,7 @@ export class DreamWebInterfaceManager {
 
         if (parser.Errors.length > 0) {
             console.error('DMF parsing errors:', parser.Errors)
-        }   
+        }
 
         this.LoadInterface();
     }
@@ -75,11 +76,55 @@ export class DreamWebInterfaceManager {
 
     }
 
-    public RegisterKeyBinding(keyCombo: string, command: string, isRepeating: boolean): void {};
+    public RegisterKeyBinding(_keyCombo: string, _command: string, _isRepeating: boolean): void {};
 
     FrameUpdate(): void {};
-    FindElementWithId(id: string): InterfaceElement | undefined { return undefined };
-    SaveScreenshot(openDialog: boolean): void {};
+
+    /**
+     * Find an interface element (control, menu, macro, etc.) by ID
+     */
+    public FindElementWithId(elementId: string): InterfaceElement | undefined {
+        // Check windows
+        if (this.Windows.has(elementId)) {
+            return this.Windows.get(elementId);
+        }
+
+        // Check controls within windows (recursive)
+        for (const window of this.Windows.values()) {
+            const control = this.findControlInWindow(window, elementId);
+            if (control) return control;
+        }
+
+        // Check menus
+        for (const menu of this.Menus.values()) {
+            if (menu.id === elementId) return menu;
+            // TODO: Check menu items
+        }
+
+        // Check macro sets
+        for (const macroSet of this.MacroSets.values()) {
+            if (macroSet.id === elementId) return macroSet;
+            // TODO: Check individual macros
+        }
+
+        return undefined;
+    }
+
+    private findControlInWindow(window: ControlWindow, elementId: string): InterfaceControl | undefined {
+        for (const control of window.childControls) {
+            if (control.id === elementId) {
+                return control;
+            }
+            // Recursively search in child windows/containers
+            if ('childControls' in control) {
+                const found = this.findControlInWindow(control as ControlWindow, elementId);
+                if (found) return found;
+            }
+        }
+        return undefined;
+    }
+
+    SaveScreenshot(_openDialog: boolean): void {};
 
     OpenAlert(
         title: string,
@@ -102,12 +147,28 @@ export class DreamWebInterfaceManager {
 
     }
 
-    RunCommand(fullCommand: string, isRepeating?: boolean): void {
-        console.log('RunCommand:', fullCommand, 'Repeating:', isRepeating);
+    RunCommand(fullCommand: string, _isRepeating?: boolean): void {
+        console.log('RunCommand:', fullCommand);
+        // TODO: Implement command execution (verb calls, internal commands, etc.)
     }
-    StopRepeatingCommand(command: string): void {}
-    WinSet(controlId: string | null, winsetParams: string): void {}
-    WinGet(controlId: string, queryValue: string, forceJson?: boolean, forceSnowflake?: boolean): string { return ""}
+
+    StopRepeatingCommand(_command: string): void {}
+
+    /**
+     * Set properties on an interface element via WinSet syntax
+     * Syntax: "element.property=value;element2.property2=value2"
+     */
+    public WinSet(controlId: string | null, winsetParams: string): void {
+        console.log(`WinSet: controlId=${controlId}, winsetParams=${winsetParams}`);
+    }
+
+    /**
+     * Get a property value from an interface element via WinGet syntax
+     */
+    public WinGet(controlId: string, queryValue: string, _forceJson?: boolean, _forceSnowflake?: boolean): string {
+        console.log(`WinGet: controlId=${controlId}, queryValue=${queryValue}`);
+        return ""
+    }
 }
 
 export enum DreamValueType {
