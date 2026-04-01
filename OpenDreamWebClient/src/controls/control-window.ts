@@ -398,7 +398,39 @@ export class ControlWindow extends InterfaceControl {
         // Add to canvas
         if (this.paneElement) {
             const element = control.createUIElement();
+            this.applyDMFLayout(element, control, this.descriptor.size);
             this.paneElement.appendChild(element);        
+        }
+    }
+
+    private applyDMFLayout(element: HTMLElement, control: InterfaceControl, parentDMFSize: DMFPropertySize): void {
+        // 1. Handle the "0 size" rule (Fill remaining space)
+        let dmfWidth = control.descriptor.size.x === 0 ? (parentDMFSize.x - control.descriptor.pos.x) : control.descriptor.size.x;
+        let dmfHeight = control.descriptor.size.y === 0 ? (parentDMFSize.y - control.descriptor.pos.y) : control.descriptor.size.y;
+
+        // 2. Calculate static offsets for Anchor 1
+        // Offset = Original Pos - (Parent DMF Size * Anchor Percentage)
+        const offsetX = control.descriptor.pos.x - (parentDMFSize.x * (control.descriptor.anchor1.x / 100));
+        const offsetY = control.descriptor.pos.y - (parentDMFSize.y * (control.descriptor.anchor1.y / 100));
+
+        element.style.position = 'absolute';
+        element.style.left = `calc(${control.descriptor.anchor1.x}% + ${offsetX}px)`;
+        element.style.top = `calc(${control.descriptor.anchor1.y}% + ${offsetY}px)`;
+
+        if (control.descriptor.anchor2) {
+            // 3. Anchor 2 exists: Calculate right/bottom offsets to handle stretching
+            // Offset2 = (Original Pos + Size) - (Parent DMF Size * Anchor2 Percentage)
+            const offset2X = (control.descriptor.pos.x + dmfWidth) - (parentDMFSize.x * (control.descriptor.anchor2.x / 100));
+            const offset2Y = (control.descriptor.pos.y + dmfHeight) - (parentDMFSize.y * (control.descriptor.anchor2.y / 100));
+
+            // In CSS, 'right' is distance from the right edge, so we flip the logic slightly
+            // or just use width: calc(...)
+            element.style.width = `calc(${(control.descriptor.anchor2.x - control.descriptor.anchor1.x)}% + ${(offset2X - offsetX)}px)`;
+            element.style.height = `calc(${(control.descriptor.anchor2.y - control.descriptor.anchor1.y)}% + ${(offset2Y - offsetY)}px)`;
+        } else {
+            // 4. No Anchor 2: Static size
+            element.style.width = `${dmfWidth}px`;
+            element.style.height = `${dmfHeight}px`;
         }
     }
 
