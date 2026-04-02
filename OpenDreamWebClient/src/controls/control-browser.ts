@@ -18,11 +18,11 @@ export class ControlBrowser extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
-        this.container.style.display = 'flex';
-        this.container.style.flexDirection = 'column';
-        this.container.style.width = '100%';
-        this.container.style.height = '100%';
-        this.container.style.overflow = 'hidden';
+        
+        
+        
+        
+        this.container.style.overflow = 'scroll';
         this.container.style.backgroundColor = '#fff';
 
         // Optional address bar
@@ -32,7 +32,7 @@ export class ControlBrowser extends InterfaceControl {
             addressBar.style.borderBottom = '1px solid #ccc';
             addressBar.style.backgroundColor = '#f5f5f5';
             addressBar.style.fontSize = '12px';
-            addressBar.style.overflow = 'hidden';
+            addressBar.style.overflow = 'scroll';
             addressBar.style.textOverflow = 'ellipsis';
             addressBar.style.whiteSpace = 'nowrap';
             addressBar.textContent = this.currentUrl;

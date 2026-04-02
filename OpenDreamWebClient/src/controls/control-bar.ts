@@ -17,12 +17,12 @@ export class ControlBar extends InterfaceControl {
     public createUIElement(): HTMLElement {
         const container = document.createElement('div');
         container.classList.add('control-bar-container');
-        container.style.display = 'flex';
+        
         container.style.alignItems = 'center';
         container.style.justifyContent = 'center';
         container.style.width = '100%';
         container.style.height = '100%';
-        container.style.overflow = 'hidden';
+        container.style.overflow = 'scroll';
 
         const dir = this.descriptor.dir.value;
 

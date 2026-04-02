@@ -16,11 +16,6 @@ export class ControlOutput extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.outputContainer = document.createElement('div');
         this.outputContainer.id = this.id;
-        this.outputContainer.style.display = 'flex';
-        this.outputContainer.style.flexDirection = 'column';
-        this.outputContainer.style.width = '100%';
-        this.outputContainer.style.height = '100%';
-        this.outputContainer.style.overflow = 'auto';
         this.outputContainer.style.padding = '4px';
         this.outputContainer.style.boxSizing = 'border-box';
         this.outputContainer.style.fontFamily = this.descriptor.font_family.value || 'monospace';

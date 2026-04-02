@@ -17,9 +17,9 @@ export class ControlInput extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
-        this.container.style.display = 'flex';
-        this.container.style.width = '100%';
-        this.container.style.height = '100%';
+        
+        
+        
         this.container.style.padding = '4px';
         this.container.style.boxSizing = 'border-box';
 

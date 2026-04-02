@@ -21,46 +21,35 @@ export class ControlChild extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.splitterContainer = document.createElement('div');
         this.splitterContainer.id = this.id;
-        this.splitterContainer.style.display = 'flex';
-        this.splitterContainer.style.flexDirection = this.descriptor.is_vert.value ? 'column' : 'row';
+        this.splitterContainer.style.position = 'absolute';
+        this.splitterContainer.style.display = 'grid';
         this.splitterContainer.style.width = '100%';
         this.splitterContainer.style.height = '100%';
-        this.splitterContainer.style.overflow = 'hidden';
 
         // Create left panel
         this.leftPanel = document.createElement('div');
         this.leftPanel.id = `${this.id}-left`;
-        this.leftPanel.style.flex = `0 0 ${this.descriptor.splitter.value}%`;
-        this.leftPanel.style.overflow = 'auto';
-        this.leftPanel.style.backgroundColor = '#f0f0f0';
-        this.leftPanel.style.width = '100%';
-        this.leftPanel.style.height = '100%';
+        // this.leftPanel.style.position = 'absolute';
+        // this.leftPanel.style.display = 'flex';
+        // this.leftPanel.style.width = '100%';
+        // this.leftPanel.style.height = '100%';
         this.splitterContainer.appendChild(this.leftPanel);
 
         // Create splitter handle
         this.splitterHandle = document.createElement('div');
         this.splitterHandle.id = `${this.id}-splitterhandle`;
-        this.splitterHandle.style.flex = '0 0 auto';
-        this.splitterHandle.style.width = this.descriptor.is_vert.value ? '100%' : '5px';
-        this.splitterHandle.style.height = this.descriptor.is_vert.value ? '5px' : '100%';
-        this.splitterHandle.style.backgroundColor = '#ccc';
-        this.splitterHandle.style.cursor = this.descriptor.is_vert.value ? 'col-resize' : 'row-resize';
+        // this.splitterHandle.style.position = 'absolute';
         this.splitterHandle.style.userSelect = 'none';
-        this.splitterHandle.style.borderTop = this.descriptor.is_vert.value ? '1px solid #999' : 'none';
-        this.splitterHandle.style.borderBottom = this.descriptor.is_vert.value ? '1px solid #999' : 'none';
-        this.splitterHandle.style.borderLeft = !this.descriptor.is_vert.value ? '1px solid #999' : 'none';
-        this.splitterHandle.style.borderRight = !this.descriptor.is_vert.value ? '1px solid #999' : 'none';
-        this.splitterHandle.style.display = this.descriptor.show_splitter.value ? 'block' : 'none';
+        
         this.splitterContainer.appendChild(this.splitterHandle);
 
         // Create right panel
         this.rightPanel = document.createElement('div');
         this.rightPanel.id = `${this.id}-right`;
-        this.rightPanel.style.flex = `0 0 ${100 - this.descriptor.splitter.value}%`;
-        this.rightPanel.style.overflow = 'auto';
-        this.rightPanel.style.backgroundColor = '#f0f0f0';
-        this.rightPanel.style.width = '100%';
-        this.rightPanel.style.height = '100%';
+        // this.rightPanel.style.position = 'absolute';
+        // this.rightPanel.style.display = 'flex';
+        // this.rightPanel.style.width = '100%';
+        // this.rightPanel.style.height = '100%';
         this.splitterContainer.appendChild(this.rightPanel);
 
         // Add event listeners for splitter dragging
@@ -68,6 +57,7 @@ export class ControlChild extends InterfaceControl {
 
         // Update the orientation layout
         this.updateOrientation();
+        this.updateSplitterPosition();
         this.updateElementDescriptor();
         return this.splitterContainer;
     }
@@ -105,17 +95,18 @@ export class ControlChild extends InterfaceControl {
     }
 
     private updateSplitterPosition(): void {
-        const splitterPercent = this.descriptor.splitter.value;
-        this.leftPanel.style.flex = `0 0 ${splitterPercent}%`;
-        this.rightPanel.style.flex = `0 0 ${100 - splitterPercent}%`;
+        const splitterPercent = this.descriptor.splitter.value/100;
+        this.splitterContainer.style.gridTemplateColumns = this.descriptor.is_vert.value ?  `${splitterPercent}fr 5px ${1 - splitterPercent}fr` : '1fr';
+        this.splitterContainer.style.gridTemplateRows = this.descriptor.is_vert.value ? '1fr' : `${splitterPercent}fr 5px ${1 - splitterPercent}fr`;
     }
 
     private updateOrientation(): void {
         const isVertical = this.descriptor.is_vert.value;
-        
+        console.log(`Updating orientation for control ${this.id} to ${isVertical ? 'vertical' : 'horizontal'}`);
+        this.updateSplitterPosition();
+
         if (!isVertical) {
-            console.log(`Setting control ${this.id} to horizontal orientation`);
-            this.splitterContainer.style.flexDirection = 'column';
+            console.log(`Setting control ${this.id} to vertical orientation`);
             this.splitterHandle.style.width = '100%';
             this.splitterHandle.style.height = '5px';
             this.splitterHandle.style.cursor = 'row-resize';
@@ -124,10 +115,9 @@ export class ControlChild extends InterfaceControl {
             this.splitterHandle.style.borderLeft = 'none';
             this.splitterHandle.style.borderRight = 'none';
         } else {
-            console.log(`Setting control ${this.id} to vertical orientation`);
-            this.splitterContainer.style.flexDirection = 'row';
+            console.log(`Setting control ${this.id} to horizontal orientation`);
             this.splitterHandle.style.width = '5px';
-            this.splitterHandle.style.height = '10px';
+            this.splitterHandle.style.height = '100%';
             this.splitterHandle.style.cursor = 'col-resize';
             this.splitterHandle.style.borderTop = 'none';
             this.splitterHandle.style.borderBottom = 'none';
@@ -142,7 +132,7 @@ export class ControlChild extends InterfaceControl {
         if (!this.splitterHandle) return;
 
         // Update visibility of splitter handle
-        this.splitterHandle.style.display = this.descriptor.show_splitter.value ? 'block' : 'none';
+        this.splitterHandle.style.display = this.descriptor.show_splitter.value ? 'flex' : 'none';
 
         // Update left and right content if panels exist
         if (this.leftPanel) {

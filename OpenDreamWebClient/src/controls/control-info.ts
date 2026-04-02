@@ -42,17 +42,16 @@ export class ControlInfo extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
-        this.container.style.display = 'flex';
-        this.container.style.flexDirection = 'column';
-        this.container.style.width = '100%';
-        this.container.style.height = '100%';
-        this.container.style.overflow = 'hidden';
+        
+        
+        
+        
+        this.container.style.overflow = 'scroll';
         this.container.style.backgroundColor = '#fff';
 
         // Create tab header
         this.tabHeader = document.createElement('div');
         this.tabHeader.id = `${this.id}-header`;
-        this.tabHeader.style.display = 'flex';
         this.tabHeader.style.flexWrap = this.descriptor.multi_line.value ? 'wrap' : 'nowrap';
         this.tabHeader.style.borderBottom = '2px solid #ddd';
         this.tabHeader.style.backgroundColor = this.descriptor.tab_background_color.value !== 'transparent'
@@ -66,7 +65,6 @@ export class ControlInfo extends InterfaceControl {
         // Create tab content area
         this.tabContent = document.createElement('div');
         this.tabContent.id = `${this.id}-content`;
-        this.tabContent.style.flex = '1';
         this.tabContent.style.overflow = 'auto';
         this.tabContent.style.backgroundColor = '#fff';
         this.container.appendChild(this.tabContent);

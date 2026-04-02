@@ -16,10 +16,9 @@ export class ControlLabel extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
-        this.container.style.display = 'flex';
-        this.container.style.width = '100%';
-        this.container.style.height = '100%';
-        this.container.style.flex = '1 1 auto';
+        
+        
+        
         this.container.style.padding = '4px';
         this.container.style.backgroundColor = this.descriptor.background_color.value !== 'transparent' 
             ? this.descriptor.background_color.value 
@@ -29,7 +28,7 @@ export class ControlLabel extends InterfaceControl {
 
         this.label = document.createElement('span');
         this.label.style.whiteSpace = this.descriptor.text_wrap.value ? 'normal' : 'nowrap';
-        this.label.style.overflow = 'hidden';
+        this.label.style.overflow = 'scroll';
         this.label.style.textOverflow = 'ellipsis';
         this.label.style.fontSize = this.descriptor.font_size.value > 0 ? `${this.descriptor.font_size.value}px` : 'inherit';
         this.label.style.fontFamily = this.descriptor.font_family.value || 'inherit';

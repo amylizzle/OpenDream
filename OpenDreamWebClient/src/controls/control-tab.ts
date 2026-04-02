@@ -19,16 +19,11 @@ export class ControlTab extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.tabContainer = document.createElement('div');
         this.tabContainer.id = this.id;
-        this.tabContainer.style.display = 'flex';
-        this.tabContainer.style.flexDirection = 'column';
-        this.tabContainer.style.width = '100%';
-        this.tabContainer.style.height = '100%';
-        this.tabContainer.style.overflow = 'hidden';
+
 
         // Create tab header with buttons
         this.tabHeader = document.createElement('div');
         this.tabHeader.id = `${this.id}-header`;
-        this.tabHeader.style.display = 'flex';
         this.tabHeader.style.flexWrap = this.descriptor.multi_line.value ? 'wrap' : 'nowrap';
         this.tabHeader.style.borderBottom = '1px solid #ccc';
         this.tabHeader.style.backgroundColor = '#f5f5f5';
@@ -40,8 +35,6 @@ export class ControlTab extends InterfaceControl {
         // Create tab content area
         this.tabContent = document.createElement('div');
         this.tabContent.id = `${this.id}-content`;
-        this.tabContent.style.flex = '1';
-        this.tabContent.style.overflow = 'auto';
         this.tabContent.style.backgroundColor = '#fff';
         this.tabContainer.appendChild(this.tabContent);
 
@@ -83,7 +76,6 @@ export class ControlTab extends InterfaceControl {
             button.style.fontFamily = 'Arial, sans-serif';
             button.style.borderRadius = '4px 4px 0 0';
             button.style.whiteSpace = 'nowrap';
-            button.style.flex = '0 0 auto';
 
             button.addEventListener('click', () => {
                 this.selectTab(tabId);
