@@ -17,10 +17,10 @@ export abstract class InterfaceControl extends InterfaceElement {
 
     public abstract createUIElement(): HTMLElement;
 
-    protected updateElementDescriptor(): void {
-        // TODO: Implementation in derived controls
-        // make sure to call applyDMFLayout after updating the descriptor to update the position/size of the element
-    }
+    // make sure to call applyDMFLayout after updating the descriptor to update the position/size of the element
+    protected abstract updateElementDescriptor(): void 
+
+    
 
     protected applyDMFLayout(element: HTMLElement, control: InterfaceControl): void {
         if (!element || !control) {

@@ -123,8 +123,6 @@ export class ControlChild extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
-
         if (!this.splitterHandle) return;
 
         // Update visibility of splitter handle

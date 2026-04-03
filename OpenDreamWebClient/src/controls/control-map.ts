@@ -11,20 +11,15 @@ export class ControlMap extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
+    protected updateElementDescriptor(): void {
+        this.applyDMFLayout(this.mapElement!, this);
+    }    
+
     public createUIElement(): HTMLElement {
         this.mapElement = document.createElement('div');
         this.mapElement.classList.add('control-map');
         this.mapElement.id = this.id;
         
-        // Respect sizing constraints: if size is 0, fill available space; otherwise use specified size
-        const width = this.descriptor.size.x || 0;
-        const height = this.descriptor.size.y || 0;
-        
-        this.mapElement.style.width = width > 0 ? `${width}px` : '100%';
-        this.mapElement.style.height = height > 0 ? `${height}px` : '100%';
-        this.mapElement.style.position = 'static';
-        this.mapElement.style.overflow = 'clip';
-
         const img = document.createElement('img');
         img.style.width = '100%';
         img.style.height = '100%';

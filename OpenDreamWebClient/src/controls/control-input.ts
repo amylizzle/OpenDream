@@ -18,8 +18,6 @@ export class ControlInput extends InterfaceControl {
         this.container = document.createElement('div');
         this.container.id = this.id;
         
-        
-        
         this.container.style.padding = '4px';
         this.container.style.boxSizing = 'border-box';
 
@@ -63,8 +61,6 @@ export class ControlInput extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
-
         if (!this.inputElement) return;
 
         // Update styling

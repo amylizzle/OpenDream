@@ -34,7 +34,7 @@ export class ControlOutput extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
+        
 
         if (!this.outputContainer) return;
 

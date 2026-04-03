@@ -64,7 +64,7 @@ export class ControlBrowser extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
+        
 
         if (this.descriptor.on_show.value) {
             this.windowControl?.windowControl?.InterfaceManager?.RunCommand(this.descriptor.on_show.value);

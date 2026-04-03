@@ -40,7 +40,7 @@ export class ControlLabel extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
+        
 
         if (!this.label) return;
 

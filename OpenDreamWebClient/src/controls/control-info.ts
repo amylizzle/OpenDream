@@ -41,11 +41,7 @@ export class ControlInfo extends InterfaceControl {
 
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
-        this.container.id = this.id;
-        
-        
-        
-        
+        this.container.id = this.id;       
         this.container.style.overflow = 'clip';
         this.container.style.backgroundColor = '#fff';
 
@@ -74,7 +70,7 @@ export class ControlInfo extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
+        
 
         if (!this.tabHeader) return;
 

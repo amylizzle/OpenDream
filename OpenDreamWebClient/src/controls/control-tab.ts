@@ -43,8 +43,6 @@ export class ControlTab extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
-
         // Clear existing tabs
         this.tabs.clear();
         this.tabHeader.innerHTML = '';

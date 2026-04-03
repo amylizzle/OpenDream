@@ -163,7 +163,7 @@ export class ControlGrid extends InterfaceControl {
     }
 
     protected updateElementDescriptor(): void {
-        super.updateElementDescriptor();
+        
 
         // Re-initialize grid if cells changed
         const newCols = this.descriptor.cells.x;
