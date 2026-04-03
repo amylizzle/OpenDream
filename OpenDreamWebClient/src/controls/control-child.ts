@@ -1,5 +1,6 @@
 import { InterfaceControl } from './interface-control';
 import { ControlDescriptorChild } from '../descriptors/control-descriptors';
+import { DMFPropertySize } from '../DMF/dmf-property';
 
 export class ControlChild extends InterfaceControl {
     private splitterContainer: HTMLElement = null!;
@@ -132,18 +133,26 @@ export class ControlChild extends InterfaceControl {
         // Update left and right content if panels exist
         if (this.leftPanel) {
             console.log(`Updating left panel content for control ${this.id} to ${this.descriptor.left.asRaw()}`);
-            const leftElement = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.left.asRaw())?.createUIElement();
-            if (leftElement) {
-                this.leftPanel.innerHTML = '';
-                this.leftPanel.appendChild(leftElement);
+            const leftControl = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.left.asRaw());
+            if (leftControl){
+                leftControl.descriptor.size = new DMFPropertySize(0,0); //todo this is a hack, should probably just have a layout override property
+                const leftElement = leftControl?.createUIElement();
+                if (leftElement) {
+                    this.leftPanel.innerHTML = '';
+                    this.leftPanel.appendChild(leftElement);
+                }
             }
         }
         if (this.rightPanel) {
             console.log(`Updating right panel content for control ${this.id} to ${this.descriptor.right.asRaw()}`);
-            const rightElement = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.right.asRaw())?.createUIElement();
-            if (rightElement) {
-                this.rightPanel.innerHTML = '';
-                this.rightPanel.appendChild(rightElement);
+            const rightControl = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.right.asRaw());
+            if (rightControl){
+                rightControl.descriptor.size = new DMFPropertySize(0,0);
+                const rightElement = rightControl?.createUIElement();
+                if (rightElement) {
+                    this.rightPanel.innerHTML = '';
+                    this.rightPanel.appendChild(rightElement);
+                }
             }
         }
         this.applyDMFLayout(this.splitterContainer, this);
