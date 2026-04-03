@@ -32,6 +32,7 @@ import type { DreamWebInterfaceManager } from '../dream-interface-manager';
 export class ControlWindow extends InterfaceControl {
     public childControls: InterfaceControl[] = [];
     private menuContainer?: HTMLElement;
+    private activeDropdown?: HTMLElement;
     private resizeObserver?: ResizeObserver;
     private currentStatus = '';
     private popupWindow?: Window;
@@ -146,12 +147,15 @@ export class ControlWindow extends InterfaceControl {
     }
 
     private showDropdown(button: HTMLElement, entries: any[]): void {
-        const dropdown = document.createElement('div');
-        dropdown.style.position = 'static';
-        dropdown.style.backgroundColor = 'white';
-        dropdown.style.border = '1px solid #ccc';
-        dropdown.style.zIndex = '10000';
-        dropdown.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+        if (this.activeDropdown) {
+            this.activeDropdown.remove();
+        }
+        this.activeDropdown = document.createElement('div');
+        this.activeDropdown.style.position = 'absolute';
+        this.activeDropdown.style.backgroundColor = 'white';
+        this.activeDropdown.style.border = '1px solid #ccc';
+        this.activeDropdown.style.zIndex = '10000';
+        this.activeDropdown.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
 
         for (const entry of entries) {
             if (!entry.text) {
@@ -159,7 +163,7 @@ export class ControlWindow extends InterfaceControl {
                 const separator = document.createElement('div');
                 separator.style.borderTop = '1px solid #ccc';
                 separator.style.margin = '4px 0';
-                dropdown.appendChild(separator);
+                this.activeDropdown.appendChild(separator);
             } else if (entry.onPressed) {
                 // Button entry
                 const item = document.createElement('button');
@@ -175,7 +179,7 @@ export class ControlWindow extends InterfaceControl {
 
                 item.addEventListener('click', () => {
                     entry.onPressed();
-                    dropdown.remove();
+                    this.activeDropdown?.remove();
                 });
 
                 item.addEventListener('mouseenter', () => {
@@ -185,26 +189,26 @@ export class ControlWindow extends InterfaceControl {
                     item.style.backgroundColor = 'transparent';
                 });
 
-                dropdown.appendChild(item);
+                this.activeDropdown.appendChild(item);
             } else if (entry.entries) {
                 // Submenu - not fully implemented for simplicity
                 const subItem = document.createElement('div');
                 subItem.textContent = entry.text + ' ▶';
                 subItem.style.padding = '8px 12px';
                 subItem.style.fontSize = '12px';
-                dropdown.appendChild(subItem);
+                this.activeDropdown.appendChild(subItem);
             }
         }
 
-        document.body.appendChild(dropdown);
+        document.body.appendChild(this.activeDropdown);
 
         const rect = button.getBoundingClientRect();
-        dropdown.style.top = `${rect.bottom}px`;
-        dropdown.style.left = `${rect.left}px`;
+        this.activeDropdown.style.top = `${rect.bottom}px`;
+        this.activeDropdown.style.left = `${rect.left}px`;
 
         const closeDropdown = (e: Event) => {
             if (e.target !== button) {
-                dropdown.remove();
+                this.activeDropdown?.remove();
                 document.removeEventListener('click', closeDropdown);
             }
         };
