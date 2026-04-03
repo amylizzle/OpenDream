@@ -65,6 +65,7 @@ export class ControlLabel extends InterfaceControl {
         // Apply alignment
         const align = this.descriptor.align.value.toLowerCase();
         this.applyAlignment(align);
+        this.applyDMFLayout(this.container, this);
     }
 
     private applyAlignment(align: string): void {

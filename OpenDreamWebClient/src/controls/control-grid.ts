@@ -178,6 +178,7 @@ export class ControlGrid extends InterfaceControl {
         // Update current cell
         this.currentRow = Math.max(0, Math.min(this.descriptor.current_cell.y - 1, this.descriptor.cells.y - 1));
         this.currentCol = Math.max(0, Math.min(this.descriptor.current_cell.x - 1, this.descriptor.cells.x - 1));
+        this.applyDMFLayout(this.gridTable, this);
     }
 
     public output(value: string, data?: string): void {

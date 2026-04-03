@@ -43,7 +43,7 @@ export class ControlBar extends InterfaceControl {
     private createStraightBar(): HTMLElement {
         const barWrapper = document.createElement('div');
         barWrapper.classList.add('control-bar');
-        barWrapper.style.position = 'relative';
+        barWrapper.style.position = 'static';
         barWrapper.style.display = 'flex';
         barWrapper.style.alignItems = 'center';
         barWrapper.style.justifyContent = 'flex-start';

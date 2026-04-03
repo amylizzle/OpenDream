@@ -69,6 +69,7 @@ export class ControlBrowser extends InterfaceControl {
         if (this.descriptor.on_show.value) {
             this.windowControl?.windowControl?.InterfaceManager?.RunCommand(this.descriptor.on_show.value);
         }
+        this.applyDMFLayout(this.container, this);
     }
 
     public setFileSource(filepath: string | null): void {

@@ -22,8 +22,8 @@ export class ControlMap extends InterfaceControl {
         
         this.mapElement.style.width = width > 0 ? `${width}px` : '100%';
         this.mapElement.style.height = height > 0 ? `${height}px` : '100%';
-        this.mapElement.style.position = 'relative';
-        this.mapElement.style.overflow = 'scroll';
+        this.mapElement.style.position = 'static';
+        this.mapElement.style.overflow = 'clip';
 
         const img = document.createElement('img');
         img.style.width = '100%';

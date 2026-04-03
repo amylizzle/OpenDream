@@ -152,8 +152,8 @@ export class DMFPropertyVec2 implements IDMFProperty {
     constructor(x: number|string, y: number|undefined){
         if (typeof x === 'string') {
             if (x.toLowerCase() === 'none') {
-                this.x = 0;
-                this.y = 0;
+                this.x = NaN;
+                this.y = NaN;
                 return;
             }
             const parts = x.split(/[,\sx]/);

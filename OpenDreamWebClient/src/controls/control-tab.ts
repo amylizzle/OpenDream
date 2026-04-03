@@ -123,6 +123,8 @@ export class ControlTab extends InterfaceControl {
             const firstTabId = this.tabs.keys().next().value;
             this.selectTab(firstTabId!);
         }
+
+        this.applyDMFLayout(this.tabContainer, this);
     }
 
     private selectTab(tabId: string): void {

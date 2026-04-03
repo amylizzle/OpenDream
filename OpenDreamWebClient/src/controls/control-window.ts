@@ -60,15 +60,15 @@ export class ControlWindow extends InterfaceControl {
 
         const container = document.createElement('div');
         container.id = this.id;
-        container.style.position = 'absolute';
-        container.style.overflow = 'scroll';
+        container.style.position = 'static';
+        container.style.overflow = 'clip';
         container.style.height = '100%';
         container.style.width = '100%';
 
         // Menu container
         this.menuContainer = document.createElement('div');
         this.menuContainer.id = `${this.id}-menu`;
-        this.menuContainer.style.position = 'absolute';
+        this.menuContainer.style.position = 'static';
         this.menuContainer.style.padding = '0';
         this.menuContainer.style.backgroundColor = '#fff';
         this.menuContainer.style.borderBottom = '1px solid #ccc';
@@ -78,7 +78,7 @@ export class ControlWindow extends InterfaceControl {
         // Canvas - layout container for child controls
         this.paneElement = document.createElement('div');
         this.paneElement.id = `${this.id}-pane`;
-        this.paneElement.style.position = 'absolute';
+        this.paneElement.style.position = 'static';
 
         const bgColor = this.descriptor.background_color?.value || '#f0f0f0';
         this.paneElement.style.backgroundColor = bgColor;
@@ -124,6 +124,7 @@ export class ControlWindow extends InterfaceControl {
             );
             macroSet?.setActive();
         }
+        this.applyDMFLayout(this.paneElement!, this);
     }
 
     private buildMenuBar(container: HTMLElement, menus: any[]): void {
@@ -146,7 +147,7 @@ export class ControlWindow extends InterfaceControl {
 
     private showDropdown(button: HTMLElement, entries: any[]): void {
         const dropdown = document.createElement('div');
-        dropdown.style.position = 'absolute';
+        dropdown.style.position = 'static';
         dropdown.style.backgroundColor = 'white';
         dropdown.style.border = '1px solid #ccc';
         dropdown.style.zIndex = '10000';
@@ -358,121 +359,7 @@ export class ControlWindow extends InterfaceControl {
         // Add to canvas
         if (this.paneElement) {
             const element = control.createUIElement();
-            this.applyDMFLayout(element, control, this.descriptor.size);
             this.paneElement.appendChild(element);        
-        }
-    }
-
-    private applyDMFLayout(element: HTMLElement, control: InterfaceControl, parentDMFSize: DMFPropertySize): void {
-        // if x is 0 set width to 100%
-
-
-        // Handle the "0 size" rule (Fill remaining space)
-        let dmfWidth = control.descriptor.size.x === 0 ? (parentDMFSize.x - control.descriptor.pos.x) : control.descriptor.size.x;
-        let dmfHeight = control.descriptor.size.y === 0 ? (parentDMFSize.y - control.descriptor.pos.y) : control.descriptor.size.y;
-
-        // No Anchor 1 or 2: Static size
-        element.style.width = `${dmfWidth}px`;
-        element.style.height = `${dmfHeight}px`;
-
-        if (!isNaN(control.descriptor.anchor1.x) && !isNaN(control.descriptor.anchor1.y)) {
-            // 2. Calculate static offsets for Anchor 1
-            // Offset = Original Pos - (Parent DMF Size * Anchor Percentage)
-            const offsetX = control.descriptor.pos.x - (parentDMFSize.x * (control.descriptor.anchor1.x / 100));
-            const offsetY = control.descriptor.pos.y - (parentDMFSize.y * (control.descriptor.anchor1.y / 100));
-
-            element.style.position = 'relative';
-            element.style.left = `calc(${control.descriptor.anchor1.x}% + ${offsetX}px)`;
-            element.style.top = `calc(${control.descriptor.anchor1.y}% + ${offsetY}px)`;
-
-            if (!isNaN(control.descriptor.anchor2.x) && !isNaN(control.descriptor.anchor2.y)) {
-                // 3. Anchor 2 exists: Calculate right/bottom offsets to handle stretching
-                // Offset2 = (Original Pos + Size) - (Parent DMF Size * Anchor2 Percentage)
-                const offset2X = (control.descriptor.pos.x + dmfWidth) - (parentDMFSize.x * (control.descriptor.anchor2.x / 100));
-                const offset2Y = (control.descriptor.pos.y + dmfHeight) - (parentDMFSize.y * (control.descriptor.anchor2.y / 100));
-
-                // In CSS, 'right' is distance from the right edge, so we flip the logic slightly
-                // or just use width: calc(...)
-                element.style.width = `calc(${(control.descriptor.anchor2.x - control.descriptor.anchor1.x)}% + ${(offset2X - offsetX)}px)`;
-                element.style.height = `calc(${(control.descriptor.anchor2.y - control.descriptor.anchor1.y)}% + ${(offset2Y - offsetY)}px)`;
-            } 
-        }
-    }
-
-    public updateAnchors(): void {
-        if (!this.paneElement) return;
-
-        let windowSize = { x: this.descriptor.size.x, y: this.descriptor.size.y };
-
-        if (windowSize.x === 0) {
-            windowSize.x = this.paneElement.clientWidth;
-        }
-        if (windowSize.y === 0) {
-            windowSize.y = this.paneElement.clientHeight;
-        }
-
-        for (const control of this.childControls) {
-            const element = control.createUIElement() as HTMLElement;
-            if (!(element instanceof HTMLElement)) continue;
-
-            const controlPos = control.descriptor.pos || { x: 0, y: 0 };
-            const controlSize = control.descriptor?.size || {
-                x: 0,
-                y: 0
-            };
-            const anchor1 = (control.descriptor )?.anchor1;
-            const anchor2 = (control.descriptor )?.anchor2;
-
-            if (isNaN(anchor1.x) || isNaN(anchor1.y)) continue;
-
-            const anchorPos = control.anchorPosition || {
-                x: windowSize.x,
-                y: windowSize.y
-            };
-            let anchorToX = anchorPos.x || windowSize.x;
-            let anchorToY = anchorPos.y || windowSize.y;
-
-            if (anchorToX === 0) anchorToX = windowSize.x;
-            if (anchorToY === 0) anchorToY = windowSize.y;
-
-            const a1 = anchor1.vector;
-            const offset1X = controlPos.x - (anchorToX * (a1.x ?? 0)) / 100;
-            const offset1Y = controlPos.y - (anchorToY * (a1.y ?? 0)) / 100;
-            const left =
-                (this.paneElement.clientWidth * (a1.x ?? 0)) / 100 + offset1X;
-            const top =
-                (this.paneElement.clientHeight * (a1.y ?? 0)) / 100 + offset1Y;
-
-            element.style.left = `${Math.max(left, 0)}px`;
-            element.style.top = `${Math.max(top, 0)}px`;
-            element.style.position = 'relative';
-
-            if (!isNaN(anchor2.x) && !isNaN(anchor2.y)) {
-                const a2 = anchor2.vector;
-                if (a2.x < a1.x || a2.y < a1.y) {
-                    console.warn(
-                        `Invalid anchor2 for control ${control.descriptor?.id.value}. Ignoring.`
-                    );
-                } else {
-                    const offset2X =
-                        (((controlPos )?.x ?? 0) + ((controlSize )?.x ?? 0)) -
-                        (anchorToX * (a2.x ?? 0)) / 100;
-                    const offset2Y =
-                        (((controlPos )?.y ?? 0) + ((controlSize )?.y ?? 0)) -
-                        (anchorToY * (a2.y ?? 0)) / 100;
-                    const width =
-                        (this.paneElement.clientWidth * (a2.x ?? 0)) / 100 +
-                        offset2X -
-                        left;
-                    const height =
-                        (this.paneElement.clientHeight * (a2.y ?? 0)) / 100 +
-                        offset2Y -
-                        top;
-
-                    element.style.width = `${Math.max(width, 0)}px`;
-                    element.style.height = `${Math.max(height, 0)}px`;
-                }
-            }
         }
     }
 

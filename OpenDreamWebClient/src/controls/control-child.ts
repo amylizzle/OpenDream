@@ -21,7 +21,7 @@ export class ControlChild extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.splitterContainer = document.createElement('div');
         this.splitterContainer.id = this.id;
-        this.splitterContainer.style.position = 'absolute';
+        this.splitterContainer.style.position = 'static';
         this.splitterContainer.style.display = 'grid';
         this.splitterContainer.style.width = '100%';
         this.splitterContainer.style.height = '100%';
@@ -29,16 +29,14 @@ export class ControlChild extends InterfaceControl {
         // Create left panel
         this.leftPanel = document.createElement('div');
         this.leftPanel.id = `${this.id}-left`;
-        // this.leftPanel.style.position = 'absolute';
-        // this.leftPanel.style.display = 'flex';
-        // this.leftPanel.style.width = '100%';
-        // this.leftPanel.style.height = '100%';
+        this.leftPanel.style.minHeight = '0'; // allow the panel to shrink smaller than its content
+        this.leftPanel.style.minWidth = '0';
         this.splitterContainer.appendChild(this.leftPanel);
 
         // Create splitter handle
         this.splitterHandle = document.createElement('div');
         this.splitterHandle.id = `${this.id}-splitterhandle`;
-        // this.splitterHandle.style.position = 'absolute';
+        // this.splitterHandle.style.position = 'static';
         this.splitterHandle.style.userSelect = 'none';
         
         this.splitterContainer.appendChild(this.splitterHandle);
@@ -46,10 +44,8 @@ export class ControlChild extends InterfaceControl {
         // Create right panel
         this.rightPanel = document.createElement('div');
         this.rightPanel.id = `${this.id}-right`;
-        // this.rightPanel.style.position = 'absolute';
-        // this.rightPanel.style.display = 'flex';
-        // this.rightPanel.style.width = '100%';
-        // this.rightPanel.style.height = '100%';
+        this.rightPanel.style.minHeight = '0'; // allow the panel to shrink smaller than its content
+        this.rightPanel.style.minWidth = '0';
         this.splitterContainer.appendChild(this.rightPanel);
 
         // Add event listeners for splitter dragging
@@ -132,7 +128,7 @@ export class ControlChild extends InterfaceControl {
         if (!this.splitterHandle) return;
 
         // Update visibility of splitter handle
-        this.splitterHandle.style.display = this.descriptor.show_splitter.value ? 'flex' : 'none';
+        this.splitterHandle.style.display = this.descriptor.show_splitter.value ? 'block' : 'none';
 
         // Update left and right content if panels exist
         if (this.leftPanel) {
@@ -151,6 +147,9 @@ export class ControlChild extends InterfaceControl {
                 this.rightPanel.appendChild(rightElement);
             }
         }
+        this.applyDMFLayout(this.splitterContainer, this);
+        // also the left and right panels?
+
     }
 
     public tryGetProperty(property: string): unknown {

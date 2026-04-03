@@ -47,6 +47,8 @@ export class ControlOutput extends InterfaceControl {
             : '#000000';
         this.outputContainer.style.fontFamily = this.descriptor.font_family.value || 'monospace';
         this.outputContainer.style.fontSize = this.descriptor.font_size.value > 0 ? `${this.descriptor.font_size.value}px` : '12px';
+
+        this.applyDMFLayout(this.outputContainer, this);
     }
 
     public output(value: string, data?: string): void {

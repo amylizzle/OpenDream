@@ -83,6 +83,7 @@ export class ControlInput extends InterfaceControl {
         }
 
         this.resetText();
+        this.applyDMFLayout(this.container, this);
     }
 
     private onTextEntered(text: string): void {
