@@ -12,8 +12,13 @@ export class ControlButton extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
+    protected updateElementDescriptor(): void {
+        this.applyDMFLayout(document.getElementById(this.id)!, this);
+    }    
+
     public createUIElement(): HTMLElement {
         const button = document.createElement('button');
+        button.classList.add('BUTTON');
         button.id = this.id;
         const setButtonContent = () => {
             button.textContent = this.descriptor.text?.asRaw() ?? '';

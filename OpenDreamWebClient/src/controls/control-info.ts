@@ -42,6 +42,7 @@ export class ControlInfo extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;       
+        this.container.classList.add('INFO');
         this.container.style.overflow = 'clip';
         this.container.style.backgroundColor = '#fff';
 

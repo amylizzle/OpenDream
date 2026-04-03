@@ -21,6 +21,7 @@ export class ControlChild extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.splitterContainer = document.createElement('div');
         this.splitterContainer.id = this.id;
+        this.splitterContainer.classList.add('CHILD');
         this.splitterContainer.style.position = 'static';
         this.splitterContainer.style.display = 'grid';
         this.splitterContainer.style.width = '100%';
@@ -61,7 +62,7 @@ export class ControlChild extends InterfaceControl {
     private setupSplitterDragging(): void {
         this.splitterHandle.addEventListener('mousedown', (e: MouseEvent) => {
             this.isDragging = true;
-            this.dragStartPos = this.descriptor.is_vert.value ? e.clientY : e.clientX;
+            this.dragStartPos = !this.descriptor.is_vert.value ? e.clientY : e.clientX;
             this.initialSplitterPos = this.descriptor.splitter.value;
             e.preventDefault();
         });
@@ -70,11 +71,11 @@ export class ControlChild extends InterfaceControl {
             if (!this.isDragging) return;
 
             const container = this.splitterContainer;
-            const containerSize = this.descriptor.is_vert.value 
+            const containerSize = !this.descriptor.is_vert.value 
                 ? container.clientHeight 
                 : container.clientWidth;
 
-            const currentPos = this.descriptor.is_vert.value ? e.clientY : e.clientX;
+            const currentPos = !this.descriptor.is_vert.value ? e.clientY : e.clientX;
             const delta = currentPos - this.dragStartPos;
             const deltaPercent = (delta / containerSize) * 100;
             

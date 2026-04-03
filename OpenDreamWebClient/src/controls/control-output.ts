@@ -15,6 +15,7 @@ export class ControlOutput extends InterfaceControl {
 
     public createUIElement(): HTMLElement {
         this.outputContainer = document.createElement('div');
+        this.outputContainer.classList.add('OUTPUT');
         this.outputContainer.id = this.id;
         this.outputContainer.style.padding = '4px';
         this.outputContainer.style.boxSizing = 'border-box';

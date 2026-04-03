@@ -18,6 +18,7 @@ export class ControlTab extends InterfaceControl {
 
     public createUIElement(): HTMLElement {
         this.tabContainer = document.createElement('div');
+        this.tabContainer.classList.add('TAB');
         this.tabContainer.id = this.id;
 
 

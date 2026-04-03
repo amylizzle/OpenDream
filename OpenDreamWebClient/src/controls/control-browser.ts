@@ -18,10 +18,7 @@ export class ControlBrowser extends InterfaceControl {
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
-        
-        
-        
-        
+        this.container.classList.add('BROWSER');
         this.container.style.overflow = 'scroll';
         this.container.style.backgroundColor = '#fff';
 

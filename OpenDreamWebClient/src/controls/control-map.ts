@@ -17,7 +17,7 @@ export class ControlMap extends InterfaceControl {
 
     public createUIElement(): HTMLElement {
         this.mapElement = document.createElement('div');
-        this.mapElement.classList.add('control-map');
+        this.mapElement.classList.add('MAP');
         this.mapElement.id = this.id;
         
         const img = document.createElement('img');

@@ -16,6 +16,7 @@ export class ControlInput extends InterfaceControl {
 
     public createUIElement(): HTMLElement {
         this.container = document.createElement('div');
+        this.container.classList.add('INPUT');
         this.container.id = this.id;
         
         this.container.style.padding = '4px';

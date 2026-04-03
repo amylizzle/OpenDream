@@ -16,7 +16,7 @@ export class ControlBar extends InterfaceControl {
 
     public createUIElement(): HTMLElement {
         const container = document.createElement('div');
-        container.classList.add('control-bar-container');
+        container.classList.add('BAR');
         
         container.style.alignItems = 'center';
         container.style.justifyContent = 'center';

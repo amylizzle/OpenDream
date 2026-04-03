@@ -26,6 +26,7 @@ export class ControlGrid extends InterfaceControl {
     public createUIElement(): HTMLElement {
         const container = document.createElement('div');
         container.id = this.id;
+        container.classList.add('GRID');
         container.style.width = '100%';
         container.style.height = '100%';
         container.style.overflow = 'auto';

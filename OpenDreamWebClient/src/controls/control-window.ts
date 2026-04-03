@@ -61,6 +61,7 @@ export class ControlWindow extends InterfaceControl {
 
         const container = document.createElement('div');
         container.id = this.id;
+        container.classList.add('MAIN');
         container.style.position = 'static';
         container.style.overflow = 'clip';
         container.style.height = '100%';
@@ -69,6 +70,7 @@ export class ControlWindow extends InterfaceControl {
         // Menu container
         this.menuContainer = document.createElement('div');
         this.menuContainer.id = `${this.id}-menu`;
+        this.menuContainer.classList.add('MENU');
         this.menuContainer.style.position = 'static';
         this.menuContainer.style.padding = '0';
         this.menuContainer.style.backgroundColor = '#fff';
