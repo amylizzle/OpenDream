@@ -33,7 +33,7 @@ export class InterfaceMenu extends InterfaceElement {
         this.pauseMenuCreation = true;
 
         for (const menuElement of descriptor.elements) {
-            this.addChild(menuElement);
+            this.AddChild(menuElement);
         }
 
         this.pauseMenuCreation = false;
@@ -50,7 +50,7 @@ export class InterfaceMenu extends InterfaceElement {
         }
     }
 
-    public addChild(descriptor: MenuElementDescriptor): void {
+    public AddChild(descriptor: MenuElementDescriptor): void {
         let element: MenuElement;
         const categoryValue = descriptor.category.asRaw();
         if (!categoryValue) {
@@ -168,11 +168,11 @@ export class MenuElement extends InterfaceElement {
         return menuButton;
     }
 
-    public addChild(descriptor: MenuElementDescriptor): void {
+    public AddChild(descriptor: MenuElementDescriptor): void {
         // Set the child's category to this element
         const updatedDescriptor = descriptor.CreateCopy(descriptor.id.asRaw()) as MenuElementDescriptor;
         updatedDescriptor.category = new DMFPropertyString(this.descriptor.id.asRaw());
         // Pass this on to the parent menu
-        this.parentMenu.addChild(updatedDescriptor);
+        this.parentMenu.AddChild(updatedDescriptor);
     }
 }

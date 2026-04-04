@@ -14,7 +14,7 @@ export class ControlBar extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         const container = document.createElement('div');
         container.classList.add('BAR');
         
@@ -35,7 +35,7 @@ export class ControlBar extends InterfaceControl {
         }
 
         container.appendChild(this.barElement);
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
 
         return container;
     }
@@ -220,7 +220,7 @@ export class ControlBar extends InterfaceControl {
         }
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         // Redraw if canvas-based (arc bar)
         if (this.barElement?.tagName === 'CANVAS') {
             this.drawArcBar(this.barElement as HTMLCanvasElement);
@@ -240,7 +240,7 @@ export class ControlBar extends InterfaceControl {
         }
     }
 
-    public setProperty(property: string, value: string): void {
+    public SetProperty(property: string, value: string): void {
         const underscoreKey = property.replace(/-/g, "_").toLowerCase();
 
         // Handle specific properties that need special updates
@@ -251,7 +251,7 @@ export class ControlBar extends InterfaceControl {
             case 'is_slider':
             case 'angle1':
             case 'angle2':
-                super.setProperty(property, value);
+                super.SetProperty(property, value);
                 // Redraw the bar after value change
                 if (this.barElement) {
                     const parent = this.barElement.parentElement;
@@ -271,7 +271,7 @@ export class ControlBar extends InterfaceControl {
                 return;
         }
 
-        super.setProperty(property, value);
+        super.SetProperty(property, value);
     }
 }
 

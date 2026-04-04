@@ -1,5 +1,6 @@
 import { InterfaceControl } from './interface-control';
 import { ControlDescriptorTab } from '../descriptors/control-descriptors';
+import { DMFPropertyString, type IDMFProperty } from '../DMF/dmf-property';
 
 export class ControlTab extends InterfaceControl {
     private tabContainer: HTMLElement = null!;
@@ -16,7 +17,7 @@ export class ControlTab extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.tabContainer = document.createElement('div');
         this.tabContainer.classList.add('TAB');
         this.tabContainer.id = this.id;
@@ -39,11 +40,11 @@ export class ControlTab extends InterfaceControl {
         this.tabContent.style.backgroundColor = '#fff';
         this.tabContainer.appendChild(this.tabContent);
 
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.tabContainer;
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         // Clear existing tabs
         this.tabs.clear();
         this.tabHeader.innerHTML = '';
@@ -94,7 +95,7 @@ export class ControlTab extends InterfaceControl {
             contentDiv.style.overflow = 'auto';
             
             // Add the tab window's UI element
-            const tabElement = tabWindow.createUIElement();
+            const tabElement = tabWindow.CreateUIElement();
             contentDiv.appendChild(tabElement);
             this.tabContent.appendChild(contentDiv);
 
@@ -123,7 +124,7 @@ export class ControlTab extends InterfaceControl {
             this.selectTab(firstTabId!);
         }
 
-        this.applyDMFLayout(this.tabContainer, this);
+        this.ApplyDMFLayout(this.tabContainer, this);
     }
 
     private selectTab(tabId: string): void {
@@ -146,18 +147,18 @@ export class ControlTab extends InterfaceControl {
         }
     }
 
-    public tryGetProperty(property: string): unknown {
+    public TryGetProperty(property: string): IDMFProperty | undefined {
         switch (property) {
             case 'current-tab':
-                return this.currentTabId || '';
+                return new DMFPropertyString(this.currentTabId || '');
             default:
-                return super.tryGetProperty(property);
+                return super.TryGetProperty(property);
         }
     }
 
-    public shutdown(): void {
+    public Shutdown(): void {
         this.tabs.clear();
-        super.shutdown();
+        super.Shutdown();
     }
 }
 

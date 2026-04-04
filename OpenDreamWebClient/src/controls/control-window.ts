@@ -26,7 +26,7 @@ import { ControlBrowser } from './control-browser';
 import { ControlGrid } from './control-grid';
 import { ControlChild } from './control-child';
 
-import { DMFPropertySize } from '../DMF/dmf-property';
+import { DMFPropertySize, DMFPropertyPos, type IDMFProperty, DMFPropertyBool } from '../DMF/dmf-property';
 import type { DreamWebInterfaceManager } from '../dream-interface-manager';
 
 export class ControlWindow extends InterfaceControl {
@@ -54,10 +54,10 @@ export class ControlWindow extends InterfaceControl {
     constructor(descriptor: WindowDescriptor, interfaceManager: DreamWebInterfaceManager){
         super(descriptor);
         this.interfaceManager = interfaceManager;
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         if (this.isUIElementCreated) {
             const existing = document.getElementById(this.id);
             if (existing) return existing;
@@ -92,12 +92,12 @@ export class ControlWindow extends InterfaceControl {
         container.appendChild(this.paneElement);
 
         this.isUIElementCreated = true;
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         this.createChildControls();
         return container;
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         // Update menu container
         if (this.menuContainer) {
             this.menuContainer.innerHTML = '';
@@ -115,14 +115,18 @@ export class ControlWindow extends InterfaceControl {
         let width = this.descriptor.size.x == 0 ? '100%' : `${this.descriptor.size.x}px`;
         let height = this.descriptor.size.y == 0 ? '100%' : `${this.descriptor.size.y}px`;
 
+        //if we're the main window and we can resize, just full up the starting window
+        if (!this.descriptor.is_pane.value && this.descriptor.is_default){
+            width = '100%';
+            height = '100%';
+        }
+
         if (this.paneElement) {
             this.paneElement.style.width = width;
             this.paneElement.style.height = height;
         }
-        // Update window attributes if not in pane mode
-        if (!this.descriptor.is_pane.value && this.isUIElementCreated) {
-            //this.updateWindowAttributes();
-        }
+
+        
 
         // Set active macro if default
         if (this.descriptor.is_default?.value) {
@@ -131,7 +135,7 @@ export class ControlWindow extends InterfaceControl {
             );
             macroSet?.setActive();
         }
-        this.applyDMFLayout(this.paneElement!, this);
+        this.ApplyDMFLayout(this.paneElement!, this);
     }
 
     private buildMenuBar(container: HTMLElement, menus: any[]): void {
@@ -225,13 +229,12 @@ export class ControlWindow extends InterfaceControl {
     public closeChildWindow(): void {
         if (this.popupWindow && !this.popupWindow.closed) {
             this.popupWindow.close();
+        } else {
+            console.warn(`Attempted to close window ${this.id}, but no popup window was open.`);
         }
     }
 
     public createWindow(): Window | null {
-        if(this.descriptor.is_visible.value === false) {
-            return null;
-        }
         if (this.popupWindow && !this.popupWindow.closed) {
             return this.popupWindow;
         }
@@ -253,7 +256,11 @@ export class ControlWindow extends InterfaceControl {
         }
 
         // Initialize popup window
+        popupWindow.document.body.style = document.body.style.cssText;
         popupWindow.document.title = this.descriptor.title.asRaw();
+        // Add panel element to popup window
+        popupWindow.document.body.innerHTML='';
+        popupWindow.document.body.append(this.CreateUIElement());
 
         // Add event listener for close
         const onBeforeUnload = () => {
@@ -273,11 +280,11 @@ export class ControlWindow extends InterfaceControl {
     public createChildControls(): void {
         const controlDescriptors = this.descriptor.ControlDescriptors || [];
         for (const descriptor of controlDescriptors) {
-            this.addChild(descriptor);
+            this.AddChild(descriptor);
         }
     }
 
-    public addChild(descriptor: ControlDescriptor): void {
+    public AddChild(descriptor: ControlDescriptor): void {
         // Validate descriptor type
         if (descriptor instanceof WindowDescriptor) {
             throw new Error('Cannot add a window to a window');
@@ -368,12 +375,12 @@ export class ControlWindow extends InterfaceControl {
 
         // Add to canvas
         if (this.paneElement) {
-            const element = control.createUIElement();
+            const element = control.CreateUIElement();
             this.paneElement.appendChild(element);        
         }
     }
 
-    public tryGetProperty(property: string): unknown {
+    public TryGetProperty(property: string): IDMFProperty | undefined {
         switch (property) {
             case 'size':
                 if (this.popupWindow) {
@@ -398,55 +405,71 @@ export class ControlWindow extends InterfaceControl {
                         this.popupWindow.outerHeight
                     );
                 }
-                return this.tryGetProperty('size');
+                return this.TryGetProperty('size');
 
             case 'is-minimized':
                 // Browsers don't expose minimization state for popups
-                return false;
+                return new DMFPropertyBool(false);
 
             case 'is-maximized':
                 // Approximate: check if window size is close to screen size
                 if (this.popupWindow) {
-                    return (
+                    return new DMFPropertyBool(
                         this.popupWindow.innerWidth >= screen.width * 0.95 &&
                         this.popupWindow.innerHeight >= screen.height * 0.95
                     );
                 }
-                return false;
+                return new DMFPropertyBool(false);
 
             default:
-                return super.tryGetProperty(property);
+                console.log(`Requested property ${property} on control ${this.id}`);
+                return super.TryGetProperty(property);
         }
     }
 
-    public setProperty(property: string, value: string): void {
+    public SetProperty(property: string, value: string): void {
+        console.log(`Setting property ${property} to ${value} on control ${this.id}`);
         switch (property) {
             case 'size':
                 if (this.popupWindow) {
                     // Parse size string (e.g., "800,600")
-                    const parts = value.split(',');
-                    const width = parseInt(parts[0], 10);
-                    const height = parseInt(parts[1], 10);
+                    const size:DMFPropertySize  = new DMFPropertySize(value);
+                    const width = size.x;
+                    const height = size.y;
                     if (!isNaN(width) && !isNaN(height)) {
                         this.popupWindow.resizeTo(width, height);
                     }
                 }
-                return;
-
+                break;
             case 'pos':
                 if (this.popupWindow) {
-                    // Parse position string (e.g., "100,200")
-                    const parts = value.split(',');
-                    const x = parseInt(parts[0], 10);
-                    const y = parseInt(parts[1], 10);
+                    // Parse position string (e.g., "100,100")
+                    const pos:DMFPropertyPos  = new DMFPropertyPos(value);
+                    const x = pos.x;
+                    const y = pos.y;
                     if (!isNaN(x) && !isNaN(y)) {
                         this.popupWindow.moveTo(x, y);
                     }
                 }
-                return;
+                break;
+            case 'is-visible':
+                if (this.descriptor.is_pane.value) {
+                    if (value === 'true') {
+                        this.paneElement?.style.setProperty('display', 'block', 'important');
+                    } else {
+                        this.paneElement?.style.setProperty('display', 'none', 'important');
+                    }
+                }
+                else
+                    if (value === 'true') {
+                        this.createWindow();
+                    } else {
+                        this.closeChildWindow();
+                    }
+                break;
         }
 
-        super.setProperty(property, value);
+        super.SetProperty(property, value);
     }
 
     public setStatus(status: string): void {
@@ -465,11 +488,11 @@ export class ControlWindow extends InterfaceControl {
         this.interfaceManager?.RunCommand(command);
     }
 
-    public shutdown(): void {
+    public Shutdown(): void {
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
         }
         this.closeChildWindow();
-        super.shutdown();
+        super.Shutdown();
     }
 }

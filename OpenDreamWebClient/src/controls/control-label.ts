@@ -13,7 +13,7 @@ export class ControlLabel extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
         this.container.classList.add('LABEL');
@@ -36,11 +36,11 @@ export class ControlLabel extends InterfaceControl {
         this.label.style.fontStyle = this.descriptor.font_style.value || 'inherit';
 
         this.container.appendChild(this.label);
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.container;
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         
 
         if (!this.label) return;
@@ -66,7 +66,7 @@ export class ControlLabel extends InterfaceControl {
         // Apply alignment
         const align = this.descriptor.align.value.toLowerCase();
         this.applyAlignment(align);
-        this.applyDMFLayout(this.container, this);
+        this.ApplyDMFLayout(this.container, this);
     }
 
     private applyAlignment(align: string): void {

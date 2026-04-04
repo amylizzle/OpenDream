@@ -45,7 +45,7 @@ export class ControlInfo extends InterfaceControl {
         }
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;       
         this.container.classList.add('INFO');
@@ -72,11 +72,11 @@ export class ControlInfo extends InterfaceControl {
         this.tabContent.style.backgroundColor = '#fff';
         this.container.appendChild(this.tabContent);
 
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.container;
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         
 
         if (!this.tabHeader) return;
@@ -90,7 +90,7 @@ export class ControlInfo extends InterfaceControl {
         if (this.descriptor.on_show.value) {
             this.windowControl?.windowControl?.InterfaceManager?.RunCommand(this.descriptor.on_show.value);
         }
-        this.applyDMFLayout(this.container, this);
+        this.ApplyDMFLayout(this.container, this);
     }
 
     public selectStatPanel(statPanelName: string): void {

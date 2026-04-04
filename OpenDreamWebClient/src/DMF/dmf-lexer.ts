@@ -114,14 +114,8 @@ export class DMFLexer {
             }
             case '?': {
                 this.Advance();
+                console.log(`Parsed ternary operator '?'`);
                 return new Token(TokenType.Ternary, c);
-            }
-            case ':': {
-                if (!this._parsingAttributeName) {
-                    this.Advance();
-                    return new Token(TokenType.Colon, c);
-                }
-                break;
             }
             case '[': {
                 this.Advance();
@@ -142,6 +136,13 @@ export class DMFLexer {
                 textBuilder.push(']]');
                 return new Token(TokenType.Lookup, textBuilder.join(''));
             }
+            //Intentional fall through - in C# we just did "case ':' when _parsingAttributeName", but in TS we have to do it inside the case block
+            case ':': { 
+                if (this._parsingAttributeName) {
+                    this.Advance();
+                    return new Token(TokenType.Colon, c);
+                }
+            }            
             default: {
                 if (!this.isAscii(c)) {
                     this.Advance();
@@ -151,14 +152,15 @@ export class DMFLexer {
                 const textBuilder: string[] = [c];
 
                 while (!this.isWhitespace(this.Advance()) &&
-                       this.GetCurrent() !== ';' &&
-                       this.GetCurrent() !== '=' &&
-                       this.GetCurrent() !== '?' &&
-                       this.GetCurrent() !== ':' &&
-                       !(this._parsingAttributeName && this.GetCurrent() === '.') &&
-                       !this.AtEndOfSource) {
-                    textBuilder.push(this.GetCurrent());
-                }
+                    this.GetCurrent() != ';' && 
+                    this.GetCurrent() != '=' &&
+                    this.GetCurrent() != '?' &&
+                    this.GetCurrent() != ':' &&
+                    !(this._parsingAttributeName && this.GetCurrent() == '.') && !this.AtEndOfSource) 
+                    {
+                        textBuilder.push(this.GetCurrent());
+                    }       
+
 
                 const text = textBuilder.join('');
                 let tokenType: TokenType;
@@ -181,17 +183,16 @@ export class DMFLexer {
                             tokenType = TokenType.Attribute;
                             break;
                     }
+                    this._parsingAttributeName = false;
                 } else {
                     tokenType = TokenType.Value;
+                    console.log(`Parsed value token: ${text}`);
+                    this._parsingAttributeName = true;
                 }
 
                 return new Token(tokenType, text);
             }
         }
-
-        // Handle the case when none of the above cases match
-        this.Advance();
-        return new Token(TokenType.Error, `Unexpected character: ${c}`);
     }
 
     private isWhitespace(char: string): boolean {

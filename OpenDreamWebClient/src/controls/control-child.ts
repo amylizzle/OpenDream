@@ -1,6 +1,6 @@
 import { InterfaceControl } from './interface-control';
 import { ControlDescriptorChild } from '../descriptors/control-descriptors';
-import { DMFPropertySize } from '../DMF/dmf-property';
+import { DMFPropertySize, type IDMFProperty } from '../DMF/dmf-property';
 
 export class ControlChild extends InterfaceControl {
     private splitterContainer: HTMLElement = null!;
@@ -19,7 +19,7 @@ export class ControlChild extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.splitterContainer = document.createElement('div');
         this.splitterContainer.id = this.id;
         this.splitterContainer.classList.add('CHILD');
@@ -56,7 +56,7 @@ export class ControlChild extends InterfaceControl {
         // Update the orientation layout
         this.updateOrientation();
         this.updateSplitterPosition();
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.splitterContainer;
     }
 
@@ -124,7 +124,7 @@ export class ControlChild extends InterfaceControl {
         }
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         if (!this.splitterHandle) return;
 
         // Update visibility of splitter handle
@@ -136,7 +136,7 @@ export class ControlChild extends InterfaceControl {
             const leftControl = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.left.asRaw());
             if (leftControl){
                 leftControl.descriptor.size = new DMFPropertySize(0,0); //todo this is a hack, should probably just have a layout override property
-                const leftElement = leftControl?.createUIElement();
+                const leftElement = leftControl?.CreateUIElement();
                 if (leftElement) {
                     this.leftPanel.innerHTML = '';
                     this.leftPanel.appendChild(leftElement);
@@ -148,30 +148,21 @@ export class ControlChild extends InterfaceControl {
             const rightControl = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.right.asRaw());
             if (rightControl){
                 rightControl.descriptor.size = new DMFPropertySize(0,0);
-                const rightElement = rightControl?.createUIElement();
+                const rightElement = rightControl?.CreateUIElement();
                 if (rightElement) {
                     this.rightPanel.innerHTML = '';
                     this.rightPanel.appendChild(rightElement);
                 }
             }
         }
-        this.applyDMFLayout(this.splitterContainer, this);
+        this.ApplyDMFLayout(this.splitterContainer, this);
         // also the left and right panels?
 
     }
 
-    public tryGetProperty(property: string): unknown {
-        switch (property) {
-            case 'splitter':
-                return this.descriptor.splitter.value;
-            default:
-                return super.tryGetProperty(property);
-        }
-    }
-
-    public shutdown(): void {
+    public Shutdown(): void {
         this.isDragging = false;
-        super.shutdown();
+        super.Shutdown();
     }
 }
 

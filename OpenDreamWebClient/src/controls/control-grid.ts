@@ -1,5 +1,6 @@
 import { InterfaceControl } from './interface-control';
 import { ControlDescriptorGrid } from '../descriptors/control-descriptors';
+import type { IDMFProperty } from '../DMF/dmf-property';
 
 interface GridCell {
     content: string;
@@ -23,7 +24,7 @@ export class ControlGrid extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         const container = document.createElement('div');
         container.id = this.id;
         container.classList.add('GRID');
@@ -46,7 +47,7 @@ export class ControlGrid extends InterfaceControl {
         container.appendChild(this.gridTable);
 
         this.initializeGrid();
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
 
         return container;
     }
@@ -163,7 +164,7 @@ export class ControlGrid extends InterfaceControl {
         // For now, just show text representation
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         
 
         // Re-initialize grid if cells changed
@@ -179,7 +180,7 @@ export class ControlGrid extends InterfaceControl {
         // Update current cell
         this.currentRow = Math.max(0, Math.min(this.descriptor.current_cell.y - 1, this.descriptor.cells.y - 1));
         this.currentCol = Math.max(0, Math.min(this.descriptor.current_cell.x - 1, this.descriptor.cells.x - 1));
-        this.applyDMFLayout(this.gridTable, this);
+        this.ApplyDMFLayout(this.gridTable, this);
     }
 
     public output(value: string, data?: string): void {
@@ -234,22 +235,9 @@ export class ControlGrid extends InterfaceControl {
         this.renderGrid();
     }
 
-    public tryGetProperty(property: string): unknown {
-        switch (property) {
-            case 'cells':
-                return `${this.descriptor.cells.x}x${this.descriptor.cells.y}`;
-            case 'current-cell':
-                return `${this.currentCol + 1},${this.currentRow + 1}`;
-            case 'cell-span':
-                const cell = this.cells[this.currentRow]?.[this.currentCol];
-                return cell ? `${cell.colspan}x${cell.rowspan}` : '1x1';
-            default:
-                return super.tryGetProperty(property);
-        }
-    }
 
-    public setProperty(property: string, value: string, manualWinset = false): void {
-        super.setProperty(property, value, manualWinset);
+    public SetProperty(property: string, value: string, manualWinset = false): void {
+        super.SetProperty(property, value, manualWinset);
 
         switch (property) {
             case 'cells':

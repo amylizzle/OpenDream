@@ -15,7 +15,7 @@ export class ControlBrowser extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.id = this.id;
         this.container.classList.add('BROWSER');
@@ -56,17 +56,17 @@ export class ControlBrowser extends InterfaceControl {
         // Set up BYOND protocol link interceptor in iframe
         this.setupByondProtocolHandling();
 
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.container;
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         
 
         if (this.descriptor.on_show.value) {
             this.windowControl?.windowControl?.InterfaceManager?.RunCommand(this.descriptor.on_show.value);
         }
-        this.applyDMFLayout(this.container, this);
+        this.ApplyDMFLayout(this.container, this);
     }
 
     public setFileSource(filepath: string | null): void {
@@ -256,11 +256,11 @@ export class ControlBrowser extends InterfaceControl {
         }
     }
 
-    public shutdown(): void {
+    public Shutdown(): void {
         if (this.messageListenerHandler) {
             window.removeEventListener('message', this.messageListenerHandler);
         }
-        super.shutdown();
+        super.Shutdown();
     }
 }
 

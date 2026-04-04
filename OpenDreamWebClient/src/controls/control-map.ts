@@ -17,11 +17,11 @@ export class ControlMap extends InterfaceControl {
         }
     }
 
-    protected updateElementDescriptor(): void {
-        this.applyDMFLayout(this.mapElement!, this);
+    protected UpdateElementDescriptor(): void {
+        this.ApplyDMFLayout(this.mapElement!, this);
     }    
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.mapElement = document.createElement('div');
         this.mapElement.classList.add('MAP');
         this.mapElement.id = this.id;

@@ -187,11 +187,11 @@ export class InterfaceMacroSet extends InterfaceElement {
         this.inputContextName = `${InterfaceMacroSet.InputContextPrefix}${this.id}`;
 
         for (const macro of descriptor.macros) {
-            this.addChild(macro);
+            this.AddChild(macro);
         }
     }
 
-    public addChild(descriptor: MacroDescriptor): void {
+    public AddChild(descriptor: MacroDescriptor): void {
         this.macros.set(descriptor.id.value, new InterfaceMacro(
             this.inputContextName,
             descriptor,

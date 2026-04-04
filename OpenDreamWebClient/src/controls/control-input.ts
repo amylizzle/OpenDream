@@ -1,5 +1,6 @@
 import { InterfaceControl } from './interface-control';
 import { ControlDescriptorInput } from '../descriptors/control-descriptors';
+import { DMFPropertyString, type IDMFProperty } from '../DMF/dmf-property';
 
 export class ControlInput extends InterfaceControl {
     private inputElement: HTMLInputElement | HTMLTextAreaElement = null!;
@@ -14,7 +15,7 @@ export class ControlInput extends InterfaceControl {
         super(descriptor, windowControl);
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.container = document.createElement('div');
         this.container.classList.add('INPUT');
         this.container.id = this.id;
@@ -51,7 +52,7 @@ export class ControlInput extends InterfaceControl {
         }
 
         this.container.appendChild(this.inputElement);
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.container;
     }
 
@@ -62,7 +63,7 @@ export class ControlInput extends InterfaceControl {
         }
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         if (!this.inputElement) return;
 
         // Update styling
@@ -81,7 +82,7 @@ export class ControlInput extends InterfaceControl {
         }
 
         this.resetText();
-        this.applyDMFLayout(this.container, this);
+        this.ApplyDMFLayout(this.container, this);
     }
 
     private onTextEntered(text: string): void {
@@ -114,16 +115,16 @@ export class ControlInput extends InterfaceControl {
         }
     }
 
-    public tryGetProperty(property: string): unknown {
+    public TryGetProperty(property: string): IDMFProperty | undefined {
         switch (property) {
             case 'text':
-                return this.inputElement.value;
+                return new DMFPropertyString(this.inputElement.value);
             default:
-                return super.tryGetProperty(property);
+                return super.TryGetProperty(property);
         }
     }
 
-    public setProperty(property: string, value: string, manualWinset = false): void {
+    public SetProperty(property: string, value: string, manualWinset = false): void {
         switch (property) {
             case 'focus':
                 if (value === 'true' || value === '1') {
@@ -134,7 +135,7 @@ export class ControlInput extends InterfaceControl {
                 this.inputElement.value = value;
                 break;
             default:
-                super.setProperty(property, value, manualWinset);
+                super.SetProperty(property, value, manualWinset);
                 break;
         }
     }

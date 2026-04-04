@@ -1,4 +1,4 @@
-interface IDMFProperty {
+export interface IDMFProperty {
     asArg(): string;
     asEscaped(): string;
     asString(): string;
@@ -7,6 +7,7 @@ interface IDMFProperty {
     asJsonDM(): string;
     asRaw(): string;
     asSnowflake(): string;
+    equals(comparison: string | undefined): boolean
 }
 
 /*
@@ -74,6 +75,14 @@ export class DMFPropertyString implements IDMFProperty {
     toString(): string {
         return this.asRaw();
     }
+
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        } else {
+            return this.value === new DMFPropertyString(comparison).value;
+        }
+    }    
 }
 
 export class DMFPropertyNum implements IDMFProperty {
@@ -137,6 +146,14 @@ export class DMFPropertyNum implements IDMFProperty {
     toString(): string {
         return this.asRaw();
     }
+
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        } else {
+            return this.value === new DMFPropertyNum(comparison).value;
+        }
+    } 
 }
 
 interface Vector2i {
@@ -204,6 +221,15 @@ export class DMFPropertyVec2 implements IDMFProperty {
     toString(): string {
         return this.asRaw();
     }
+
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        } else {
+            const comparisonObj = new DMFPropertyVec2(comparison, undefined);
+            return this.x === comparisonObj.x && this.y === comparisonObj.y;
+        }
+    } 
 }
 
 export class DMFPropertySize implements IDMFProperty {
@@ -254,6 +280,14 @@ export class DMFPropertySize implements IDMFProperty {
     asSnowflake(): string {
         return this._value.asSnowflake();
     }
+
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        } else {
+            return this._value.equals(comparison);
+        }
+    }     
 }
 
 export class DMFPropertyPos implements IDMFProperty {
@@ -302,6 +336,14 @@ export class DMFPropertyPos implements IDMFProperty {
     asSnowflake(): string {
         return this._value.asSnowflake();
     }
+
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        } else {
+            return this._value.equals(comparison);
+        }
+    } 
 }
 
 export class DMFPropertyColor implements IDMFProperty {
@@ -373,6 +415,14 @@ export class DMFPropertyColor implements IDMFProperty {
     toString(): string {
         return this.asRaw();
     }
+
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        } else {
+            return this.value === new DMFPropertyColor(comparison).value;
+        }
+    }  
 }
 
 export class DMFPropertyBool implements IDMFProperty {
@@ -422,7 +472,10 @@ export class DMFPropertyBool implements IDMFProperty {
         return this.asRaw();
     }
 
-    equals(comparison: string): boolean {
+    equals(comparison: string | undefined): boolean {
+        if (comparison === undefined) {
+            return false;
+        }
         const comparisonBool = new DMFPropertyBool(comparison);
         return this.value === comparisonBool.value;
     }

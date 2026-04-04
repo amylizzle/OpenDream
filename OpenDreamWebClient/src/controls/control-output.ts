@@ -19,7 +19,7 @@ export class ControlOutput extends InterfaceControl {
         }
     }
 
-    public createUIElement(): HTMLElement {
+    public CreateUIElement(): HTMLElement {
         this.outputContainer = document.createElement('div');
         this.outputContainer.classList.add('OUTPUT');
         this.outputContainer.id = this.id;
@@ -36,11 +36,11 @@ export class ControlOutput extends InterfaceControl {
             ? this.descriptor.text_color.value
             : '#000000';
 
-        this.updateElementDescriptor();
+        this.UpdateElementDescriptor();
         return this.outputContainer;
     }
 
-    protected updateElementDescriptor(): void {
+    protected UpdateElementDescriptor(): void {
         
 
         if (!this.outputContainer) return;
@@ -55,7 +55,7 @@ export class ControlOutput extends InterfaceControl {
         this.outputContainer.style.fontFamily = this.descriptor.font_family.value || 'monospace';
         this.outputContainer.style.fontSize = this.descriptor.font_size.value > 0 ? `${this.descriptor.font_size.value}px` : '12px';
 
-        this.applyDMFLayout(this.outputContainer, this);
+        this.ApplyDMFLayout(this.outputContainer, this);
     }
 
     public output(value: string, data?: string): void {

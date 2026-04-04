@@ -35,7 +35,6 @@ async function main() {
     const dmfSource = await loadDMF()
     const interfaceManager = new DreamWebInterfaceManager()
     interfaceManager.LoadInterfaceFromSource(dmfSource)
-    document.getElementById('app')?.append(interfaceManager.DefaultWindow?.createUIElement()!);
 
     // // Load JSONs
     // const appearances = await loadAppearances()
