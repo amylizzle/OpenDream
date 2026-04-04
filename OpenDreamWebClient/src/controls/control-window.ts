@@ -87,8 +87,7 @@ export class ControlWindow extends InterfaceControl {
         this.paneElement.id = `${this.id}-pane`;
         this.paneElement.style.position = 'static';
 
-        const bgColor = this.descriptor.background_color?.value || '#f0f0f0';
-        this.paneElement.style.backgroundColor = bgColor;
+        this.paneElement.style.backgroundColor = this.descriptor.background_color.value;
         container.appendChild(this.paneElement);
 
         this.isUIElementCreated = true;
@@ -247,7 +246,7 @@ export class ControlWindow extends InterfaceControl {
         const popupWindow = window.open(
             '',
             this.id,
-            `width=${width},height=${height}`
+            `width=${width},height=${height},menubar=no,toolbar=no,location=no`
         );
 
         if (!popupWindow) {

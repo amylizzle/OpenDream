@@ -68,7 +68,7 @@ export abstract class ControlDescriptor extends ElementDescriptor {
     public flash: DMFPropertyNum = new DMFPropertyNum(0);
     public saved_params: DMFPropertyString = new DMFPropertyString("");
     public text_color: DMFPropertyColor = new DMFPropertyColor('#000000');
-    public background_color: DMFPropertyColor = new DMFPropertyColor('transparent');
+    public background_color: DMFPropertyColor = new DMFPropertyColor('#fff');
     public is_default: DMFPropertyBool = new DMFPropertyBool(false);
     public is_disabled: DMFPropertyBool = new DMFPropertyBool(false);
     public focus: DMFPropertyBool = new DMFPropertyBool(false);
