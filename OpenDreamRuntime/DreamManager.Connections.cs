@@ -475,8 +475,14 @@ public sealed class DumpDataCommand : IConsoleCommand {
 
         var dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
         // Dump resources - index is ID
-        var resources = dreamResourceManager.GetAllResources().Where(r => r is IconResource).ToList();
-        var resourcesJson = JsonSerializer.Serialize(resources, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+        List<IconResource> resources = dreamResourceManager.GetAllResources().Where(r => r is IconResource).Select(r => (IconResource)r).ToList();
+        var DMIBase = resources.Select(r => new {
+            Id = r.Id,
+            ResourceData = r.ResourceData,
+            ResourcePath = r.ResourcePath,
+            DMIStates = r.DMI.ExportAsText()
+        });
+        var resourcesJson = JsonSerializer.Serialize(DMIBase, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
         File.WriteAllText("resources.json", resourcesJson);
         shell.WriteLine($"Dumped {resources.Count} resources to resources.json");
 

@@ -1,5 +1,6 @@
 import { InterfaceControl } from './interface-control';
 import { ControlDescriptorMap } from '../descriptors/control-descriptors';
+import { CreateRenderer } from '../renderer/map-main';
 
 export class ControlMap extends InterfaceControl {
     private mapElement: HTMLElement | undefined;
@@ -25,14 +26,10 @@ export class ControlMap extends InterfaceControl {
         this.mapElement = document.createElement('div');
         this.mapElement.classList.add('MAP');
         this.mapElement.id = this.id;
-        
-        const img = document.createElement('img');
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.src = 'src/assets/map_placeholder.png';
-        img.alt = 'Map';
-        img.style.objectFit = 'cover';
-        this.mapElement.appendChild(img);
+        //todo - why is resizing not working?
+        this.UpdateElementDescriptor();
+        this.mapElement.innerHTML=''
+        CreateRenderer(this.mapElement).then((canvas) => this.mapElement?.appendChild(canvas))
         return this.mapElement;
     }
 }
