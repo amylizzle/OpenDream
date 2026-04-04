@@ -67,12 +67,12 @@ export class DreamWebInterfaceManager {
             }
         }
 
-        // // Set default output, info, and map controls if specified
-        // if (this.DefaultWindow) {
-        //     this.DefaultOutput = this.DefaultWindow.Controls.get(this.DefaultWindow.descriptor.output) as ControlOutput
-        //     this.DefaultInfo = this.DefaultWindow.Controls.get(this.DefaultWindow.descriptor.info) as ControlInfo
-        //     this.DefaultMap = this.DefaultWindow.Controls.get(this.DefaultWindow.descriptor.map) as ControlMap
-        // }
+        // Set default output, info, and map controls if specified
+        if (this.DefaultWindow) {
+            this.DefaultOutput = this.DefaultWindow.defaultOutput;
+            this.DefaultInfo = this.DefaultWindow.defaultInfo;
+            this.DefaultMap = this.DefaultWindow.defaultMap;
+        }
 
     }
 

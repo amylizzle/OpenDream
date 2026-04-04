@@ -37,6 +37,12 @@ export class ControlInfo extends InterfaceControl {
 
     constructor(descriptor: ControlDescriptorInfo, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
+        if (windowControl && this.descriptor.is_default.value) {
+            if(windowControl.defaultInfo) {
+                console.warn(`Window ${windowControl.id} already has a default info control (${windowControl.defaultInfo.id}). Overriding with ${this.id}.`);
+            }
+            windowControl.defaultInfo = this;
+        }
     }
 
     public createUIElement(): HTMLElement {

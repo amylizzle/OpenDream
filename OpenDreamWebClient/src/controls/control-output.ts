@@ -11,6 +11,12 @@ export class ControlOutput extends InterfaceControl {
 
     constructor(descriptor: ControlDescriptorOutput, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
+        if (windowControl && this.descriptor.is_default.value) {
+            if(windowControl.defaultOutput) {
+                console.warn(`Window ${windowControl.id} already has a default output control (${windowControl.defaultOutput.id}). Overriding with ${this.id}.`);
+            }
+            windowControl.defaultOutput = this;
+        }
     }
 
     public createUIElement(): HTMLElement {

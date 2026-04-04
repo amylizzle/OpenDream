@@ -39,6 +39,10 @@ export class ControlWindow extends InterfaceControl {
     private paneElement?: HTMLElement;
     private isUIElementCreated = false;
 
+    public defaultOutput?: ControlOutput;
+    public defaultInfo?: ControlInfo;
+    public defaultMap?: ControlMap;
+
     // Reference to interface manager for commands
     private interfaceManager: DreamWebInterfaceManager;
     public get InterfaceManager():DreamWebInterfaceManager { return this.interfaceManager; } // Expose as public property for child controls to access if needed
@@ -378,7 +382,7 @@ export class ControlWindow extends InterfaceControl {
                         this.popupWindow.innerHeight
                     );
                 } else {
-                    return this.descriptor.size || new DMFPropertySize(0, 0);
+                    return this.descriptor.size;
                 }
 
             case 'inner-size':

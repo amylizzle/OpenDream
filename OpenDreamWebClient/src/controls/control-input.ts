@@ -30,7 +30,8 @@ export class ControlInput extends InterfaceControl {
             (this.inputElement as HTMLInputElement).type = this.descriptor.is_password.value ? 'password' : 'text';
         }
 
-        this.inputElement.style.flex = '1';
+        this.inputElement.style.width = '100%';
+        this.inputElement.style.height = this.descriptor.multi_line.value ? '100%' : 'auto';
         this.inputElement.style.padding = '4px';
         this.inputElement.style.border = '1px solid #ccc';
         this.inputElement.style.fontFamily = this.descriptor.font_family.value || 'monospace';

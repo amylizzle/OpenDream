@@ -9,6 +9,12 @@ export class ControlMap extends InterfaceControl {
 
     constructor(descriptor: ControlDescriptorMap, windowControl?: ControlWindow) {
         super(descriptor, windowControl);
+        if (windowControl && this.descriptor.is_default.value) {
+            if(windowControl.defaultMap) {
+                console.warn(`Window ${windowControl.id} already has a default map control (${windowControl.defaultMap.id}). Overriding with ${this.id}.`);
+            }
+            windowControl.defaultMap = this;
+        }
     }
 
     protected updateElementDescriptor(): void {
