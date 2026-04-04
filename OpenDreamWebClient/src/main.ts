@@ -35,14 +35,6 @@ async function main() {
     const dmfSource = await loadDMF()
     const interfaceManager = new DreamWebInterfaceManager()
     interfaceManager.LoadInterfaceFromSource(dmfSource)
-
-    // // Load JSONs
-    // const appearances = await loadAppearances()
-    // const entities = await loadEntities()
-    // const map = await loadMap()
-    // const resources = await loadResources()
-
-    // console.log('Loaded data:', { appearances, entities, map, resources })
   } catch (error) {
     console.error('Error:', error)
   }

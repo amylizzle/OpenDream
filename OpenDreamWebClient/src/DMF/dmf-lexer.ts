@@ -114,7 +114,6 @@ export class DMFLexer {
             }
             case '?': {
                 this.Advance();
-                console.log(`Parsed ternary operator '?'`);
                 return new Token(TokenType.Ternary, c);
             }
             case '[': {
@@ -186,7 +185,6 @@ export class DMFLexer {
                     this._parsingAttributeName = false;
                 } else {
                     tokenType = TokenType.Value;
-                    console.log(`Parsed value token: ${text}`);
                     this._parsingAttributeName = true;
                 }
 

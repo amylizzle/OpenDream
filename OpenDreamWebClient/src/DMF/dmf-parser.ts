@@ -270,7 +270,6 @@ export class DMFParser {
                 // Re-queue tokens (Ew)
                 this._tokenQueue.push(this._currentToken);
                 this._currentToken = attributeToken;
-                console.log(`Requeud token after failed attribute parse: ${this._currentToken.Type}(${this._currentToken.Text})`);
                 return { success: false, winSet: null };
             }
 
@@ -294,11 +293,8 @@ export class DMFParser {
             } else if (this.Check(TokenType.Ternary)) {
                 const trueStatements: DMFWinSet[] = [];
                 const falseStatements: DMFWinSet[] = [];
-                console.log(`Parsing ternary statements for attribute "${attributeToken.Text}" with value "${valueText}"`);
                 let result = this.TryGetAttribute();
-                console.log(`Ternary parsing result: success=${result.success}, winSet=${result.winSet}`);
                 while (result.success) {
-                    console.log(`Parsed true statement for ternary on attribute "${attributeToken.Text}": ${result.winSet.attribute} = ${result.winSet.value}`);
                     if (result.winSet) trueStatements.push(result.winSet);
                     result = this.TryGetAttribute();
                 }
@@ -318,7 +314,6 @@ export class DMFParser {
             winSet = new DMFWinSet(element, attributeToken.Text, valueText);
             return { success: true, winSet };
         }
-        console.log(`Current token ${attributeToken.Type}(${attributeToken.Text}) is not a valid attribute token`);
         return { success: false, winSet: null };
     }
 }

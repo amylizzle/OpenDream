@@ -421,13 +421,11 @@ export class ControlWindow extends InterfaceControl {
                 return new DMFPropertyBool(false);
 
             default:
-                console.log(`Requested property ${property} on control ${this.id}`);
                 return super.TryGetProperty(property);
         }
     }
 
     public SetProperty(property: string, value: string): void {
-        console.log(`Setting property ${property} to ${value} on control ${this.id}`);
         switch (property) {
             case 'size':
                 if (this.popupWindow) {

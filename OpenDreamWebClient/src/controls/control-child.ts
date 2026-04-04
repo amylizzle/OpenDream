@@ -100,11 +100,9 @@ export class ControlChild extends InterfaceControl {
 
     private updateOrientation(): void {
         const isVertical = this.descriptor.is_vert.value;
-        console.log(`Updating orientation for control ${this.id} to ${isVertical ? 'vertical' : 'horizontal'}`);
         this.updateSplitterPosition();
 
         if (!isVertical) {
-            console.log(`Setting control ${this.id} to vertical orientation`);
             this.splitterHandle.style.width = '100%';
             this.splitterHandle.style.height = '5px';
             this.splitterHandle.style.cursor = 'row-resize';
@@ -113,7 +111,6 @@ export class ControlChild extends InterfaceControl {
             this.splitterHandle.style.borderLeft = 'none';
             this.splitterHandle.style.borderRight = 'none';
         } else {
-            console.log(`Setting control ${this.id} to horizontal orientation`);
             this.splitterHandle.style.width = '5px';
             this.splitterHandle.style.height = '100%';
             this.splitterHandle.style.cursor = 'col-resize';
@@ -132,7 +129,6 @@ export class ControlChild extends InterfaceControl {
 
         // Update left and right content if panels exist
         if (this.leftPanel) {
-            console.log(`Updating left panel content for control ${this.id} to ${this.descriptor.left.asRaw()}`);
             const leftControl = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.left.asRaw());
             if (leftControl){
                 leftControl.descriptor.size = new DMFPropertySize(0,0); //todo this is a hack, should probably just have a layout override property
@@ -144,7 +140,6 @@ export class ControlChild extends InterfaceControl {
             }
         }
         if (this.rightPanel) {
-            console.log(`Updating right panel content for control ${this.id} to ${this.descriptor.right.asRaw()}`);
             const rightControl = this.windowControl?.InterfaceManager.Windows.get(this.descriptor.right.asRaw());
             if (rightControl){
                 rightControl.descriptor.size = new DMFPropertySize(0,0);

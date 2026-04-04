@@ -55,7 +55,7 @@ async function loadTexturesIntoCache() {
         }
     }
     
-    console.log("All assets cached by ID.");
+    console.log("Loaded all spritesheets.");
 }
 
 function parseDmiToPixi(dmiText: string, imageUrl: string = "spritesheet.png"): SpritesheetData {
@@ -179,7 +179,6 @@ async function getTexture(resourceId:number, iconState:string, iconDir:number):P
     if(!dmi)
         throw new Error(`Invalid DMIResource requested! ${resourceId} ${iconState} ${iconDir}`)
 
-    console.dir(dmi)
     if(!iconState)
         return dmi.animations[":::DEFAULT:::"]
     return dmi.animations[`anim_${iconState}`]
@@ -220,18 +219,16 @@ export async function CreateRenderer(parent:HTMLElement):Promise<HTMLCanvasEleme
   console.log(`Rendering ${entities.length} entities`)
   // and now the entities...
   for(const ent of entities){
-    // console.dir(ent)
     if(ent.Sprite == 0) //default appearance, don't render
         continue;
     const entAppearance = appearanceCache.get(ent.Sprite)!
     if(!entAppearance){
-        console.log(`Couldn't find appearance ${ent.Sprite}!`)
+        console.error(`Couldn't find appearance ${ent.Sprite}!`)
         continue;
     }
-    // console.dir(entAppearance)
     const texture = await getTexture(entAppearance.Icon, entAppearance.IconState, entAppearance.Direction);
     if(!texture){
-        console.warn(`Failed to get texture for ${entAppearance.Icon}, ${entAppearance.IconState}, ${entAppearance.Direction}`)
+        console.error(`Failed to get texture for ${entAppearance.Icon}, ${entAppearance.IconState}, ${entAppearance.Direction}`)
         continue;
     }
     const sprite = new AnimatedSprite(texture)

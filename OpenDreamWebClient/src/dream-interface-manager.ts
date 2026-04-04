@@ -340,7 +340,6 @@ export class DreamWebInterfaceManager {
     }
 
     public WinSet(controlId: string | null, winsetParams: string): void {
-        console.log(`Processing WinSet for controlId="${controlId}" with params="${winsetParams}"`);
         let parser: DMFParser;
         try {
             const lexer = new DMFLexer(winsetParams);
@@ -362,7 +361,6 @@ export class DreamWebInterfaceManager {
 
         if (!controlId) {
             const winSets = parser.GlobalWinSet();
-            console.dir(winSets)
             if (checkParserErrors())
                 return;
 
@@ -388,17 +386,12 @@ export class DreamWebInterfaceManager {
                         if (!conditionalElement) {
                             console.error(`Invalid element on ternary condition "${elementId}"`);
                         } else {
-                            console.log(`Evaluating ternary condition on element "${elementId}" for attribute "${winSet.attribute}" with value "${winSet.value}"`);
                             if (conditionalElement.TryGetProperty(winSet.attribute)?.equals(winSet.value)) {
-                                console.log(`Condition is true; applying true statements for element "${elementId}"`);
-                                console.dir(winSet.trueStatements);
                                 for (const statement of winSet.trueStatements) {
-                                    
                                     const statementElementId = statement.element ?? elementId;
                                     const statementElement = this.FindElementWithId(statementElementId);
                                     if (statementElement) {
                                         const holder = { hadWinget: false };
-                                        console.log(`Applying true statement to element "${statementElementId}" for attribute "${statement.attribute}" with value "${statement.value}"`);
                                         statementElement.SetProperty(statement.attribute, this.HandleEmbeddedWinget(statementElementId, statement.value, holder), true);
                                     } else {
                                         console.error(`Invalid element on ternary "${statementElementId}"`);
