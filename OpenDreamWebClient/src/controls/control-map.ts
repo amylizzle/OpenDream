@@ -29,7 +29,9 @@ export class ControlMap extends InterfaceControl {
         //todo - why is resizing not working?
         this.UpdateElementDescriptor();
         this.mapElement.innerHTML=''
-        CreateRenderer(this.mapElement).then((canvas) => this.mapElement?.appendChild(canvas))
+        CreateRenderer(this.mapElement).then((canvas) => this.mapElement?.appendChild(canvas)).catch((err) => {
+            console.error(`Unable to create map renderer, an error occurred during in initialisation ${err}`)
+        })
         return this.mapElement;
     }
 }

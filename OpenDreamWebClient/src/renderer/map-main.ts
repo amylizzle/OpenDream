@@ -1,13 +1,8 @@
 // description: This example demonstrates how to use a Container to group and manipulate multiple sprites
-import { Application, Assets, Container, AnimatedSprite, Spritesheet, type SpritesheetData, Texture, Sprite, Color, RenderGroup } from 'pixi.js';
+import { Application, Assets, Container, AnimatedSprite, Spritesheet, type SpritesheetData, Texture, Sprite, Color, Point } from 'pixi.js';
+import { parseDmiToPixi } from './dmiparser';
+import 'pixi.js/math-extras';
 
-interface DmiState {
-    name: string;
-    dirs: number;
-    frames: number;
-    delay?: number[];
-    rewind?: boolean;
-}
 
 interface Appearance {
     Id: number;
@@ -17,8 +12,8 @@ interface Appearance {
     IconState: string | null;
     Direction: number;
     InheritsDirection: boolean;   // Inherits direction when used as an overlay
-    PixelOffset:Vector2Math;   // pixel_x and pixel_y
-    PixelOffset2:Vector2Math;  // pixel_w and pixel_z
+    PixelOffset: {X:number, Y:number};   // pixel_x and pixel_y
+    PixelOffset2: {X:number, Y:number};  // pixel_w and pixel_z
     Color: Color; 
     Alpha: number; 
     GlideSize: number;
@@ -38,8 +33,8 @@ interface Appearance {
     Filters: Object[];
     Verbs: number[];
     ColorMatrix: Object;
-    MaptextSize:Vector2Math; 
-    MaptextOffset: Vector2Math;
+    MaptextSize:Point; 
+    MaptextOffset: Point;
     Maptext:string | null ;
     EnabledMouseEvents: number;
     MouseDragPointer:number ;
@@ -48,10 +43,10 @@ interface Appearance {
     MouseDropPointer: number;
 
     /// <summary> The Transform property of this appearance, in [a,d,b,e,c,f] order</summary>
-     Transform:number[];
+    Transform:number[];
 
     // PixelOffset2 behaves the same as PixelOffset in top-down mode, so this is used
-    //TotalPixelOffset: Vector2Math => PixelOffset + PixelOffset2;
+    //TotalPixelOffset: Point => PixelOffset + PixelOffset2;
 }
 
 interface Entity {
@@ -63,6 +58,133 @@ interface Entity {
     Sprite: number
 }
 
+interface Resource {
+    Id: number;
+    ResourceData: string,
+    ResourcePath: string,
+    DMIStates: string,
+}
+
+class SpriteWrapper {
+    Sprite: Sprite;
+    Appearance: Appearance;
+    Position: Point;
+
+    Icon: number;
+    IconState: string;
+    Layer: number;
+    Plane: number;
+    ClickUid: number;
+    MouseOpacity: number;
+
+    constructor(appearance: Appearance, worldPosition: Point, parent: SpriteWrapper | undefined = undefined){
+        if(isNaN(worldPosition.x) || isNaN(worldPosition.y)) {
+            throw `Attempted to render an appearance (${appearance.Id}: "${appearance.Name}") at invalid position ${worldPosition}`
+        }
+        this.Appearance = appearance;
+        this.Position = worldPosition
+        this.Position.x += this.Appearance.PixelOffset.X;
+        this.Position.y += this.Appearance.PixelOffset.Y;
+        if(appearance.Icon === null){
+            if(!parent)
+                throw "No icon was specified for a sprite without a parent. Sprites with no icon gotta have a parent.";
+            this.Icon = parent.Icon; 
+        } else {
+            this.Icon = appearance.Icon;
+        }
+        this.IconState = appearance.IconState || "";
+
+        const texture = getTexture(this.Icon, this.IconState, appearance.Direction);
+        if(!texture){
+            throw `Failed to get texture for appearance (${appearance.Id}: "${appearance.Name}"): ${this.Icon}, '${this.IconState}', ${appearance.Direction}`;
+        }    
+        
+        if(texture.length == 1){
+            this.Sprite = new Sprite(texture[0])
+        } else {
+            this.Sprite = new AnimatedSprite(texture)
+        }
+        this.Sprite.position = this.Position;
+
+        if (parent) {
+            this.ClickUid = parent.ClickUid;
+            this.MouseOpacity = parent.MouseOpacity;
+            // if ((icon.Appearance.AppearanceFlags & AppearanceFlags.ResetColor) != 0 || keepTogether) { //RESET_COLOR
+            //     this.ColorToApply = icon.Appearance.Color;
+            //     this.ColorMatrixToApply = icon.Appearance.ColorMatrix;
+            // } else {
+            //     this.ColorToApply = parent.ColorToApply * icon.Appearance.Color;
+            //     ColorMatrix.Multiply(in parent.ColorMatrixToApply, in icon.Appearance.ColorMatrix, out this.ColorMatrixToApply);
+            // }
+
+            // if ((icon.Appearance.AppearanceFlags & AppearanceFlags.ResetAlpha) != 0 || keepTogether) //RESET_ALPHA
+            //     this.AlphaToApply = icon.Appearance.Alpha / 255.0f;
+            // else
+            //     this.AlphaToApply = parent.AlphaToApply * (icon.Appearance.Alpha / 255.0f);
+
+            // if ((icon.Appearance.AppearanceFlags & AppearanceFlags.ResetTransform) != 0 || keepTogether) //RESET_TRANSFORM
+            //     this.TransformToApply = iconAppearanceTransformMatrix;
+            // else
+            //     this.TransformToApply = iconAppearanceTransformMatrix * parent.TransformToApply;
+
+            if ((this.Appearance.Plane < -10000)) //FLOAT_PLANE - Note: yes, this really is how it works. Yes it's dumb as shit.
+                this.Plane = parent.Plane + (this.Appearance.Plane + 32767);
+            else
+                this.Plane = this.Appearance.Plane;
+
+            //FLOAT_LAYER - if this icon's layer is negative, it's a float layer so set it's layer equal to the parent object and sort through the float_layer shit later
+            this.Layer = (this.Appearance.Layer < 0) ? parent.Layer : this.Appearance.Layer;
+
+            // if (this.BlendMode == BlendMode.Default)
+            //     this.BlendMode = parent.BlendMode;
+        } else {
+            // this.ColorToApply = icon.Appearance.Color;
+            // this.ColorMatrixToApply = icon.Appearance.ColorMatrix;
+            // this.AlphaToApply = icon.Appearance.Alpha / 255.0f;
+            // this.TransformToApply = iconAppearanceTransformMatrix;
+            if(this.Appearance.Plane < -10000)
+                console.warn(`Float plane requested with no parent appearance (${appearance.Id}: "${appearance.Name}")`)
+            if(this.Appearance.Layer < 0)
+                console.warn(`Float layer requested with no parent appearance (${appearance.Id}: "${appearance.Name}")`)
+            this.Plane = this.Appearance.Plane;
+            this.Layer = Math.max(0, this.Appearance.Layer); //float layers are invalid for icons with no parent
+            this.MouseOpacity = this.Appearance.MouseOpacity;
+            this.ClickUid = 0; // todo entity id
+        }
+
+        //special handling for EFFECTS_LAYER and BACKGROUND_LAYER
+        //SO IT TURNS OUT EFFECTS_LAYER IS JUST A LIE *scream
+        //and BACKGROUND_LAYER is basically the same behaviour as FLOAT_PLANE
+        if (this.Layer >= 20000) {
+            this.Layer -= 40000;
+            // this.IsScreen = false; //BACKGROUND_LAYER renders behind everything on that plane
+        }
+
+
+        //DM layer = PIXI sprite.zIndex
+        //DM plane = PIXI parent Container
+        this.Sprite.zIndex = this.Layer;
+        let plane:Container|undefined = planeCache.get(this.Plane)
+        if(!plane){
+            plane = new Container({isRenderGroup: true, zIndex:this.Plane});
+            planeCache.set(this.Plane, plane)
+        }
+        plane.addChild(this.Sprite);
+        
+        for(let underlay of this.Appearance.Underlays){
+            const underlaySprite = new SpriteWrapper(underlay, this.Position, this)
+            this.Sprite.addChild(underlaySprite.Sprite);
+        }
+
+        for(let overlay of this.Appearance.Overlays){
+            const overlaySprite = new SpriteWrapper(overlay, this.Position, this)
+            this.Sprite.addChild(overlaySprite.Sprite)
+        }
+
+    }
+}
+
+
 const textureCache = new Map<Number, Spritesheet>();
 const appearanceCache = new Map<Number, Appearance>()
 let map_tiles: number[][] = [];
@@ -72,12 +194,11 @@ const planeCache = new Map<number, Container>();
 
 async function loadTexturesIntoCache() {    
     const response = await fetch('src/assets/resources.json')
-    const dataArray = await response.json();
+    const dataArray:Resource[] = await response.json();
 
     console.log(`Loading ${dataArray.length} assets...`);
     
     for (const item of dataArray) {       
-        
         try {
             // Create a data URL from the base64 string
             const dataUrl = `data:image/png;base64,${item.ResourceData}`;
@@ -98,102 +219,7 @@ async function loadTexturesIntoCache() {
     console.log("Loaded all spritesheets.");
 }
 
-function parseDmiToPixi(dmiText: string, imageUrl: string = "spritesheet.png"): SpritesheetData {
-    const lines = dmiText.split('\n').map(line => line.trim());
-    
-    let width = 32;
-    let height = 32;
-    const states: DmiState[] = [];
-    let currentState: Partial<DmiState> | null = null;
 
-    // 1. Parse Dmi Text into structured objects
-    for (const line of lines) {
-        if (!line || line.startsWith('#')) continue;
-
-        const [key, val] = line.split('=').map(s => s.trim());
-        
-        if (key === 'width') width = parseInt(val, 10);
-        else if (key === 'height') height = parseInt(val, 10);
-        else if (key === 'state') {
-            if (currentState && currentState.name) {
-                states.push(currentState as DmiState);
-            }
-            // Remove surrounding quotes from state name
-            currentState = { name: val.replace(/^"|"$/g, '') };
-            if(!currentState.name)
-                currentState.name = ":::DEFAULT:::"
-        } else if (currentState) {
-            if (key === 'dirs') currentState.dirs = parseInt(val, 10);
-            else if (key === 'frames') currentState.frames = parseInt(val, 10);
-            else if (key === 'delay') currentState.delay = val.split(',').map(Number);
-            else if (key === 'rewind') currentState.rewind = val === '1';
-        }
-    }
-    // Push the last state
-    if (currentState && currentState.name) {
-        states.push(currentState as DmiState);
-    }
-
-    // 2. Build PixiJS Spritesheet JSON
-    const pixiJson: SpritesheetData = {
-        frames: {},
-        meta: {
-            image: imageUrl,
-            format: "RGBA8888",
-            scale: 1,
-            size: { w: 0, h: 0 } // Will be calculated based on total frames
-        },
-        animations: {}
-    };
-
-    let globalFrameIndex = 0;
-
-    for (const state of states) {
-        const animationFrames: string[] = [];
-        const totalFramesInState = state.frames * state.dirs;
-
-        for (let i = 0; i < totalFramesInState; i++) {
-            const frameKey = `frame_${state.name}_${i}`;
-            animationFrames.push(frameKey);
-
-            // DMI stores frames sequentially. Let's assume a standard sprite grid.
-            // Note: If you know the actual texture width, replace `10` with (textureWidth / width)
-            const framesPerRow = 10; 
-            const col = globalFrameIndex % framesPerRow;
-            const row = Math.floor(globalFrameIndex / framesPerRow);
-
-            const x = col * width;
-            const y = row * height;
-
-            pixiJson.frames[frameKey] = {
-                frame: { x, y, w: width, h: height },
-                rotated: false,
-                trimmed: false,
-                spriteSourceSize: { x: 0, y: 0, w: width, h: height },
-                sourceSize: { w: width, h: height }
-            };
-
-            // Add frame delay (DMI typically uses 1/10th of a second ticks)
-            // if (state.delay && state.delay[i % state.frames]) {
-            //     pixiJson.somethign += state.delay[i % state.frames] * 100;
-            // }
-
-            globalFrameIndex++;
-        }
-
-        // Add to animations block for easy playback in Pixi
-        if (pixiJson.animations) {
-            pixiJson.animations[`anim_${state.name}`] = animationFrames;
-        }
-    }
-
-    // Rough estimate of canvas size based on our arbitrary grid
-    const maxCols = Math.min(globalFrameIndex, 10);
-    const maxRows = Math.ceil(globalFrameIndex / 10);
-    pixiJson.meta.size = { w: maxCols * width, h: maxRows * height };
-
-    return pixiJson;
-}
 
 async function loadMap(): Promise<any> {
   const response = await fetch('src/assets/tileids.json')
@@ -214,62 +240,22 @@ async function loadAppearances(): Promise<any> {
 
 }
 
-async function getTexture(resourceId:number, iconState:string, iconDir:number):Promise<Texture[]|undefined> {
+function getTexture(resourceId:number, iconState:string, iconDir:number):Texture[]|undefined {
     const dmi = textureCache.get(resourceId);
     if(!dmi)
         throw new Error(`Invalid DMIResource requested! ${resourceId} ${iconState} ${iconDir}`)
 
-    if(!iconState)
-        return dmi.animations["anim_:::DEFAULT:::"]
-    return dmi.animations[`anim_${iconState}`]
-
-}
-
-async function getSprite(appearanceId:number, parent:Sprite | undefined = undefined):Promise<Sprite|AnimatedSprite|undefined>{
-    const entAppearance = appearanceCache.get(appearanceId)!
-    if(!entAppearance){
-        console.error(`Couldn't find appearance ${appearanceId}!`)
-        return undefined;
-    }    
-    if(!entAppearance.Icon || !entAppearance.IconState){
-        console.warn(`Should probably be grabbing parent icon here? ${parent?.position}`)
-        return;
+    if(!iconState){
+        //get the blank or first iconstate
+        return dmi.animations["anim_:::DEFAULT:::"] || dmi.animations[Object.keys(dmi.animations)[0]]
     }
-    const texture = await getTexture(entAppearance.Icon, entAppearance.IconState, entAppearance.Direction);
-    if(!texture){
-        console.error(`Failed to get texture for ${entAppearance.Icon}, ${entAppearance.IconState}, ${entAppearance.Direction}`)
-        return undefined;
-    }    
-    let result: Sprite
-    if(texture.length == 1){
-        result = new Sprite(texture[0])
-    } else {
-        result = new AnimatedSprite(texture)
-    }
-
-    //DM layer = PIXI zIndex
-    //DM plane = PIXI RenderLayer
-    result.zIndex = entAppearance.Layer;
-    let plane:Container|undefined = planeCache.get(entAppearance.Plane)
-    if(!plane){
-        plane = new Container({isRenderGroup: true, zIndex:entAppearance.Plane});
-        planeCache.set(entAppearance.Plane, plane)
-    }
-    plane.addChild(result);
-    
-    for(let underlay of entAppearance.Underlays){
-        const underlaySprite = await getSprite(underlay.Id, result);
-        if(underlaySprite)
-            result.addChild(underlaySprite)
-    }
-
-    for(let overlay of entAppearance.Overlays){
-        const overlaySprite = await getSprite(overlay.Id, result);
-        if(overlaySprite)
-            result.addChild(overlaySprite)
-    }
-
-    return result;
+    //get the targetted or first iconstate
+    if(`anim_${iconState}` in dmi.animations)
+        return dmi.animations[`anim_${iconState}`] 
+    else {
+        console.warn(`Returning default state for invalid icon state ${iconState} requested on resource ${resourceId}`)
+        return dmi.animations[Object.keys(dmi.animations)[0]];
+    } 
 }
 
 
@@ -291,12 +277,10 @@ export async function CreateRenderer(parent:HTMLElement):Promise<HTMLCanvasEleme
   // Create the grid of tiles
   for (let x = 0; x < map_tiles.length; x++) {
     for (let y = 0; y < map_tiles[0].length; y++) {
-        const tile = await getSprite(map_tiles[x][y])
-        if(!tile)
+        const tileAppearance = appearanceCache.get(map_tiles[x][y])
+        if(!tileAppearance)
             continue;
-        tile.x = x * 32;
-        tile.y = maxy - y * 32;
-        // container.addChild(tile);
+        new SpriteWrapper(tileAppearance, new Point(x * 32, maxy - y * 32))
     }
   }
 
@@ -305,17 +289,15 @@ export async function CreateRenderer(parent:HTMLElement):Promise<HTMLCanvasEleme
   for(const ent of entities){
     if(ent.Sprite == 0) //default appearance, don't render
         continue;
-    const sprite = await getSprite(ent.Sprite)
-    if(!sprite)
+    const entAppearance = appearanceCache.get(ent.Sprite)
+    if(!entAppearance)
         continue;
-    sprite.x = (ent.Transform.X-1.0)*32;
-    sprite.y = maxy - ent.Transform.Y*32;
-    // container.addChild(sprite);
+    new SpriteWrapper(entAppearance, new Point((ent.Transform.X-1)*32, maxy - ent.Transform.Y*32))
   }
 
   for(const [planeNum, plane] of planeCache){
     container.addChild(plane)
-    console.log(`adding plane ${planeNum}`)
+    console.log(`adding plane ${planeNum} with ${plane.children.length} children`)
   }
   // Move the container to the center
   container.x = app.screen.width / 2;
@@ -324,13 +306,36 @@ export async function CreateRenderer(parent:HTMLElement):Promise<HTMLCanvasEleme
   // Center the pivot in local container coordinates
   container.pivot.x = container.width / 2;
   container.pivot.y = container.height / 2;
+  let currKey = new Map<string, boolean>([
+    ["a", false],
+    ["w", false],
+    ["s", false],
+    ["d", false]
+    ])
 
-//   // Listen for animate update
-//   app.ticker.add((time) => {
-//     // Continuously rotate the container!
-//     // * use delta to create frame-independent transform *
-//     container.rotation -= 0.01 * time.deltaTime;
-//   });
+    document.addEventListener("keydown",(ev)=>{
+        currKey.set(ev.key, true)
+    })
+    document.addEventListener("keyup",(ev)=>{
+        currKey.set(ev.key, false)
+    })
+
+
+    let i = 0
+    app.ticker.add((time)=>{
+        if(currKey.get("d")){
+            container.x += 10 * time.deltaTime
+        }
+        if(currKey.get("s")){
+            container.y += 10 * time.deltaTime
+        }
+        if(currKey.get("a")){
+            container.x -= 10 * time.deltaTime
+        }
+        if(currKey.get("w")){
+            container.y -= 10 * time.deltaTime
+        }
+    })
 
   return  app.canvas;
 }
