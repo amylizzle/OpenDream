@@ -1,5 +1,5 @@
 // description: This example demonstrates how to use a Container to group and manipulate multiple sprites
-import { Application, Assets, Container, AnimatedSprite, Spritesheet, type SpritesheetData, Texture, Sprite, Color, Point } from 'pixi.js';
+import { Application, Assets, Container, AnimatedSprite, Spritesheet, type SpritesheetData, Texture, Sprite, Color, Point, FederatedPointerEvent } from 'pixi.js';
 import { parseDmiToPixi } from './dmiparser';
 import 'pixi.js/math-extras';
 
@@ -70,7 +70,7 @@ class SpriteWrapper {
     Appearance: Appearance;
     Position: Point;
 
-    Icon: number;
+    Icon: number | null;
     IconState: string;
     Layer: number;
     Plane: number;
@@ -81,18 +81,17 @@ class SpriteWrapper {
         if(isNaN(worldPosition.x) || isNaN(worldPosition.y)) {
             throw `Attempted to render an appearance (${appearance.Id}: "${appearance.Name}") at invalid position ${worldPosition}`
         }
+
         this.Appearance = appearance;
         this.Position = worldPosition
         this.Position.x += this.Appearance.PixelOffset.X;
         this.Position.y += this.Appearance.PixelOffset.Y;
-        if(appearance.Icon === null){
-            if(!parent)
-                throw "No icon was specified for a sprite without a parent. Sprites with no icon gotta have a parent.";
-            this.Icon = parent.Icon; 
-        } else {
-            this.Icon = appearance.Icon;
-        }
-        this.IconState = appearance.IconState || "";
+        this.Icon = appearance.Icon;
+        
+        if(this.Appearance.IconState === null)
+            this.IconState = parent?.IconState || ""
+        else
+            this.IconState = this.Appearance.IconState;
 
         const texture = getTexture(this.Icon, this.IconState, appearance.Direction);
         if(!texture){
@@ -105,6 +104,8 @@ class SpriteWrapper {
             this.Sprite = new AnimatedSprite(texture)
         }
         this.Sprite.position = this.Position;
+        this.Sprite.eventMode = 'static';
+        this.Sprite.on('pointerdown', this.onMouseDown.bind(this))
 
         if (parent) {
             this.ClickUid = parent.ClickUid;
@@ -173,14 +174,20 @@ class SpriteWrapper {
         
         for(let underlay of this.Appearance.Underlays){
             const underlaySprite = new SpriteWrapper(underlay, this.Position, this)
+            underlaySprite.Sprite.position = underlaySprite.Sprite.position.subtract(this.Sprite.position);
             this.Sprite.addChild(underlaySprite.Sprite);
         }
 
         for(let overlay of this.Appearance.Overlays){
             const overlaySprite = new SpriteWrapper(overlay, this.Position, this)
+            overlaySprite.Sprite.position = overlaySprite.Sprite.position.subtract(this.Sprite.position);
             this.Sprite.addChild(overlaySprite.Sprite)
         }
 
+    }
+
+    onMouseDown(event:FederatedPointerEvent){
+        console.log(`Clicked ${this.Appearance.Name} at position ${this.Position} sprite position ${this.Sprite.position}`)
     }
 }
 
@@ -240,7 +247,10 @@ async function loadAppearances(): Promise<any> {
 
 }
 
-function getTexture(resourceId:number, iconState:string, iconDir:number):Texture[]|undefined {
+function getTexture(resourceId:number|null, iconState:string, iconDir:number):Texture[]|undefined {
+    if(resourceId === null)
+        return [Texture.EMPTY];
+
     const dmi = textureCache.get(resourceId);
     if(!dmi)
         throw new Error(`Invalid DMIResource requested! ${resourceId} ${iconState} ${iconDir}`)
@@ -297,7 +307,7 @@ export async function CreateRenderer(parent:HTMLElement):Promise<HTMLCanvasEleme
 
   for(const [planeNum, plane] of planeCache){
     container.addChild(plane)
-    console.log(`adding plane ${planeNum} with ${plane.children.length} children`)
+    console.log(`adding plane ${planeNum} with ${plane.children.length} children at ${plane.position}`)
   }
   // Move the container to the center
   container.x = app.screen.width / 2;
@@ -320,8 +330,6 @@ export async function CreateRenderer(parent:HTMLElement):Promise<HTMLCanvasEleme
         currKey.set(ev.key, false)
     })
 
-
-    let i = 0
     app.ticker.add((time)=>{
         if(currKey.get("d")){
             container.x += 10 * time.deltaTime
