@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Work around https://github.com/dotnet/project-system/issues/4314 -->
-    <TargetFramework>$(TargetFramework)</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <OutputPath>..\bin\Content.IntegrationTests\</OutputPath>
     <IsPackable>false</IsPackable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -28,11 +28,6 @@
     <ProjectReference Include="..\DMCompiler\DMCompiler.csproj" />
   </ItemGroup>
 
-  <Import Project="..\RobustToolbox\Imports\Client.props" />
-  <Import Project="..\RobustToolbox\Imports\Server.props" />
-  <Import Project="..\RobustToolbox\Imports\Shared.props" />
-  <Import Project="..\RobustToolbox\Imports\Testing.props" />
-
   <ItemGroup>
     <DMProject Include="$(ProjectDir)\DMProject\**" />
     <DMStandard Include="..\DMCompiler\DMStandard\**" />
@@ -50,5 +45,4 @@
   <Target Name="CopyDMStandardOnPublish" AfterTargets="Publish">
     <Copy SourceFiles="@(DMStandard)" DestinationFiles="@(DMStandard->'$(PublishDir)\DMStandard\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
-  <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
 </Project>

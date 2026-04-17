@@ -1,8 +1,9 @@
-﻿using Robust.Shared.Maths;
-using Robust.Shared.ViewVariables;
+﻿
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Dream;
 
@@ -25,45 +26,45 @@ public sealed class MutableAppearance : IEquatable<MutableAppearance>, IDisposab
 
     private static Stack<MutableAppearance> _mutableAppearancePool = new();
 
-    [ViewVariables] public string Name = string.Empty;
-    [ViewVariables] public string? Desc = string.Empty;
-    [ViewVariables] public int? Icon;
-    [ViewVariables] public string? IconState;
-    [ViewVariables] public AtomDirection Direction = AtomDirection.South;
-    [ViewVariables] public bool InheritsDirection = true; // Inherits direction when used as an overlay
-    [ViewVariables] public Vector2i PixelOffset;  // pixel_x and pixel_y
-    [ViewVariables] public Vector2i PixelOffset2; // pixel_w and pixel_z
-    [ViewVariables] public Color Color = Color.White;
-    [ViewVariables] public byte Alpha = 255;
-    [ViewVariables] public float GlideSize;
-    [ViewVariables] public float Layer = -1f;
-    [ViewVariables] public int Plane = -32767;
-    [ViewVariables] public BlendMode BlendMode = BlendMode.Default;
-    [ViewVariables] public AppearanceFlags AppearanceFlags = AppearanceFlags.None;
-    [ViewVariables] public sbyte Invisibility;
-    [ViewVariables] public bool Opacity;
-    [ViewVariables] public bool Override;
-    [ViewVariables] public string? RenderSource;
-    [ViewVariables] public string? RenderTarget;
-    [ViewVariables] public MouseOpacity MouseOpacity = MouseOpacity.PixelOpaque;
-    [ViewVariables] public List<ImmutableAppearance> Overlays;
-    [ViewVariables] public List<ImmutableAppearance> Underlays;
-    [ViewVariables] public List<Robust.Shared.GameObjects.NetEntity> VisContents;
-    [ViewVariables] public List<DreamFilter> Filters;
-    [ViewVariables] public List<int> Verbs;
-    [ViewVariables] public Vector2i MaptextSize = new(32,32);
-    [ViewVariables] public Vector2i MaptextOffset = new(0,0);
-    [ViewVariables] public string? Maptext;
-    [ViewVariables] public int MouseDragPointer;
-    [ViewVariables] public bool MouseDropZone;
-    [ViewVariables] public int MouseOverPointer;
-    [ViewVariables] public int MouseDropPointer;
+    public string Name = string.Empty;
+    public string? Desc = string.Empty;
+    public int? Icon;
+    public string? IconState;
+    public AtomDirection Direction = AtomDirection.South;
+    public bool InheritsDirection = true; // Inherits direction when used as an overlay
+    public Vector2i PixelOffset;  // pixel_x and pixel_y
+    public Vector2i PixelOffset2; // pixel_w and pixel_z
+    public Color Color = Color.White;
+    public byte Alpha = 255;
+    public float GlideSize;
+    public float Layer = -1f;
+    public int Plane = -32767;
+    public BlendMode BlendMode = BlendMode.Default;
+    public AppearanceFlags AppearanceFlags = AppearanceFlags.None;
+    public sbyte Invisibility;
+    public bool Opacity;
+    public bool Override;
+    public string? RenderSource;
+    public string? RenderTarget;
+    public MouseOpacity MouseOpacity = MouseOpacity.PixelOpaque;
+    public List<ImmutableAppearance> Overlays;
+    public List<ImmutableAppearance> Underlays;
+    public List<Robust.Shared.GameObjects.NetEntity> VisContents;
+    public List<DreamFilter> Filters;
+    public List<int> Verbs;
+    public Vector2i MaptextSize = new(32,32);
+    public Vector2i MaptextOffset = new(0,0);
+    public string? Maptext;
+    public int MouseDragPointer;
+    public bool MouseDropZone;
+    public int MouseOverPointer;
+    public int MouseDropPointer;
 
     /// <summary>
     /// Used by atoms to mark what mouse events are enabled. Doesn't mean anything outside the context of atoms.
     /// Intentionally left out of hash & equality!
     /// </summary>
-    [ViewVariables] public AtomMouseEvents EnabledMouseEvents;
+    public AtomMouseEvents EnabledMouseEvents;
 
     /// <summary>
     /// An appearance can gain a color matrix filter by two possible forces: <br/>
@@ -76,10 +77,10 @@ public sealed class MutableAppearance : IEquatable<MutableAppearance>, IDisposab
     /// The reason we don't just take the slow path and always use this filter is not just for optimization,<br/>
     /// it's also for parity! See <see cref="TryRepresentMatrixAsRgbaColor"/> for more.
     /// </remarks>
-    [ViewVariables] public ColorMatrix ColorMatrix = ColorMatrix.Identity;
+    public ColorMatrix ColorMatrix = ColorMatrix.Identity;
 
     /// <summary> The Transform property of this appearance, in [a,d,b,e,c,f] order</summary>
-    [ViewVariables] public float[] Transform = [
+    public float[] Transform = [
         1, 0,   // a d
         0, 1,   // b e
         0, 0    // c f

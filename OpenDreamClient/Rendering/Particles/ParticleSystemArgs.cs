@@ -1,4 +1,4 @@
-using Robust.Client.Graphics;
+
 using Color = Robust.Shared.Maths.Color;
 
 namespace OpenDreamClient.Rendering.Particles;

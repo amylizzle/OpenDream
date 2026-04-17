@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Work around https://github.com/dotnet/project-system/issues/4314 -->
-    <TargetFramework>$(TargetFramework)</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>12</LangVersion>
     <IsPackable>false</IsPackable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -25,10 +25,4 @@
     <ProjectReference Include="..\OpenDreamRuntime\OpenDreamRuntime.csproj" />
     <ProjectReference Include="..\OpenDreamShared\OpenDreamShared.csproj" />
   </ItemGroup>
-
-  <Import Project="..\RobustToolbox\Imports\Lidgren.props" />
-  <Import Project="..\RobustToolbox\Imports\Server.props" />
-  <Import Project="..\RobustToolbox\Imports\Shared.props" />
-
-  <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
 </Project>

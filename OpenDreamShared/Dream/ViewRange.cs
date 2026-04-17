@@ -1,5 +1,5 @@
 ﻿using System;
-using Robust.Shared.Maths;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Dream;
 

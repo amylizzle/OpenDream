@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics.Contracts;
 using System.IO;
-using Lidgren.Network;
-using Robust.Shared.Serialization;
+using OpenDreamShared.EngineUtils;
+
 using System.Linq;
-using Robust.Shared.ViewVariables;
-using Robust.Shared.Maths;
+
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Robust.Shared.GameObjects;
+
 using SharedAppearanceSystem = OpenDreamShared.Rendering.SharedAppearanceSystem;
 
 namespace OpenDreamShared.Dream;
@@ -28,44 +28,44 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
     private uint? _registeredId;
     public uint? Id => _registeredId;
 
-    [ViewVariables] public readonly string Name = MutableAppearance.Default.Name;
-    [ViewVariables] public readonly string? Desc = MutableAppearance.Default.Desc;
-    [ViewVariables] public readonly int? Icon = MutableAppearance.Default.Icon;
-    [ViewVariables] public readonly string? IconState = MutableAppearance.Default.IconState;
-    [ViewVariables] public readonly AtomDirection Direction = MutableAppearance.Default.Direction;
-    [ViewVariables] public readonly bool InheritsDirection = MutableAppearance.Default.InheritsDirection; // Inherits direction when used as an overlay
-    [ViewVariables] public readonly Vector2i PixelOffset = MutableAppearance.Default.PixelOffset;  // pixel_x and pixel_y
-    [ViewVariables] public readonly Vector2i PixelOffset2 = MutableAppearance.Default.PixelOffset2; // pixel_w and pixel_z
-    [ViewVariables] public readonly Color Color = MutableAppearance.Default.Color;
-    [ViewVariables] public readonly byte Alpha = MutableAppearance.Default.Alpha;
-    [ViewVariables] public readonly float GlideSize = MutableAppearance.Default.GlideSize;
-    [ViewVariables] public readonly float Layer = MutableAppearance.Default.Layer;
-    [ViewVariables] public readonly int Plane = MutableAppearance.Default.Plane;
-    [ViewVariables] public readonly BlendMode BlendMode = MutableAppearance.Default.BlendMode;
-    [ViewVariables] public readonly AppearanceFlags AppearanceFlags = MutableAppearance.Default.AppearanceFlags;
-    [ViewVariables] public readonly sbyte Invisibility = MutableAppearance.Default.Invisibility;
-    [ViewVariables] public readonly bool Opacity = MutableAppearance.Default.Opacity;
-    [ViewVariables] public readonly bool Override = MutableAppearance.Default.Override;
-    [ViewVariables] public readonly string? RenderSource = MutableAppearance.Default.RenderSource;
-    [ViewVariables] public readonly string? RenderTarget = MutableAppearance.Default.RenderTarget;
-    [ViewVariables] public readonly MouseOpacity MouseOpacity = MutableAppearance.Default.MouseOpacity;
-    [ViewVariables] public readonly ImmutableAppearance[] Overlays;
-    [ViewVariables] public readonly ImmutableAppearance[] Underlays;
-    [ViewVariables] public readonly Robust.Shared.GameObjects.NetEntity[] VisContents;
-    [ViewVariables] public readonly DreamFilter[] Filters;
-    [ViewVariables] public readonly int[] Verbs;
-    [ViewVariables] public readonly ColorMatrix ColorMatrix = ColorMatrix.Identity;
-    [ViewVariables] public Vector2i MaptextSize = MutableAppearance.Default.MaptextSize;
-    [ViewVariables] public Vector2i MaptextOffset = MutableAppearance.Default.MaptextOffset;
-    [ViewVariables] public string? Maptext = MutableAppearance.Default.Maptext;
-    [ViewVariables] public AtomMouseEvents EnabledMouseEvents;
-    [ViewVariables] public int MouseDragPointer = MutableAppearance.Default.MouseDragPointer;
-    [ViewVariables] public bool MouseDropZone = MutableAppearance.Default.MouseDropZone;
-    [ViewVariables] public int MouseOverPointer = MutableAppearance.Default.MouseOverPointer;
-    [ViewVariables] public int MouseDropPointer = MutableAppearance.Default.MouseDropPointer;
+    public readonly string Name = MutableAppearance.Default.Name;
+    public readonly string? Desc = MutableAppearance.Default.Desc;
+    public readonly int? Icon = MutableAppearance.Default.Icon;
+    public readonly string? IconState = MutableAppearance.Default.IconState;
+    public readonly AtomDirection Direction = MutableAppearance.Default.Direction;
+    public readonly bool InheritsDirection = MutableAppearance.Default.InheritsDirection; // Inherits direction when used as an overlay
+    public readonly Vector2i PixelOffset = MutableAppearance.Default.PixelOffset;  // pixel_x and pixel_y
+    public readonly Vector2i PixelOffset2 = MutableAppearance.Default.PixelOffset2; // pixel_w and pixel_z
+    public readonly Color Color = MutableAppearance.Default.Color;
+    public readonly byte Alpha = MutableAppearance.Default.Alpha;
+    public readonly float GlideSize = MutableAppearance.Default.GlideSize;
+    public readonly float Layer = MutableAppearance.Default.Layer;
+    public readonly int Plane = MutableAppearance.Default.Plane;
+    public readonly BlendMode BlendMode = MutableAppearance.Default.BlendMode;
+    public readonly AppearanceFlags AppearanceFlags = MutableAppearance.Default.AppearanceFlags;
+    public readonly sbyte Invisibility = MutableAppearance.Default.Invisibility;
+    public readonly bool Opacity = MutableAppearance.Default.Opacity;
+    public readonly bool Override = MutableAppearance.Default.Override;
+    public readonly string? RenderSource = MutableAppearance.Default.RenderSource;
+    public readonly string? RenderTarget = MutableAppearance.Default.RenderTarget;
+    public readonly MouseOpacity MouseOpacity = MutableAppearance.Default.MouseOpacity;
+    public readonly ImmutableAppearance[] Overlays;
+    public readonly ImmutableAppearance[] Underlays;
+    public readonly Robust.Shared.GameObjects.NetEntity[] VisContents;
+    public readonly DreamFilter[] Filters;
+    public readonly int[] Verbs;
+    public readonly ColorMatrix ColorMatrix = ColorMatrix.Identity;
+    public Vector2i MaptextSize = MutableAppearance.Default.MaptextSize;
+    public Vector2i MaptextOffset = MutableAppearance.Default.MaptextOffset;
+    public string? Maptext = MutableAppearance.Default.Maptext;
+    public AtomMouseEvents EnabledMouseEvents;
+    public int MouseDragPointer = MutableAppearance.Default.MouseDragPointer;
+    public bool MouseDropZone = MutableAppearance.Default.MouseDropZone;
+    public int MouseOverPointer = MutableAppearance.Default.MouseOverPointer;
+    public int MouseDropPointer = MutableAppearance.Default.MouseDropPointer;
 
     /// <summary> The Transform property of this appearance, in [a,d,b,e,c,f] order</summary>
-    [ViewVariables] public readonly float[] Transform = [
+    public readonly float[] Transform = [
         1, 0,   // a d
         0, 1,   // b e
         0, 0    // c f

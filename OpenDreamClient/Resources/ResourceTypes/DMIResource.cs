@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using OpenDreamShared.Dream;
 using OpenDreamShared.Resources;
-using Robust.Client.Graphics;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;

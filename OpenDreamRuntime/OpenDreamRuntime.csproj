@@ -12,17 +12,13 @@
     <ProjectReference Include="..\OpenDreamShared\OpenDreamShared.csproj" />
   </ItemGroup>
 
-  <Import Project="..\RobustToolbox\Imports\Server.props" />
-  <Import Project="..\RobustToolbox\Imports\Shared.props" />
-
   <ItemGroup>
     <PackageReference Include="Byond.TopicSender" />
     <PackageReference Include="Tracy-CSharp" />
-    <PackageReference Include="OpenDreamByondApi" />
-    <PackageReference Include="SpaceWizards.Sodium" />
-    <PackageReference Include="SixLabors.ImageSharp" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" />
+    <PackageReference Include="OpenDreamByondApi"/>
+    <PackageReference Include="SpaceWizards.Sodium"  />
+    <PackageReference Include="SixLabors.ImageSharp"  />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core"  />
   </ItemGroup>
 
-  <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
 </Project>

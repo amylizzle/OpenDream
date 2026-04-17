@@ -3,8 +3,8 @@ using OpenDreamClient.Resources;
 using OpenDreamClient.Resources.ResourceTypes;
 using OpenDreamShared.Dream;
 using OpenDreamShared.Resources;
-using Robust.Client.Graphics;
-using Robust.Shared.Timing;
+
+
 using System.Linq;
 using OpenDreamClient.Interface;
 
@@ -35,7 +35,7 @@ internal sealed class DreamIcon(RenderTargetPool renderTargetPool, IDreamInterfa
         }
     }
 
-    [ViewVariables]
+
     public ImmutableAppearance? Appearance {
         get => CalculateAnimatedAppearance();
         private set {

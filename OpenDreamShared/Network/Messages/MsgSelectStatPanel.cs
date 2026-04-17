@@ -1,7 +1,7 @@
 ﻿using System;
 using Lidgren.Network;
-using Robust.Shared.Network;
-using Robust.Shared.Serialization;
+
+
 
 namespace OpenDreamShared.Network.Messages {
     //Client -> Server: Tell the server what stat panel the client is now looking at

@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
-using Robust.Shared.Random;
-using Robust.Shared.Serialization;
+using OpenDreamShared.EngineUtils;
+
 
 namespace OpenDreamShared.Dream;
 

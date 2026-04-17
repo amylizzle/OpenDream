@@ -12,9 +12,8 @@
   <ItemGroup>
     <DMStandard Include="DMStandard\**" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\RobustToolbox\Robust.Shared.Maths\Robust.Shared.Maths.csproj" />
+    <ProjectReference Include="..\OpenDreamShared\OpenDreamShared.csproj" />
   </ItemGroup>
 
   <Target Name="CopyDMStandard" AfterTargets="AfterBuild">

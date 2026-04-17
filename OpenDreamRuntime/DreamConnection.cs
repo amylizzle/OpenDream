@@ -8,8 +8,8 @@ using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
 using OpenDreamShared.Network.Messages;
-using Robust.Shared.Enums;
-using Robust.Shared.Player;
+
+
 using SpaceWizards.Sodium;
 
 namespace OpenDreamRuntime;
@@ -26,15 +26,15 @@ public sealed class DreamConnection {
     private readonly ServerClientImagesSystem? _clientImagesSystem;
     private readonly ServerVerbSystem? _verbSystem;
 
-    [ViewVariables] private readonly Dictionary<string, List<(string, string, string?)>> _statPanels = new();
-    [ViewVariables] private bool _currentlyUpdatingStat;
-    [ViewVariables] public TimeSpan? LastClickTime { get; set; }
+    private readonly Dictionary<string, List<(string, string, string?)>> _statPanels = new();
+    private bool _currentlyUpdatingStat;
+    public TimeSpan? LastClickTime { get; set; }
 
-    [ViewVariables] public ICommonSession? Session { get; private set; }
-    [ViewVariables] public DreamObjectClient? Client { get; private set; }
-    [ViewVariables] public string Key { get; private set; }
+    public ICommonSession? Session { get; private set; }
+    public DreamObjectClient? Client { get; private set; }
+    public string Key { get; private set; }
 
-    [ViewVariables] public DreamObjectMob? Mob {
+    public DreamObjectMob? Mob {
         get => _mob;
         set {
             if (_mob != value) {
@@ -65,7 +65,7 @@ public sealed class DreamConnection {
         }
     }
 
-    [ViewVariables] public DreamObjectMovable? Eye {
+    public DreamObjectMovable? Eye {
         get;
         set {
             field = value;
@@ -74,13 +74,13 @@ public sealed class DreamConnection {
         }
     }
 
-    [ViewVariables]
+
     public DreamValue StatObj { get; set; } // This can be just any DreamValue. Only atoms will function though.
 
-    [ViewVariables] private string? _outputStatPanel;
-    [ViewVariables] private string? _selectedStatPanel;
-    [ViewVariables] private readonly Dictionary<int, Action<DreamValue>> _promptEvents = new();
-    [ViewVariables] private int _nextPromptEvent = 1;
+    private string? _outputStatPanel;
+    private string? _selectedStatPanel;
+    private readonly Dictionary<int, Action<DreamValue>> _promptEvents = new();
+    private int _nextPromptEvent = 1;
     private readonly Dictionary<string, DreamResource> _permittedBrowseRscFiles = new();
     private DreamObjectMob? _mob;
 

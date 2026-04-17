@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Robust.Shared.Maths;
+using OpenDreamShared.EngineUtils;
 
 namespace DMCompiler;
 

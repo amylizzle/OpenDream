@@ -1,4 +1,4 @@
-﻿using Robust.Shared.Maths;
+﻿
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using OpenDreamShared.Dream;
 using System.Globalization;
-
+using OpenDreamShared.EngineUtils;
 namespace OpenDreamShared.Resources;
 
 public static class DMIParser {
