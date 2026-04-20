@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OpenDreamRuntime.Resources;
 
-[Virtual]
+
 public class DreamResource(int id, string? filePath, string? resourcePath) {
     public readonly string? ResourcePath = resourcePath;
     public readonly int Id = id;

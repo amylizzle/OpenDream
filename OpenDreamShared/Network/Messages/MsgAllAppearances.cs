@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using Lidgren.Network;
+using OpenDreamShared.Network;
 using OpenDreamShared.Dream;
 
 
@@ -10,7 +10,7 @@ using OpenDreamShared.Dream;
 namespace OpenDreamShared.Network.Messages;
 
 public sealed class MsgAllAppearances(Dictionary<uint, ImmutableAppearance> allAppearances) : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
     public Dictionary<uint, ImmutableAppearance> AllAppearances = allAppearances;
 
     public MsgAllAppearances() : this(new()) { }

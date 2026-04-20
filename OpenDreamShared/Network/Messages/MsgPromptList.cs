@@ -1,12 +1,12 @@
 ﻿using System;
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages;
 
 public sealed class MsgPromptList : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
     public int PromptId;
     public string Title = String.Empty;

@@ -1,5 +1,5 @@
 using System;
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
@@ -10,7 +10,7 @@ namespace OpenDreamShared.Network.Messages {
             Wav
         }
 
-        public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
         public SoundData SoundData;
         public int? ResourceId;

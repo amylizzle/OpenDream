@@ -1,11 +1,11 @@
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages;
 
 public sealed class MsgLink : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
     public override NetDeliveryMethod DeliveryMethod => NetDeliveryMethod.ReliableUnordered;
 
     public string Url = string.Empty;

@@ -100,7 +100,7 @@ namespace OpenDreamRuntime {
         }
     }
 
-    [Virtual]
+
     internal class DMThrowException(DreamValue value) : Exception(GetRuntimeMessage(value)) {
         public readonly DreamValue Value = value;
 

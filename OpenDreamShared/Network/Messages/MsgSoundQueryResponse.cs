@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages;
 
 public sealed class MsgSoundQueryResponse : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
     public int PromptId;
     public List<SoundData> Sounds = default!;

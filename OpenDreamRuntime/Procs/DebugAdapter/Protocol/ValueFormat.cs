@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace OpenDreamRuntime.Procs.DebugAdapter.Protocol;
 
-[Virtual]
+
 public class ValueFormat {
     /**
      * Display the value in hex.

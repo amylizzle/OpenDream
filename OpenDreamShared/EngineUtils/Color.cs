@@ -1115,7 +1115,6 @@ public struct Color : IEquatable<Color>, ISpanFormattable
     public readonly bool Equals(Color other)
         => RGBA == other.RGBA;
 
-    [PublicAPI]
     public enum BlendFactor : byte
     {
         Zero,

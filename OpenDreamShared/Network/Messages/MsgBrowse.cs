@@ -1,11 +1,11 @@
-﻿using Lidgren.Network;
+﻿using OpenDreamShared.Network;
 
 
 
 
 namespace OpenDreamShared.Network.Messages {
     public sealed class MsgBrowse : NetMessage {
-        public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
         public string? Window;
         public string? HtmlSource;

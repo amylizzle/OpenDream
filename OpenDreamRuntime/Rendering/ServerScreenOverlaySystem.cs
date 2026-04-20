@@ -5,7 +5,7 @@ using OpenDreamShared.Rendering;
 namespace OpenDreamRuntime.Rendering;
 
 public sealed class ServerScreenOverlaySystem : SharedScreenOverlaySystem {
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly EntityManager _entityManager = default!;
     [Dependency] private readonly PvsOverrideSystem _pvsOverride = default!;
 
     public void AddScreenObject(DreamConnection connection, DreamObjectMovable screenObject) {

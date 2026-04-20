@@ -4,7 +4,7 @@
 using System;
 
 namespace OpenDreamShared.Rendering {
-    [Virtual]
+
     public class SharedScreenOverlaySystem : EntitySystem {
         [Serializable, NetSerializable]
         public sealed class AddScreenObjectEvent : EntityEventArgs {

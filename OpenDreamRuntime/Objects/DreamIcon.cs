@@ -289,7 +289,7 @@ public interface IDreamIconOperation {
     public void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds);
 }
 
-[Virtual]
+
 public class DreamIconOperationBlend : IDreamIconOperation {
     // With the same values as the ICON_* defines in DMStandard
     public enum BlendType {

@@ -5,7 +5,7 @@ using OpenDreamShared.Dream;
 
 namespace OpenDreamRuntime.Objects.Types;
 
-[Virtual]
+
 public class DreamObjectMovable : DreamObjectAtom {
     public EntityUid Entity;
     public readonly DMISpriteComponent SpriteComponent;

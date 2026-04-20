@@ -7,7 +7,7 @@ using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Dream;
 
-[Virtual]
+
 public class VerbSystem : EntitySystem {
     [Serializable, NetSerializable]
     public struct VerbInfo {

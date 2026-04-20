@@ -10,7 +10,7 @@ using Dependency = Robust.Shared.IoC.DependencyAttribute;
 
 namespace OpenDreamRuntime.Objects.Types;
 
-[Virtual]
+
 public class DreamList : DreamObject, IDreamList {
     private static readonly Stack<List<DreamValue>> ListPool = new();
 
@@ -932,7 +932,7 @@ public sealed class DreamOverlaysList : DreamList {
 // Operates on an atom's appearance
 public sealed class DreamVisContentsList : DreamList {
     [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly EntityManager _entityManager = default!;
     private readonly PvsOverrideSystem? _pvsOverrideSystem;
 
     private readonly List<DreamObjectAtom> _visContents = new();

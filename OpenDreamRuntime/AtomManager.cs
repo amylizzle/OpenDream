@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using OpenDreamRuntime.Map;
 using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Objects.Types;
@@ -9,6 +8,8 @@ using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
 using OpenDreamShared.EngineUtils;
+
+using Dependency = OpenDreamShared.EngineUtils.Dependency;
 
 namespace OpenDreamRuntime;
 
@@ -31,7 +32,7 @@ public sealed class AtomManager {
         }
     }
 
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly EntityManager _entityManager = default!;
     [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
     [Dependency] private readonly DreamObjectTree _objectTree = default!;
     [Dependency] private readonly IDreamMapManager _dreamMapManager = default!;
@@ -721,7 +722,7 @@ public sealed class AtomManager {
         return mouseEvents;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public (int X, int Y, int Z) GetAtomPosition(DreamObjectAtom atom) {
         return atom switch {
             DreamObjectMovable { Position: var pos, Z: var z } => (pos.X, pos.Y, z),
@@ -731,7 +732,7 @@ public sealed class AtomManager {
         };
     }
 
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     private static (int X, int Y, int) ThrowCantGetPosition(DreamObjectAtom atom) {
         throw new Exception($"Cannot get the position of {atom}");
     }

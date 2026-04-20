@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using OpenDreamShared.Network;
 using OpenDreamShared.Dream;
 
 
@@ -9,7 +9,7 @@ namespace OpenDreamShared.Network.Messages;
 /// A NetMessage intended for information the client needs, is small, and infrequently changes
 /// </summary>
 public sealed class MsgUpdateClientInfo : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
     public int IconSize;
     public ViewRange View;

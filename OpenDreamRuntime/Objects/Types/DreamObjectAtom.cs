@@ -1,6 +1,6 @@
 ﻿namespace OpenDreamRuntime.Objects.Types;
 
-[Virtual]
+
 public class DreamObjectAtom : DreamObject {
     public readonly DreamOverlaysList Overlays;
     public readonly DreamOverlaysList Underlays;

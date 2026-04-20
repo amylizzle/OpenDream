@@ -63,7 +63,7 @@ public sealed class DreamObjectTree {
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IDreamDebugManager _dreamDebugManager = default!;
     [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly EntityManager _entityManager = default!;
     [Dependency] private readonly DreamResourceManager _dreamResourceManager = default!;
     [Dependency] private readonly WalkManager _walkManager = default!;
     [Dependency] private readonly ISerializationManager _serializationManager = default!;

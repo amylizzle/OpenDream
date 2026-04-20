@@ -1,11 +1,11 @@
-﻿using Lidgren.Network;
+﻿using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages;
 
 public sealed class MsgWinGet : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
     public int PromptId;
     public string ControlId = string.Empty;

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages {
     public sealed class MsgUpdateStatPanels : NetMessage {
-        public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
         public readonly Dictionary<string, List<(string Name, string Value, string? AtomRef)>> StatPanels;
 

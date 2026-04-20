@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace OpenDreamShared.Rendering;
 
-[Virtual]
+
 public class SharedClientImagesSystem : EntitySystem {
     [Serializable, NetSerializable]
     public sealed class AddClientImageEvent(NetEntity attachedEntity, Vector3 turfCoords, NetEntity imageEntity)

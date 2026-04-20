@@ -462,7 +462,7 @@ public sealed class DumpDataCommand : IConsoleCommand {
 
 
         // Dump entities
-        var entityManager = IoCManager.Resolve<IEntityManager>();
+        var entityManager = IoCManager.Resolve<EntityManager>();
 
         var entities = entityManager.GetEntities().Select(e => new {
             EntityId = e.ToString(),

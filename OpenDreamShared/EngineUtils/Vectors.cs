@@ -113,9 +113,9 @@ public struct Vector2i :
         }
     }
 
-    public Vector2i Rotate(Angle angle)
+    public Vector2i Rotate(float angle)
     {
-        return (Vector2i) angle.RotateVec(this);
+        return new((int) Math.Round(this.X * Math.Sin(angle)), (int) Math.Round(this.Y * Math.Cos(angle)));
     }
 
     public static Vector2i operator -(Vector2i a, Vector2i b)
@@ -216,18 +216,6 @@ public struct Vector2i :
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         return ToString();
-    }
-
-    public bool TryFormat(
-        Span<char> destination,
-        out int charsWritten,
-        ReadOnlySpan<char> format,
-        IFormatProvider? provider)
-    {
-        return FormatHelpers.TryFormatInto(
-            destination,
-            out charsWritten,
-            $"({X}, {Y})");
     }
 
     public static bool operator >(Vector2i left, Vector2i right)

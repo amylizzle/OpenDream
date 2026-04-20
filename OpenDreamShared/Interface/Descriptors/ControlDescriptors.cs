@@ -11,7 +11,7 @@ using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Interface.Descriptors;
 
-[Virtual]
+
 public partial class ControlDescriptor : ElementDescriptor {
     [DataField("pos")]
     public DMFPropertyPos Pos = new(0, 0);

@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using OpenDreamShared.Network;
 
 
 
@@ -7,7 +7,7 @@ namespace OpenDreamShared.Network.Messages {
     /// Sent server -> client to tell the client to load the interface after connecting, before going in-game.
     /// </summary>
     public sealed class MsgLoadInterface : NetMessage {
-        public override MsgGroups MsgGroup => MsgGroups.Core;
+
 
         /// <summary>
         /// The DMF source for the interface. Null if none exists.

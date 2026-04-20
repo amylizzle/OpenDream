@@ -1,5 +1,6 @@
 using DMCompiler.Bytecode;
 using OpenDreamRuntime.Procs.DebugAdapter;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Resources;
 

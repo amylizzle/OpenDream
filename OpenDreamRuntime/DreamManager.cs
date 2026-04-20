@@ -58,7 +58,7 @@ public sealed partial class DreamManager {
     [Dependency] private readonly ITaskManager _taskManager = default!;
     [Dependency] private readonly IGameTiming _gameTiming = default!;
     [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly EntityManager _entityManager = default!;
 
     //TODO This arg is awful and temporary until RT supports cvar overrides in unit tests
     public void PreInitialize(string? jsonPath) {

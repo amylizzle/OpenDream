@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace OpenDreamRuntime.Procs.DebugAdapter.Protocol;
 
-[Virtual]
+
 public class Request : ProtocolMessage {
     [JsonPropertyName("command")] public required string Command { get; set; }
 

@@ -1,11 +1,11 @@
-﻿using Lidgren.Network;
+﻿using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages;
 public sealed class MsgBrowseResource : NetMessage {
     // TODO: Browse should be on its own channel or something.
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
     public string Filename = string.Empty;
     public byte[] DataHash = [];

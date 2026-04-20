@@ -15,7 +15,7 @@ using OpenDreamRuntime.Resources;
 
 namespace OpenDreamRuntime.Objects;
 
-[Virtual]
+
 public class DreamObject {
     public DreamObjectDefinition ObjectDefinition;
 
@@ -35,7 +35,7 @@ public class DreamObject {
     protected IMapManager MapManager => ObjectDefinition.MapManager;
     protected DreamResourceManager DreamResourceManager => ObjectDefinition.DreamResourceManager;
     protected WalkManager WalkManager => ObjectDefinition.WalkManager;
-    protected IEntityManager EntityManager => ObjectDefinition.EntityManager;
+    protected EntityManager EntityManager => ObjectDefinition.EntityManager;
     protected ISerializationManager SerializationManager => ObjectDefinition.SerializationManager;
     protected ServerAppearanceSystem? AppearanceSystem => ObjectDefinition.AppearanceSystem;
     protected TransformSystem? TransformSystem => ObjectDefinition.TransformSystem;

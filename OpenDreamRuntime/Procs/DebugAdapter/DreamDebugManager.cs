@@ -5,7 +5,7 @@ using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Procs.DebugAdapter.Protocol;
 using OpenDreamRuntime.Resources;
-
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Procs.DebugAdapter;
 

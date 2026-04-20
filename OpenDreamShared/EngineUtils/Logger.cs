@@ -12,17 +12,22 @@ public static class Logger {
 
 class ConsoleLog : ISawmill {
     public void Log(LogLevel logLevel, string message) {
-        Console.WriteLine(message);
+        Console.WriteLine($"[{logLevel}] {message}");
+    }
+
+    public void Log(LogLevel logLevel, Exception e, string message) {
+        Log(logLevel, $"Exception: {e.Message} - {message}");
     }
 }
 
 public interface ISawmill {
     public void Log(LogLevel logLevel, string message);
+    public void Log(LogLevel logLevel, Exception e, string message);
     public void Debug(string message) { Log(LogLevel.Debug, message); }
     public void Info(string message) { Log(LogLevel.Info, message); }
     public void Warning(string message) { Log(LogLevel.Warning, message); }
     public void Error(string message) { Log(LogLevel.Error, message); }
-    public void Critical(string message) { Log(LogLevel.Critical, message); }
+    public void Fatal(string message) { Log(LogLevel.Fatal, message); }
 }
 
 public enum LogLevel {
@@ -30,5 +35,5 @@ public enum LogLevel {
     Info,
     Warning,
     Error,
-    Critical,
+    Fatal,
 }

@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using OpenDreamShared.Network;
 using OpenDreamShared.Dream;
 
 
@@ -6,7 +6,7 @@ using OpenDreamShared.Dream;
 namespace OpenDreamShared.Network.Messages;
 
 public sealed class MsgPrompt : NetMessage {
-    public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
     public int PromptId;
     public DreamValueType Types;

@@ -10,7 +10,7 @@ namespace OpenDreamShared.Dream;
 /// <summary>
 /// An object describing type and vars so the client doesn't have to make a ShaderInstance for shaders with the same params
 /// </summary>
-[Serializable, NetSerializable, ImplicitDataDefinitionForInheritors]
+[Serializable, NetSerializable]
 public partial record DreamFilter {
     /// <summary>
     /// Indicates this filter was used in the last render cycle, for shader caching purposes

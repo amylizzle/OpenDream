@@ -1,10 +1,10 @@
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages {
     public sealed class MsgCommandRepeatStart : NetMessage {
-        public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
         public string Command = string.Empty;
 
@@ -18,7 +18,7 @@ namespace OpenDreamShared.Network.Messages {
     }
 
     public sealed class MsgCommandRepeatStop : NetMessage {
-        public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
         public string Command = string.Empty;
 

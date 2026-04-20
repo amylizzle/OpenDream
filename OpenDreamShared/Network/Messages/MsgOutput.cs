@@ -1,11 +1,11 @@
 ﻿using System;
-using Lidgren.Network;
+using OpenDreamShared.Network;
 
 
 
 namespace OpenDreamShared.Network.Messages {
     public sealed class MsgOutput : NetMessage {
-        public override MsgGroups MsgGroup => MsgGroups.EntityEvent;
+
 
         public string? Control;
         public string Value = String.Empty;
