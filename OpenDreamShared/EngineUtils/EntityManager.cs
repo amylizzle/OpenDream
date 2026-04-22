@@ -28,7 +28,7 @@ public sealed class EntityManager {
 
     }
 
-    public bool TryGetComponent<T>(Entity entity, out T? component[NotNullWhen(true)]) {
+    public bool TryGetComponent<T>(Entity entity, [NotNullWhen(true)] out T? component) {
 
     }
 

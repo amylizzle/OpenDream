@@ -11,7 +11,6 @@ namespace OpenDreamShared.EngineUtils;
 // ReSharper disable once InconsistentNaming
 public struct Vector2i :
     IEquatable<Vector2i>,
-    ISpanFormattable,
     IAdditionOperators<Vector2i, Vector2i, Vector2i>,
     ISubtractionOperators<Vector2i, Vector2i, Vector2i>,
     IMultiplyOperators<Vector2i, Vector2i, Vector2i>,

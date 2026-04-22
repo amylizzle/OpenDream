@@ -5,7 +5,7 @@
     <OutputPath>..\bin\Content.IntegrationTests\</OutputPath>
     <IsPackable>false</IsPackable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <LangVersion>12</LangVersion>
+    <LangVersion>13</LangVersion>
     <NoWarn>NU1507</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Content.IntegrationTests</RootNamespace>

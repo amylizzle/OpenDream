@@ -9,8 +9,6 @@ using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
 using OpenDreamShared.EngineUtils;
 
-using Dependency = OpenDreamShared.EngineUtils.Dependency;
-
 namespace OpenDreamRuntime;
 
 public sealed class AtomManager {
@@ -32,7 +30,7 @@ public sealed class AtomManager {
         }
     }
 
-    [Dependency] private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
+    private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
     private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();

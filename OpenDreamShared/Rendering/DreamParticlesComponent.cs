@@ -8,40 +8,40 @@ using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Rendering;
 
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
+// [RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
 public sealed partial class DreamParticlesComponent : Component {
-    [AutoNetworkedField] public int Width;
-    [AutoNetworkedField] public int Height;
-    [AutoNetworkedField] public int Count;
-    [AutoNetworkedField] public float Spawning;
-    [AutoNetworkedField] public Vector3 Bound1;
-    [AutoNetworkedField] public Vector3 Bound2;
-    [AutoNetworkedField] public Vector3 Gravity;
-    [AutoNetworkedField] public Color[] Gradient = [];
-    [AutoNetworkedField] public Matrix3x2 Transform;
-    [AutoNetworkedField] public ImmutableAppearance[] TextureList = [];
-    [AutoNetworkedField] public IGeneratorNum? Lifespan;
-    [AutoNetworkedField] public IGeneratorNum? FadeIn;
-    [AutoNetworkedField] public IGeneratorNum? FadeOut;
+    [AutoNetworkedField] public partial int Width {get;set;}
+    [AutoNetworkedField] public partial int Height {get;set;}
+    [AutoNetworkedField] public partial int Count {get;set;}
+    [AutoNetworkedField] public partial float Spawning {get;set;}
+    [AutoNetworkedField] public partial Vector3 Bound1 {get;set;}
+    [AutoNetworkedField] public partial Vector3 Bound2 {get;set;}
+    [AutoNetworkedField] public partial Vector3 Gravity {get;set;}
+    [AutoNetworkedField] public partial Color[] Gradient {get;set;} = [];
+    [AutoNetworkedField] public partial Matrix3x2 Transform {get;set;}
+    [AutoNetworkedField] public partial ImmutableAppearance[] TextureList {get;set;} = [];
+    [AutoNetworkedField] public partial IGeneratorNum? Lifespan {get;set;}
+    [AutoNetworkedField] public partial IGeneratorNum? FadeIn {get;set;}
+    [AutoNetworkedField] public partial IGeneratorNum? FadeOut {get;set;}
 
-    [AutoNetworkedField] public IGeneratorVector? SpawnPosition;
+    [AutoNetworkedField] public partial IGeneratorVector? SpawnPosition {get;set;}
 
 	//Starting velocity of the particles
-    [AutoNetworkedField] public IGeneratorVector? SpawnVelocity;
+    [AutoNetworkedField] public partial IGeneratorVector? SpawnVelocity {get;set;}
 
 	//Acceleration applied to the particles per second
-    [AutoNetworkedField] public IGeneratorVector? Friction;
+    [AutoNetworkedField] public partial IGeneratorVector? Friction {get;set;}
 
 	//Scaling applied to the particles in (x,y)
-    [AutoNetworkedField] public IGeneratorVector Scale = new GeneratorNum(1);
+    [AutoNetworkedField] public partial IGeneratorVector Scale {get;set;}= new GeneratorNum(1);
 
 	//Rotation applied to the particles in degrees
-    [AutoNetworkedField] public IGeneratorNum? Rotation;
+    [AutoNetworkedField] public partial IGeneratorNum? Rotation {get;set;}
 
 	//Increase in scale per second
-    [AutoNetworkedField] public IGeneratorVector? Growth;
+    [AutoNetworkedField] public partial IGeneratorVector? Growth {get;set;}
 
 	//Change in rotation per second
-    [AutoNetworkedField] public IGeneratorNum? Spin;
-    [AutoNetworkedField] public IGeneratorVector? Drift;
+    [AutoNetworkedField] public partial IGeneratorNum? Spin {get;set;}
+    [AutoNetworkedField] public partial IGeneratorVector? Drift {get;set;}
 }

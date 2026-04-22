@@ -7,3 +7,9 @@ public sealed class NetSerializableAttribute : Attribute
 {
 }
 
+[AttributeUsage(AttributeTargets.Property)]
+public class AutoNetworkedFieldAttribute : Attribute { }
+
+
+[AttributeUsage(AttributeTargets.Property|AttributeTargets.Field)]
+public class DataField(string name, bool required=false) : Attribute { string _name = name; bool required = required; }
