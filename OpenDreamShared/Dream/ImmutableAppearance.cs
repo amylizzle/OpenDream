@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using System.IO;
 using OpenDreamShared.EngineUtils;
-
+using OpenDreamShared.Network;
 using System.Linq;
 
 
@@ -51,7 +51,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
     public readonly MouseOpacity MouseOpacity = MutableAppearance.Default.MouseOpacity;
     public readonly ImmutableAppearance[] Overlays;
     public readonly ImmutableAppearance[] Underlays;
-    public readonly Robust.Shared.GameObjects.NetEntity[] VisContents;
+    public readonly NetEntity[] VisContents;
     public readonly DreamFilter[] Filters;
     public readonly int[] Verbs;
     public readonly ColorMatrix ColorMatrix = ColorMatrix.Identity;
@@ -293,7 +293,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
         return (int)_storedHashCode;
     }
 
-    public ImmutableAppearance(NetBuffer buffer, IRobustSerializer serializer) {
+    public ImmutableAppearance(NetBuffer buffer) {
         Overlays = [];
         Underlays = [];
         VisContents = [];
@@ -539,7 +539,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
         return result;
     }
 
-    public void WriteToBuffer(NetBuffer buffer, IRobustSerializer serializer) {
+    public void WriteToBuffer(NetBuffer buffer) {
         buffer.Write((byte)IconAppearanceProperty.Id);
         buffer.WriteVariableUInt32(MustGetId());
 
@@ -761,7 +761,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
         buffer.Write((byte)IconAppearanceProperty.End);
     }
 
-    public int ReadFromBuffer(NetBuffer buffer, IRobustSerializer serializer) {
+    public int ReadFromBuffer(NetBuffer buffer) {
         throw new NotImplementedException();
     }
 }

@@ -9,11 +9,11 @@ public sealed class MsgLookupResource : NetMessage {
 
     public string ResourcePathOrRef = "";
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         ResourcePathOrRef = buffer.ReadString();
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.Write(ResourcePathOrRef);
     }
 }

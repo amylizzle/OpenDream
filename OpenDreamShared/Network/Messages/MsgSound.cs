@@ -17,7 +17,7 @@ namespace OpenDreamShared.Network.Messages {
         public FormatType? Format; // TODO: This should probably be sent along with the sound resource instead somehow
         //TODO: Frequency and friends
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             SoundData = new SoundData(buffer);
 
             if (buffer.ReadBoolean()) {
@@ -26,7 +26,7 @@ namespace OpenDreamShared.Network.Messages {
             }
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             SoundData.WriteToBuffer(buffer);
 
             buffer.Write(ResourceId != null);

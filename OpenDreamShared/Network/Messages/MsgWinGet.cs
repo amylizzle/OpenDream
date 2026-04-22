@@ -11,13 +11,13 @@ public sealed class MsgWinGet : NetMessage {
     public string ControlId = string.Empty;
     public string QueryValue = string.Empty;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         PromptId = buffer.ReadVariableInt32();
         ControlId = buffer.ReadString();
         QueryValue = buffer.ReadString();
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.WriteVariableInt32(PromptId);
         buffer.Write(ControlId);
         buffer.Write(QueryValue);

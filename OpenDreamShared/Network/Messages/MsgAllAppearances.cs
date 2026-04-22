@@ -15,7 +15,7 @@ public sealed class MsgAllAppearances(Dictionary<uint, ImmutableAppearance> allA
 
     public MsgAllAppearances() : this(new()) { }
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         var compressedData = new MemoryStream(buffer.Data, buffer.PositionInBytes, buffer.LengthBytes - buffer.PositionInBytes);
         using var decompressStream = new DeflateStream(compressedData, CompressionMode.Decompress);
         var decompressedData = decompressStream.CopyToArray();
@@ -34,7 +34,7 @@ public sealed class MsgAllAppearances(Dictionary<uint, ImmutableAppearance> allA
         }
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         var beforeCompress = new NetBuffer();
         beforeCompress.Write(AllAppearances.Count);
         foreach (var pair in AllAppearances) {

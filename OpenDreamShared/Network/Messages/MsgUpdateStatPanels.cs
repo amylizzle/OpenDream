@@ -19,7 +19,7 @@ namespace OpenDreamShared.Network.Messages {
             StatPanels = new();
         }
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             var countTabs = buffer.ReadVariableInt32();
             StatPanels.EnsureCapacity(countTabs);
 
@@ -38,7 +38,7 @@ namespace OpenDreamShared.Network.Messages {
             }
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             buffer.WriteVariableInt32(StatPanels.Count);
             foreach (var (title, lines) in StatPanels) {
                 buffer.Write(title);

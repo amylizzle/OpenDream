@@ -11,7 +11,7 @@ public sealed class MsgSoundQueryResponse : NetMessage {
     public int PromptId;
     public List<SoundData> Sounds = default!;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         PromptId = buffer.ReadVariableInt32();
         var soundCount = buffer.ReadUInt16();
 
@@ -24,7 +24,7 @@ public sealed class MsgSoundQueryResponse : NetMessage {
         }
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.WriteVariableInt32(PromptId);
 
         var soundCount = Sounds.Count;

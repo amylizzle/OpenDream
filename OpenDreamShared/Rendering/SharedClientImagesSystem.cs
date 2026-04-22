@@ -3,6 +3,7 @@
 
 using System;
 using System.Numerics;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Rendering;
 

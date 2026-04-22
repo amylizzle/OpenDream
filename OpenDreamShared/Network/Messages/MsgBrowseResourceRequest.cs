@@ -9,11 +9,11 @@ public sealed class MsgBrowseResourceRequest : NetMessage {
 
     public string Filename = string.Empty;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         Filename = buffer.ReadString();
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.Write(Filename);
     }
 }

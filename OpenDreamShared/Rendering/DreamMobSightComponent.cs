@@ -1,11 +1,9 @@
 
 
 using System;
-
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Rendering {
-    [RegisterComponent]
-    [NetworkedComponent]
     public sealed partial class DreamMobSightComponent : Component {
         //this would be a good place for:
         //see_in_dark

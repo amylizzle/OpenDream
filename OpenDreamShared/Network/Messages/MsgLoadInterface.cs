@@ -14,14 +14,14 @@ namespace OpenDreamShared.Network.Messages {
         /// </summary>
         public string? InterfaceText;
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             bool hasInterface = buffer.ReadBoolean();
 
             if (hasInterface)
                 InterfaceText = buffer.ReadString();
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             buffer.Write(InterfaceText != null);
 
             if (InterfaceText != null)

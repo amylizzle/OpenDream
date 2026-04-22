@@ -17,14 +17,14 @@ public sealed class MsgUpdateClientInfo : NetMessage {
 
     public bool ShowPopupMenus;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         IconSize = buffer.ReadInt32();
         View = new(buffer.ReadInt32(), buffer.ReadInt32());
         ShowPopupMenus = buffer.ReadBoolean();
         CursorResource = buffer.ReadInt32();
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.Write(IconSize);
         buffer.Write(View.Width);
         buffer.Write(View.Height);

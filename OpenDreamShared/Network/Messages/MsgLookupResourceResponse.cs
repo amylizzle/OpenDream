@@ -11,13 +11,13 @@ public sealed class MsgLookupResourceResponse : NetMessage {
     public string ResourcePathOrRef = "";
     public bool Success;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         ResourceId = buffer.ReadInt32();
         ResourcePathOrRef = buffer.ReadString();
         Success = buffer.ReadBoolean();
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.Write(ResourceId);
         buffer.Write(ResourcePathOrRef);
         buffer.Write(Success);

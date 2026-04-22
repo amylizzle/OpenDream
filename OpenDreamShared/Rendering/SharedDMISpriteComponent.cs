@@ -3,10 +3,10 @@
 using System;
 
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Rendering;
 
-[NetworkedComponent]
 public abstract partial class SharedDMISpriteComponent : Component {
     [Serializable, NetSerializable]
     public sealed class DMISpriteComponentState : ComponentState {

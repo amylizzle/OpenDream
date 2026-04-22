@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenDreamShared.Interface.DMF;
-
+using OpenDreamShared.EngineUtils;
 
 
 
@@ -26,7 +26,6 @@ public sealed class InterfaceDescriptor {
     }
 }
 
-[Virtual, ImplicitDataDefinitionForInheritors]
 public partial class ElementDescriptor {
     [DataField("type")]
     public DMFPropertyString _type;

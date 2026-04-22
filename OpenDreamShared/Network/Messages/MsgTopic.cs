@@ -9,11 +9,11 @@ namespace OpenDreamShared.Network.Messages {
 
         public string Query = String.Empty;
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             Query = buffer.ReadString();
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             buffer.Write(Query);
         }
     }

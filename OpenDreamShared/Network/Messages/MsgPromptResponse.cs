@@ -14,7 +14,7 @@ public sealed class MsgPromptResponse : NetMessage {
     public DreamValueType Type;
     public object? Value;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         PromptId = buffer.ReadVariableInt32();
         Type = (DreamValueType)buffer.ReadUInt16();
 
@@ -27,7 +27,7 @@ public sealed class MsgPromptResponse : NetMessage {
         };
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.WriteVariableInt32(PromptId);
 
         buffer.Write((ushort)Type);

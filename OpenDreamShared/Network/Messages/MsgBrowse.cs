@@ -1,5 +1,5 @@
 ﻿using OpenDreamShared.Network;
-
+using OpenDreamShared.EngineUtils;
 
 
 
@@ -11,7 +11,7 @@ namespace OpenDreamShared.Network.Messages {
         public string? HtmlSource;
         public Vector2i Size;
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             var hasWindow = buffer.ReadBoolean();
             var hasHtml = buffer.ReadBoolean();
             buffer.ReadPadBits();
@@ -24,7 +24,7 @@ namespace OpenDreamShared.Network.Messages {
             Size = (buffer.ReadUInt16(), buffer.ReadUInt16());
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             buffer.Write(Window != null);
             buffer.Write(HtmlSource != null);
             buffer.WritePadBits();

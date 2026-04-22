@@ -10,12 +10,12 @@ public sealed class MsgBrowseResource : NetMessage {
     public string Filename = string.Empty;
     public byte[] DataHash = [];
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         Filename = buffer.ReadString();
         DataHash = buffer.ReadBytes(32);
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.Write(Filename);
         buffer.Write(DataHash);
     }

@@ -15,7 +15,7 @@ public sealed class MsgPromptList : NetMessage {
     public bool CanCancel;
     public string[] Values = Array.Empty<string>();
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         PromptId = buffer.ReadVariableInt32();
         Title = buffer.ReadString();
         Message = buffer.ReadString();
@@ -28,7 +28,7 @@ public sealed class MsgPromptList : NetMessage {
         }
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.WriteVariableInt32(PromptId);
         buffer.Write(Title);
         buffer.Write(Message);

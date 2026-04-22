@@ -49,7 +49,7 @@ public sealed class MutableAppearance : IEquatable<MutableAppearance>, IDisposab
     public MouseOpacity MouseOpacity = MouseOpacity.PixelOpaque;
     public List<ImmutableAppearance> Overlays;
     public List<ImmutableAppearance> Underlays;
-    public List<Robust.Shared.GameObjects.NetEntity> VisContents;
+    public List<NetEntity> VisContents;
     public List<DreamFilter> Filters;
     public List<int> Verbs;
     public Vector2i MaptextSize = new(32,32);

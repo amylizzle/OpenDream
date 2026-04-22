@@ -2,6 +2,7 @@
 
 
 using System;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared.Rendering {
 

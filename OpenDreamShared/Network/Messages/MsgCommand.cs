@@ -8,11 +8,11 @@ namespace OpenDreamShared.Network.Messages {
 
         public string Command = string.Empty;
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             Command = buffer.ReadString();
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             buffer.Write(Command);
         }
     }
@@ -22,11 +22,11 @@ namespace OpenDreamShared.Network.Messages {
 
         public string Command = string.Empty;
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+        public override void ReadFromBuffer(NetIncomingMessage buffer) {
             Command = buffer.ReadString();
         }
 
-        public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+        public override void WriteToBuffer(NetOutgoingMessage buffer) {
             buffer.Write(Command);
         }
     }

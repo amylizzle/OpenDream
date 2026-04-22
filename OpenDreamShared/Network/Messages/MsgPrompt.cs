@@ -14,7 +14,7 @@ public sealed class MsgPrompt : NetMessage {
     public string Message = string.Empty;
     public string DefaultValue = string.Empty;
 
-    public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer) {
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
         PromptId = buffer.ReadVariableInt32();
         Types = (DreamValueType) buffer.ReadUInt16();
         Title = buffer.ReadString();
@@ -22,7 +22,7 @@ public sealed class MsgPrompt : NetMessage {
         DefaultValue = buffer.ReadString();
     }
 
-    public override void WriteToBuffer(NetOutgoingMessage buffer, IRobustSerializer serializer) {
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
         buffer.WriteVariableInt32(PromptId);
         buffer.Write((ushort) Types);
         buffer.Write(Title);
