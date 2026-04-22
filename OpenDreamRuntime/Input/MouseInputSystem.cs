@@ -9,11 +9,11 @@ using OpenDreamShared.Input;
 namespace OpenDreamRuntime.Input;
 
 internal sealed class MouseInputSystem : SharedMouseInputSystem {
-    [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly DreamManager _dreamManager = default!;
-    [Dependency] private readonly DreamRefManager _refManager = default!;
-    [Dependency] private readonly IDreamMapManager _mapManager = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+    private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
+    private readonly IDreamMapManager _mapManager = IoCManager.Resolve<IDreamMapManager>();
+    private readonly IGameTiming _timing = IoCManager.Resolve<IGameTiming>();
 
     private readonly TimeSpan _doubleClickDelay = TimeSpan.FromMilliseconds(250);
 

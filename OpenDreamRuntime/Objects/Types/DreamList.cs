@@ -553,8 +553,8 @@ internal sealed class DreamListVars(DreamObjectDefinition listDef, DreamObject d
 
 // global.vars list
 internal sealed class DreamGlobalVars : DreamList {
-    [Dependency] private readonly DreamManager _dreamMan = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
+    private readonly DreamManager _dreamMan = IoCManager.Resolve<DreamManager>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
 
     public override bool IsAssociative =>
         true; // We don't use the associative array but, yes, we behave like an associative list
@@ -810,7 +810,7 @@ public sealed class VerbsList(DreamObjectTree objectTree, AtomManager atomManage
 // atom.overlays or atom.underlays list
 // Operates on an object's appearance
 public sealed class DreamOverlaysList : DreamList {
-    [Dependency] private readonly AtomManager _atomManager = default!;
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
     private readonly ServerAppearanceSystem? _appearanceSystem;
     private readonly DreamObject _owner;
     private readonly bool _isUnderlays;
@@ -931,8 +931,8 @@ public sealed class DreamOverlaysList : DreamList {
 // atom.vis_contents list
 // Operates on an atom's appearance
 public sealed class DreamVisContentsList : DreamList {
-    [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly EntityManager _entityManager = default!;
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
+    private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
     private readonly PvsOverrideSystem? _pvsOverrideSystem;
 
     private readonly List<DreamObjectAtom> _visContents = new();

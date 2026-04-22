@@ -10,11 +10,11 @@ using OpenDreamShared.EngineUtils;
 namespace OpenDreamRuntime.Procs.DebugAdapter;
 
 internal sealed class DreamDebugManager : IDreamDebugManager {
-    [Dependency] private readonly DreamManager _dreamManager = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly DreamResourceManager _resourceManager = default!;
-    [Dependency] private readonly ProcScheduler _procScheduler = default!;
-    [Dependency] private readonly IBaseServer _server = default!;
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
+    private readonly ProcScheduler _procScheduler = IoCManager.Resolve<ProcScheduler>();
+    private readonly IBaseServer _server = IoCManager.Resolve<IBaseServer>();
 
     private ISawmill _sawmill = default!;
 

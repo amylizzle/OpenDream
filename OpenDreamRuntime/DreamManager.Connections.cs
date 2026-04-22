@@ -25,8 +25,8 @@ namespace OpenDreamRuntime {
         private static readonly byte[] ByondTopicHeaderRaw = { 0x00, 0x83 };
         private static readonly byte[] ByondTopicHeaderEncrypted = { 0x00, 0x15 };
 
-        [Dependency] private readonly IServerNetManager _netManager = default!;
-        [Dependency] private readonly IConfigurationManager _config = default!;
+        private readonly IServerNetManager _netManager = IoCManager.Resolve<IServerNetManager>();
+        private readonly IConfigurationManager _config = IoCManager.Resolve<IConfigurationManager>();
 
         private readonly Dictionary<NetUserId, DreamConnection> _connections = new();
 

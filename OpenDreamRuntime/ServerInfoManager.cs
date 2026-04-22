@@ -19,8 +19,8 @@ public sealed class ServerInfoManager {
         // @formatter:on
     };
 
-    [Dependency] private readonly IStatusHost _statusHost = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    private readonly IStatusHost _statusHost = IoCManager.Resolve<IStatusHost>();
+    private readonly IConfigurationManager _cfg = IoCManager.Resolve<IConfigurationManager>();
 
     public void Initialize() {
         _statusHost.OnInfoRequest += OnInfoRequest;

@@ -49,16 +49,16 @@ public sealed partial class DreamManager {
 
     private ISawmill _sawmill = default!;
 
-    [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly DreamRefManager _refManager = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IDreamMapManager _dreamMapManager = default!;
-    [Dependency] private readonly ProcScheduler _procScheduler = default!;
-    [Dependency] private readonly DreamResourceManager _dreamResourceManager = default!;
-    [Dependency] private readonly ITaskManager _taskManager = default!;
-    [Dependency] private readonly IGameTiming _gameTiming = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly EntityManager _entityManager = default!;
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
+    private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
+    private readonly IPlayerManager _playerManager = IoCManager.Resolve<IPlayerManager>();
+    private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
+    private readonly ProcScheduler _procScheduler = IoCManager.Resolve<ProcScheduler>();
+    private readonly DreamResourceManager _dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
+    private readonly ITaskManager _taskManager = IoCManager.Resolve<ITaskManager>();
+    private readonly IGameTiming _gameTiming = IoCManager.Resolve<IGameTiming>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
 
     //TODO This arg is awful and temporary until RT supports cvar overrides in unit tests
     public void PreInitialize(string? jsonPath) {

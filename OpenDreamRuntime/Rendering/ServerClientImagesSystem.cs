@@ -6,7 +6,7 @@ using OpenDreamRuntime.Objects;
 namespace OpenDreamRuntime.Rendering;
 
 public sealed class ServerClientImagesSystem : SharedClientImagesSystem {
-    [Dependency] private readonly PvsOverrideSystem _pvsOverrideSystem = default!;
+    private readonly PvsOverrideSystem _pvsOverrideSystem = IoCManager.Resolve<PvsOverrideSystem>();
 
     public void AddImageObject(DreamConnection connection, DreamObjectImage imageObject) {
         if (connection.Session == null || imageObject.GetAttachedLoc() is not { } loc)

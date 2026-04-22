@@ -15,12 +15,12 @@ using System.Linq;
 
 namespace OpenDreamRuntime {
     public sealed class EntryPoint : GameServer {
-        [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
-        [Dependency] private readonly DreamManager _dreamManager = default!;
-        [Dependency] private readonly IConfigurationManager _configManager = default!;
-        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-        [Dependency] private readonly IDreamDebugManager _debugManager = default!;
-        [Dependency] private readonly ServerInfoManager _serverInfoManager = default!;
+        private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
+        private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+        private readonly IConfigurationManager _configManager = IoCManager.Resolve<IConfigurationManager>();
+        private readonly IPrototypeManager _prototypeManager = IoCManager.Resolve<IPrototypeManager>();
+        private readonly IDreamDebugManager _debugManager = IoCManager.Resolve<IDreamDebugManager>();
+        private readonly ServerInfoManager _serverInfoManager = IoCManager.Resolve<ServerInfoManager>();
 
         private ServerVerbSystem? _serverVerbSystem;
 

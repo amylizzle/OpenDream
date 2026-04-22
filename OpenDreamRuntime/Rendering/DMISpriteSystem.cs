@@ -5,7 +5,7 @@ using OpenDreamShared.Rendering;
 namespace OpenDreamRuntime.Rendering;
 
 public sealed class DMISpriteSystem : EntitySystem {
-    [Dependency] private readonly ServerAppearanceSystem _appearance = default!;
+    private readonly ServerAppearanceSystem _appearance = IoCManager.Resolve<ServerAppearanceSystem>();
 
     public override void Initialize() {
         SubscribeLocalEvent<DMISpriteComponent, ComponentGetState>(GetComponentState);

@@ -11,10 +11,10 @@ using OpenDreamShared.Dream;
 namespace OpenDreamRuntime;
 
 public sealed class ServerVerbSystem : VerbSystem {
-    [Dependency] private readonly DreamManager _dreamManager = default!;
-    [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly IPlayerManager _playerManager = IoCManager.Resolve<IPlayerManager>();
 
     private readonly List<VerbInfo> _verbs = new();
     private readonly Dictionary<int, DreamProc> _verbIdToProc = new();

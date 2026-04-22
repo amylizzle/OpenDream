@@ -13,10 +13,10 @@ namespace OpenDreamRuntime;
 /// walk_towards(), walk_to(), walk_away(), etc.
 /// </summary>
 public sealed class WalkManager {
-    [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly IDreamMapManager _dreamMapManager = default!;
-    [Dependency] private readonly ProcScheduler _scheduler = default!;
-    [Dependency] private readonly DreamManager _dreamManager = default!;
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
+    private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
+    private readonly ProcScheduler _scheduler = IoCManager.Resolve<ProcScheduler>();
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
 
     private readonly Dictionary<DreamObjectMovable, CancellationTokenSource> _walkTasks = new();
 

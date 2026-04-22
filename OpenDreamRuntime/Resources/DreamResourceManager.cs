@@ -16,10 +16,10 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace OpenDreamRuntime.Resources;
 
 public sealed class DreamResourceManager {
-    [Dependency] private readonly IServerNetManager _netManager = default!;
-    [Dependency] private readonly IStatusHost _statusHost = default!;
-    [Dependency] private readonly IDependencyCollection _dependencyCollection = default!;
-    [Dependency] private readonly ISerializationManager _serializationManager = default!;
+    private readonly IServerNetManager _netManager = IoCManager.Resolve<IServerNetManager>();
+    private readonly IStatusHost _statusHost = IoCManager.Resolve<IStatusHost>();
+    private readonly IDependencyCollection _dependencyCollection = IoCManager.Resolve<IDependencyCollection>();
+    private readonly ISerializationManager _serializationManager = IoCManager.Resolve<ISerializationManager>();
 
     public string RootPath { get; private set; } = default!;
     public DMFResource? InterfaceFile { get; private set; }

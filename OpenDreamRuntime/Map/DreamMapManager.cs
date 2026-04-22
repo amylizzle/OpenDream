@@ -16,11 +16,11 @@ using Cell = OpenDreamRuntime.Map.IDreamMapManager.Cell;
 namespace OpenDreamRuntime.Map;
 
 public sealed partial class DreamMapManager : IDreamMapManager {
-    [Dependency] private readonly DreamManager _dreamManager = default!;
-    [Dependency] private readonly AtomManager _atomManager = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+    private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
+    private readonly IMapManager _mapManager = IoCManager.Resolve<IMapManager>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
 
     // Set in Initialize
     private ServerAppearanceSystem _appearanceSystem = default!;

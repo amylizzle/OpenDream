@@ -15,12 +15,12 @@ using SpaceWizards.Sodium;
 namespace OpenDreamRuntime;
 
 public sealed class DreamConnection {
-    [Dependency] private readonly DreamManager _dreamManager = default!;
-    [Dependency] private readonly DreamRefManager _refManager = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly DreamResourceManager _resourceManager = default!;
-    [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
-    [Dependency] private readonly ISharedPlayerManager _playerManager = default!;
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+    private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
+    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
+    private readonly ISharedPlayerManager _playerManager = IoCManager.Resolve<ISharedPlayerManager>();
 
     private readonly ServerScreenOverlaySystem? _screenOverlaySystem;
     private readonly ServerClientImagesSystem? _clientImagesSystem;

@@ -25,10 +25,10 @@ public sealed class DreamObjectWorld : DreamObject {
     public float Cpu { get; set; }
     public readonly int IconSize;
 
-    [Dependency] private readonly IBaseServer _server = default!;
-    [Dependency] private readonly IGameTiming _gameTiming = default!;
-    [Dependency] private readonly INetManager _netManager = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    private readonly IBaseServer _server = IoCManager.Resolve<IBaseServer>();
+    private readonly IGameTiming _gameTiming = IoCManager.Resolve<IGameTiming>();
+    private readonly INetManager _netManager = IoCManager.Resolve<INetManager>();
+    private readonly IConfigurationManager _cfg = IoCManager.Resolve<IConfigurationManager>();
 
     private readonly ISawmill _sawmill = Logger.GetSawmill("opendream.world");
 

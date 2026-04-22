@@ -488,8 +488,8 @@ public struct DreamValue : IEquatable<DreamValue> {
 #region Serialization
 
 public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly DreamResourceManager _resourceManager = default!;
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
 
     public DreamValueJsonConverter() {
         IoCManager.InjectDependencies(this);

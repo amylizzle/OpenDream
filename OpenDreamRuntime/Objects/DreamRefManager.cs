@@ -16,9 +16,9 @@ public sealed class DreamRefManager {
 
     public Dictionary<string, List<DreamObject>> Tags { get; } = new();
 
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly DreamResourceManager _resourceManager = default!;
-    [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
+    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
     private ServerAppearanceSystem? _appearanceSystem;
 
     private readonly Dictionary<RefType, Bucket> _buckets = new();

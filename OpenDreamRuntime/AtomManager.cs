@@ -32,12 +32,12 @@ public sealed class AtomManager {
         }
     }
 
-    [Dependency] private readonly EntityManager _entityManager = default!;
-    [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
-    [Dependency] private readonly DreamObjectTree _objectTree = default!;
-    [Dependency] private readonly IDreamMapManager _dreamMapManager = default!;
-    [Dependency] private readonly DreamResourceManager _resourceManager = default!;
-    [Dependency] private readonly DreamRefManager _refManager = default!;
+    [Dependency] private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
+    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
+    private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
+    private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
+    private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
+    private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
 
     private readonly Dictionary<EntityUid, DreamObjectMovable> _entityToAtom = new();
     private readonly Dictionary<DreamObjectDefinition, MutableAppearance> _definitionAppearanceCache = new();
