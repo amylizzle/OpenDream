@@ -2,10 +2,6 @@ using System.Diagnostics.Contracts;
 using System.Text;
 using OpenDreamClient.Interface.Html;
 
-
-
-
-
 namespace OpenDreamClient.Rendering;
 
 /// <summary>
@@ -26,7 +22,7 @@ public sealed class MapTextRenderer(IResourceCache resourceCache, MarkupTagManag
             handle.SetTransform(DreamViewOverlay.CreateRenderTargetFlipMatrix(texture.Size, Vector2.Zero));
 
             var message = new FormattedMessage();
-            HtmlParser.Parse(maptext, message);
+            HtmlParser.Parse(StringFormatDecoder.RemoveFormatting(maptext), message);
 
             var (height, lineBreaks) = ProcessWordWrap(message, texture.Size.X);
             var lineHeight = _defaultFont.GetLineHeight(Scale);
