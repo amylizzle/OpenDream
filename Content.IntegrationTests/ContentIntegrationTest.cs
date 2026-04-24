@@ -58,8 +58,8 @@ public abstract class ContentIntegrationTest : RobustIntegrationTest {
         };
 
         // Set compiled json path by default.
-        if (!options.CVarOverrides.ContainsKey(OpenDreamCVars.JsonPath.Name))
-            options.CVarOverrides[OpenDreamCVars.JsonPath.Name] = SetupCompileDm.CompiledProject;
+        if (!options.CVarOverrides.ContainsKey(OpenDreamConfig.JsonPath.Name))
+            options.CVarOverrides[OpenDreamConfig.JsonPath.Name] = SetupCompileDm.CompiledProject;
 
         options.ContentStart = true;
 

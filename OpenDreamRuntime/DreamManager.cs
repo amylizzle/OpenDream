@@ -63,8 +63,8 @@ public sealed partial class DreamManager {
     //TODO This arg is awful and temporary until RT supports cvar overrides in unit tests
     public void PreInitialize(string? jsonPath) {
         _sawmill = Logger.GetSawmill("opendream");
-        ListPoolThreshold = _config.GetCVar(OpenDreamCVars.ListPoolThreshold);
-        ListPoolSize = _config.GetCVar(OpenDreamCVars.ListPoolSize);
+        ListPoolThreshold = OpenDreamConfig.ListPoolThreshold;
+        ListPoolSize = OpenDreamConfig.ListPoolSize;
         ByondApi.ByondApi.Initialize(this, _refManager, _atomManager, _dreamMapManager, _objectTree);
 
         InitializeConnectionManager();
@@ -195,7 +195,7 @@ public sealed partial class DreamManager {
         } else {
             logRsc.Output(new DreamValue($"[{LogMessage.LogLevelToName(level)}] {sawmill}: {message}"));
 
-            if (_config.GetCVar(OpenDreamCVars.AlwaysShowExceptions)) {
+            if (OpenDreamConfig.AlwaysShowExceptions) {
                 Logger.GetSawmill(sawmill).Log(level, message);
             }
         }

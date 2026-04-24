@@ -1,51 +1,103 @@
 ﻿using System;
-
+using System.CommandLine;
+using System.IO;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamShared;
 
-[CVarDefs]
-public abstract class OpenDreamCVars {
-    public static readonly CVarDef<string> JsonPath =
-        CVarDef.Create("opendream.json_path", string.Empty, CVar.SERVERONLY);
+public static class OpenDreamConfig {
 
-    public static readonly CVarDef<int> DownloadTimeout =
-        CVarDef.Create("opendream.download_timeout", 30, CVar.CLIENTONLY);
+    private static ParseResult? parseResult; //access before Parse() should be a hard error anyway
 
-    public static readonly CVarDef<bool> AlwaysShowExceptions =
-        CVarDef.Create("opendream.always_show_exceptions", false, CVar.SERVERONLY);
+    public static void Parse(string[] args) {
+        RootCommand rootCommand = new("OpenDream Server");
 
-    public static readonly CVarDef<int> DebugAdapterLaunched =
-        CVarDef.Create("opendream.debug_adapter_launched", 0, CVar.SERVERONLY);
+        rootCommand.Options.Add(optionJsonPath);
+        rootCommand.Options.Add(optionAlwaysShowExceptions);
+        rootCommand.Options.Add(optionDebugAdapterLaunched);
+        rootCommand.Options.Add(optionWorldParams);
+        rootCommand.Options.Add(optionTopicPort);
+        rootCommand.Options.Add(optionListPoolThreshold);
+        rootCommand.Options.Add(optionListPoolSize);
+        rootCommand.Options.Add(optionTracyEnable);
+        rootCommand.Options.Add(optionInfoLinksDiscord);
+        rootCommand.Options.Add(optionInfoLinksForum);
+        rootCommand.Options.Add(optionInfoLinksGithub);
+        rootCommand.Options.Add(optionInfoLinksWebsite);
+        rootCommand.Options.Add(optionInfoLinksWiki);
 
-    /// <summary>
-    /// Older versions of BYOND used Internet Explorer. Set this if you need to spoof the old user agent.
-    /// </summary>
-    public static readonly CVarDef<bool> SpoofIEUserAgent =
-        CVarDef.Create("opendream.spoof_ie_user_agent", false, CVar.CLIENTONLY);
+        parseResult = rootCommand.Parse(args);
+        if(parseResult.Errors.Count > 0){
+            var _sawmill = Logger.GetSawmill("ArgumentParser");
+            foreach(var parseResultError in parseResult.Errors)
+                _sawmill.Error(parseResultError.Message);
+            throw new ArgumentException($"{parseResult.Errors.Count} error(s) occurred while parsing args.");
+        }
+    }
+    private static readonly Option<string> optionJsonPath = new("opendream.json_path") {
+        Description = "The compiled JSON file containing the OpenDream bytecode.",
+        Required = true
+    };
 
-    public static readonly CVarDef<string> WorldParams =
-        CVarDef.Create("opendream.world_params", string.Empty, CVar.SERVERONLY);
+    public static string JsonPath => parseResult?.GetValue(optionJsonPath) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
-    public static readonly CVarDef<ushort> TopicPort =
-        CVarDef.Create<ushort>("opendream.topic_port", 25567, CVar.SERVERONLY);
+    private static readonly Option<bool> optionAlwaysShowExceptions = new("opendream.always_show_exceptions") {
+        Description = "Whether OpenDream should always show exceptions.",
+        DefaultValueFactory = (_) => false,
+        Required = false
+    };
+    public static bool AlwaysShowExceptions => parseResult?.GetValue(optionAlwaysShowExceptions) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
+
+    private static readonly Option<int> optionDebugAdapterLaunched = new("opendream.debug_adapter_launched") {
+        Description = "Whether this server was launched by the debug adapter.",
+        DefaultValueFactory = (_) => 0,
+        Required = false
+    };
+    public static int DebugAdapterLaunched => parseResult?.GetValue(optionDebugAdapterLaunched) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
+
+    private static readonly Option<string> optionWorldParams = new("opendream.world_params") {
+        Description = "The parameters to pass to /world",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string WorldParams => parseResult?.GetValue(optionWorldParams) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
+
+    private static readonly Option<ushort> optionTopicPort = new("opendream.topic_port") {
+        Description = "The port to host /world.Topic() on.",
+        DefaultValueFactory = (_) => 25567,
+        Required = false
+    };
+    public static ushort TopicPort => parseResult?.GetValue(optionTopicPort) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// How large a /list's capacity has to be before it will be held in the list pool
     /// </summary>
-    public static readonly CVarDef<int> ListPoolThreshold =
-        CVarDef.Create("opendream.list_pool_threshold", 2048, CVar.SERVERONLY);
+    private static readonly Option<int> optionListPoolThreshold = new("opendream.list_pool_threshold") {
+        Description = "How large a /list's capacity has to be before it will be held in the list pool.",
+        DefaultValueFactory = (_) => 2048,
+        Required = false
+    };
+    public static int ListPoolThreshold => parseResult?.GetValue(optionListPoolThreshold) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// The maximum amount of lists kept in the list pool
     /// </summary>
-    public static readonly CVarDef<int> ListPoolSize =
-        CVarDef.Create("opendream.list_pool_size", 256, CVar.SERVERONLY);
+    private static readonly Option<int> optionListPoolSize = new("opendream.list_pool_size") {
+        Description = "The maximum amount of lists kept in the list pool.",
+        DefaultValueFactory = (_) => 256,
+        Required = false
+    };
+    public static int ListPoolSize => parseResult?.GetValue(optionListPoolSize) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// If Tracy should be enabled. ONLY FUNCTIONS IN TOOLS BUILD.
     /// </summary>
-    public static readonly CVarDef<bool> TracyEnable =
-        CVarDef.Create("opendream.enable_tracy", false, CVar.SERVERONLY);
+    private static readonly Option<bool> optionTracyEnable = new("opendream.enable_tracy") {
+        Description = "If Tracy should be enabled. ONLY FUNCTIONS IN TOOLS BUILD.",
+        DefaultValueFactory = (_) => false,
+        Required = false
+    };
+    public static bool TracyEnable => parseResult?.GetValue(optionTracyEnable) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /*
     * INFOLINKS
@@ -54,30 +106,50 @@ public abstract class OpenDreamCVars {
     /// <summary>
     /// Link to Discord server to show in the launcher.
     /// </summary>
-    public static readonly CVarDef<string> InfoLinksDiscord =
-        CVarDef.Create("infolinks.discord", "", CVar.SERVER | CVar.REPLICATED);
+    private static readonly Option<string> optionInfoLinksDiscord = new("infolinks.discord") {
+        Description = "Link to Discord server to show in the launcher.",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string InfoLinksDiscord  => parseResult?.GetValue(optionInfoLinksDiscord) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// Link to forum to show in the launcher.
     /// </summary>
-    public static readonly CVarDef<string> InfoLinksForum =
-        CVarDef.Create("infolinks.forum", "", CVar.SERVER | CVar.REPLICATED);
+    private static readonly Option<string> optionInfoLinksForum = new("infolinks.forum") {
+        Description = "Link to forum to show in the launcher.",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string InfoLinksForum => parseResult?.GetValue(optionInfoLinksForum) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// Link to GitHub page to show in the launcher.
     /// </summary>
-    public static readonly CVarDef<string> InfoLinksGithub =
-        CVarDef.Create("infolinks.github", "", CVar.SERVER | CVar.REPLICATED);
+    private static readonly Option<string> optionInfoLinksGithub = new("infolinks.github") {
+        Description = "Link to GitHub page to show in the launcher.",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string InfoLinksGithub => parseResult?.GetValue(optionInfoLinksGithub) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// Link to website to show in the launcher.
     /// </summary>
-    public static readonly CVarDef<string> InfoLinksWebsite =
-        CVarDef.Create("infolinks.website", "", CVar.SERVER | CVar.REPLICATED);
+    private static readonly Option<string> optionInfoLinksWebsite = new("infolinks.website") {
+        Description = "Link to website to show in the launcher.",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string InfoLinksWebsite => parseResult?.GetValue(optionInfoLinksWebsite) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 
     /// <summary>
     /// Link to wiki to show in the launcher.
     /// </summary>
-    public static readonly CVarDef<string> InfoLinksWiki =
-        CVarDef.Create("infolinks.wiki", "", CVar.SERVER | CVar.REPLICATED);
+    private static readonly Option<string> optionInfoLinksWiki = new("infolinks.wiki") {
+        Description = "Link to wiki to show in the launcher.",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string InfoLinksWiki => parseResult?.GetValue(optionInfoLinksWiki) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
 }

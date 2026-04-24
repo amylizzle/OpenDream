@@ -26,8 +26,6 @@ namespace OpenDreamRuntime {
         private static readonly byte[] ByondTopicHeaderEncrypted = { 0x00, 0x15 };
 
         private readonly IServerNetManager _netManager = IoCManager.Resolve<IServerNetManager>();
-        private readonly IConfigurationManager _config = IoCManager.Resolve<IConfigurationManager>();
-
         private readonly Dictionary<NetUserId, DreamConnection> _connections = new();
 
         public IEnumerable<DreamConnection> Connections => _connections.Values;
@@ -83,7 +81,7 @@ namespace OpenDreamRuntime {
             _netManager.RegisterNetMessage<MsgUpdateClientInfo>();
             _netManager.RegisterNetMessage<MsgAllAppearances>();
 
-            var topicPort = _config.GetCVar(OpenDreamCVars.TopicPort);
+            var topicPort = OpenDreamConfig.TopicPort;
             var worldTopicAddress = new IPEndPoint(IPAddress.Loopback, topicPort);
             _sawmill.Debug($"Binding World Topic at {worldTopicAddress}");
             _worldTopicSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) {

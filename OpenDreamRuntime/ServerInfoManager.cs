@@ -11,11 +11,11 @@ namespace OpenDreamRuntime;
 public sealed class ServerInfoManager {
     private static readonly (CVarDef<string> cVar, string icon, string name)[] Vars = {
         // @formatter:off
-        (OpenDreamCVars.InfoLinksDiscord, "discord", "Discord"),
-        (OpenDreamCVars.InfoLinksForum,   "forum",   "Forum"),
-        (OpenDreamCVars.InfoLinksGithub,  "github",  "GitHub"),
-        (OpenDreamCVars.InfoLinksWebsite, "web",     "Website"),
-        (OpenDreamCVars.InfoLinksWiki,    "wiki",    "Wiki")
+        (OpenDreamConfig.InfoLinksDiscord, "discord", "Discord"),
+        (OpenDreamConfig.InfoLinksForum,   "forum",   "Forum"),
+        (OpenDreamConfig.InfoLinksGithub,  "github",  "GitHub"),
+        (OpenDreamConfig.InfoLinksWebsite, "web",     "Website"),
+        (OpenDreamConfig.InfoLinksWiki,    "wiki",    "Wiki")
         // @formatter:on
     };
 

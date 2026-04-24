@@ -45,7 +45,7 @@ public sealed class DreamObjectWorld : DreamObject {
     /// <summary> Determines whether we try to show IPv6 or IPv4 to the user during .address and .internet_address queries.</summary>
     private bool DisplayIPv6 {
         get {
-            var binds = _cfg.GetCVar(CVars.NetBindTo).Split(',');
+            var binds = OpenDreamConfig.NetBindTo.Split(',');
 
             foreach (var bindAddress in binds) {
                 // EXTREMELY unlikely since RT does this same check on network startup
@@ -95,7 +95,7 @@ public sealed class DreamObjectWorld : DreamObject {
             DefaultView = new ViewRange(viewInt);
         }
 
-        var worldParams = _cfg.GetCVar(OpenDreamCVars.WorldParams);
+        var worldParams = OpenDreamConfig.WorldParams;
         _params = worldParams != string.Empty ?
             new DreamValue(DreamProcNativeRoot.Params2List(ObjectTree, worldParams)) :
             new DreamValue(ObjectTree.CreateList());

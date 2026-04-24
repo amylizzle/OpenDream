@@ -2,12 +2,7 @@
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Procs.DebugAdapter;
 using OpenDreamShared;
-
-
-
-
-
-
+using OpenDreamShared.EngineUtils;
 using System.IO;
 using System.Linq;
 
@@ -25,36 +20,10 @@ namespace OpenDreamRuntime {
         private ServerVerbSystem? _serverVerbSystem;
 
         public override void Init() {
-            IComponentFactory componentFactory = IoCManager.Resolve<IComponentFactory>();
-            componentFactory.DoAutoRegistrations();
-
             ServerContentIoC.Register();
 
-            // This needs to happen after all IoC registrations, but before IoC.BuildGraph();
-            foreach (var callback in TestingCallbacks) {
-                var cast = (ServerModuleTestingCallbacks) callback;
-                cast.ServerBeforeIoC?.Invoke();
-            }
-
-            IoCManager.BuildGraph();
-            IoCManager.InjectDependencies(this);
-            componentFactory.GenerateNetIds();
-
-            _configManager.OverrideDefault(CVars.NetLogLateMsg, false); // Disable since disabling prediction causes timing errors otherwise.
-            _configManager.OverrideDefault(CVars.GameAutoPauseEmpty, false); // DreamObjectWorld sets this appropriately but we need to keep it disabled til then or it won't be reached
-            _configManager.OverrideDefault(CVars.DiscordRichPresenceSecondIconId, "opendream");
-            _configManager.SetCVar(CVars.GridSplitting, false); // Grid splitting should never be used
-            if(String.IsNullOrEmpty(_configManager.GetCVar<string>(OpenDreamCVars.JsonPath))) //if you haven't set the jsonpath cvar, set it to the first valid file path passed as an arg
-                foreach (string arg in Environment.GetCommandLineArgs().Skip(1)) //skip the first element, because it's just the server's exe path
-                    if(File.Exists(arg)){
-                        _configManager.SetCVar(OpenDreamCVars.JsonPath, arg);
-                        break;
-                    }
-
-            if(_configManager.GetCVar(OpenDreamCVars.TracyEnable))
+            if(OpenDreamConfig.TracyEnable)
                 Profiler.Activate();
-
-            _prototypeManager.LoadDirectory(new ResPath("/Resources/Prototypes"));
 
             _serverInfoManager.Initialize();
         }
@@ -62,9 +31,9 @@ namespace OpenDreamRuntime {
         public override void PostInit() {
             _serverVerbSystem = _entitySystemManager.GetEntitySystem<ServerVerbSystem>();
 
-            int debugAdapterPort = _configManager.GetCVar(OpenDreamCVars.DebugAdapterLaunched);
+            int debugAdapterPort = OpenDreamConfig.DebugAdapterLaunched;
             if (debugAdapterPort == 0) {
-                _dreamManager.PreInitialize(_configManager.GetCVar<string>(OpenDreamCVars.JsonPath));
+                _dreamManager.PreInitialize(OpenDreamConfig.JsonPath);
                 _dreamManager.StartWorld();
             } else {
                 // The debug manager is responsible for running _dreamManager.PreInitialize() and .StartWorld()
