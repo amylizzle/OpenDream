@@ -14,7 +14,7 @@ public sealed class ServerScreenOverlaySystem : SharedScreenOverlaySystem {
 
         _pvsOverride.AddForceSend(screenObject.Entity, connection.Session);
 
-        NetEntity ent = _entityManager.GetNetEntity(screenObject.Entity);
+        EntityUid ent = _entityManager.GetEntityUid(screenObject.Entity);
         RaiseNetworkEvent(new AddScreenObjectEvent(ent), connection.Session.Channel);
     }
 
@@ -24,7 +24,7 @@ public sealed class ServerScreenOverlaySystem : SharedScreenOverlaySystem {
 
         _pvsOverride.RemoveForceSend(screenObject.Entity, connection.Session);
 
-        NetEntity ent = _entityManager.GetNetEntity(screenObject.Entity);
+        EntityUid ent = _entityManager.GetEntityUid(screenObject.Entity);
         RaiseNetworkEvent(new RemoveScreenObjectEvent(ent), connection.Session.Channel);
     }
 }

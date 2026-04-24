@@ -7,6 +7,7 @@ public enum NetDeliveryMethod {
 }
 
 public abstract class NetMessage {
+    public NetDeliveryMethod DeliveryMethod => NetDeliveryMethod.ReliableOrdered;
     public abstract void ReadFromBuffer(NetIncomingMessage buffer);
     public abstract void WriteToBuffer(NetOutgoingMessage buffer);
 

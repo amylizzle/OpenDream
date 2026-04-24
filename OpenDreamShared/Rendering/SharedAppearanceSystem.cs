@@ -20,9 +20,9 @@ public abstract class SharedAppearanceSystem : EntitySystem {
     }
 
     [Serializable, NetSerializable]
-    public sealed class AnimationEvent(NetEntity entity, uint targetAppearanceId, TimeSpan duration, AnimationEasing easing, int loop, AnimationFlags flags, int delay, bool chainAnim, uint? turfId)
+    public sealed class AnimationEvent(EntityUid entity, uint targetAppearanceId, TimeSpan duration, AnimationEasing easing, int loop, AnimationFlags flags, int delay, bool chainAnim, uint? turfId)
         : EntityEventArgs {
-        public NetEntity Entity = entity;
+        public EntityUid Entity = entity;
         public uint TargetAppearanceId = targetAppearanceId;
         public TimeSpan Duration = duration;
         public AnimationEasing Easing = easing;

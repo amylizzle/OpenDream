@@ -21,7 +21,7 @@ public struct ClientObjectReference : IEquatable<ClientObjectReference> {
     public static readonly ClientObjectReference Client = new() { Type = RefType.Client };
 
     public RefType Type;
-    public NetEntity Entity;
+    public EntityUid Entity;
     public int TurfX, TurfY, TurfZ;
 
     public ClientObjectReference(Vector2i turfPos, int z) {
@@ -30,7 +30,7 @@ public struct ClientObjectReference : IEquatable<ClientObjectReference> {
         TurfZ = z;
     }
 
-    public ClientObjectReference(NetEntity entity) {
+    public ClientObjectReference(EntityUid entity) {
         Type = RefType.Entity;
         Entity = entity;
     }

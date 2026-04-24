@@ -10,18 +10,18 @@ namespace OpenDreamShared.Rendering;
 
 public class SharedClientImagesSystem : EntitySystem {
     [Serializable, NetSerializable]
-    public sealed class AddClientImageEvent(NetEntity attachedEntity, Vector3 turfCoords, NetEntity imageEntity)
+    public sealed class AddClientImageEvent(EntityUid attachedEntity, Vector3 turfCoords, EntityUid imageEntity)
         : EntityEventArgs {
         public Vector3 TurfCoords = turfCoords;
-        public NetEntity AttachedEntity = attachedEntity; //if this is NetEntity.Invalid (ie, a turf) use the TurfCoords instead
-        public NetEntity ImageEntity = imageEntity;
+        public EntityUid AttachedEntity = attachedEntity; //if this is EntityUid.Invalid (ie, a turf) use the TurfCoords instead
+        public EntityUid ImageEntity = imageEntity;
     }
 
     [Serializable, NetSerializable]
-    public sealed class RemoveClientImageEvent(NetEntity attachedEntity, Vector3 turfCoords, NetEntity imageEntity)
+    public sealed class RemoveClientImageEvent(EntityUid attachedEntity, Vector3 turfCoords, EntityUid imageEntity)
         : EntityEventArgs {
         public Vector3 TurfCoords = turfCoords;
-        public NetEntity AttachedEntity = attachedEntity; //if this is NetEntity.Invalid (ie, a turf) use the TurfCoords instead
-        public NetEntity ImageEntity = imageEntity;
+        public EntityUid AttachedEntity = attachedEntity; //if this is EntityUid.Invalid (ie, a turf) use the TurfCoords instead
+        public EntityUid ImageEntity = imageEntity;
     }
 }

@@ -218,7 +218,7 @@ public sealed partial class DreamManager {
 
     public ClientObjectReference GetClientReference(DreamObjectAtom atom) {
         if (atom is DreamObjectMovable movable) {
-            return new(_entityManager.GetNetEntity(movable.Entity));
+            return new(_entityManager.GetEntityUid(movable.Entity));
         } else if (atom is DreamObjectTurf turf) {
             return new((turf.X, turf.Y), turf.Z);
         } else {

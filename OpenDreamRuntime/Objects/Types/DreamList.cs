@@ -1001,7 +1001,7 @@ public sealed class DreamVisContentsList : DreamList {
 
         _atomManager.UpdateAppearance(_atom, appearance => {
             // Add even an invalid UID to keep this and _visContents in sync
-            appearance.VisContents.Add(_entityManager.GetNetEntity(entity));
+            appearance.VisContents.Add(_entityManager.GetEntityUid(entity));
         });
     }
 
@@ -1011,7 +1011,7 @@ public sealed class DreamVisContentsList : DreamList {
 
         _visContents.Remove(movable);
         _atomManager.UpdateAppearance(_atom, appearance => {
-            appearance.VisContents.Remove(_entityManager.GetNetEntity(movable.Entity));
+            appearance.VisContents.Remove(_entityManager.GetEntityUid(movable.Entity));
         });
     }
 

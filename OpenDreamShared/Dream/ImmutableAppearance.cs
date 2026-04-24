@@ -51,7 +51,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
     public readonly MouseOpacity MouseOpacity = MutableAppearance.Default.MouseOpacity;
     public readonly ImmutableAppearance[] Overlays;
     public readonly ImmutableAppearance[] Underlays;
-    public readonly NetEntity[] VisContents;
+    public readonly EntityUid[] VisContents;
     public readonly DreamFilter[] Filters;
     public readonly int[] Verbs;
     public readonly ColorMatrix ColorMatrix = ColorMatrix.Identity;
@@ -404,9 +404,9 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
                 case IconAppearanceProperty.VisContents: {
                     var visContentsCount = buffer.ReadVariableInt32();
 
-                    VisContents = new NetEntity[visContentsCount];
+                    VisContents = new EntityUid[visContentsCount];
                     for (int visContentsI = 0; visContentsI < visContentsCount; visContentsI++) {
-                        VisContents[visContentsI] = new NetEntity(buffer.ReadInt32());
+                        VisContents[visContentsI] = new EntityUid(buffer.ReadInt32());
                     }
 
                     break;

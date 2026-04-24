@@ -9,18 +9,18 @@ namespace OpenDreamShared.Rendering {
     public class SharedScreenOverlaySystem : EntitySystem {
         [Serializable, NetSerializable]
         public sealed class AddScreenObjectEvent : EntityEventArgs {
-            public NetEntity ScreenObject;
+            public EntityUid ScreenObject;
 
-            public AddScreenObjectEvent(NetEntity screenObject) {
+            public AddScreenObjectEvent(EntityUid screenObject) {
                 ScreenObject = screenObject;
             }
         }
 
         [Serializable, NetSerializable]
         public sealed class RemoveScreenObjectEvent : EntityEventArgs {
-            public NetEntity ScreenObject;
+            public EntityUid ScreenObject;
 
-            public RemoveScreenObjectEvent(NetEntity screenObject) {
+            public RemoveScreenObjectEvent(EntityUid screenObject) {
                 ScreenObject = screenObject;
             }
         }
