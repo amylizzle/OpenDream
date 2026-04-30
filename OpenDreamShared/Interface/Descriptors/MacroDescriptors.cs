@@ -21,14 +21,14 @@ public sealed partial class MacroSetDescriptor : ElementDescriptor {
 
     }
 
-    public override MacroDescriptor CreateChildDescriptor(ISerializationManager serializationManager, MappingDataNode attributes) {
+    public override MacroDescriptor CreateChildDescriptor(MappingDataNode attributes) {
         var macro = serializationManager.Read<MacroDescriptor>(attributes, notNullableOverride: true);
 
         _macros.Add(macro);
         return macro;
     }
 
-    public override ElementDescriptor CreateCopy(ISerializationManager serializationManager, string id) {
+    public override ElementDescriptor CreateCopy(string id) {
         var copy = serializationManager.CreateCopy(this, notNullableOverride: true);
 
         copy._id = new DMFPropertyString(id);

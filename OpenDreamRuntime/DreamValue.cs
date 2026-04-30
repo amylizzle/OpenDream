@@ -622,7 +622,7 @@ public sealed class DreamValueStringSerializer : ITypeReader<string, DreamValueD
         return strValue;
     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager, DreamValueDataNode node,
+    public ValidationNode Validate(DreamValueDataNode node,
         IDependencyCollection dependencies,
         ISerializationContext? context = null) {
         if (node.Value.TryGetValueAsString(out _))
@@ -794,7 +794,7 @@ public sealed class DreamValueColorMatrixSerializer : ITypeReader<ColorMatrix, D
         return new ErrorNode(node, $"Value {node.Value} is not a color matrix");
     }
 
-    public ColorMatrix CreateCopy(ISerializationManager serializationManager, ColorMatrix source,
+    public ColorMatrix CreateCopy(ColorMatrix source,
         IDependencyCollection dependencies,
         SerializationHookContext hookCtx,
         ISerializationContext? context = null) {

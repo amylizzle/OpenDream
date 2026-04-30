@@ -21,14 +21,14 @@ public sealed partial class MenuDescriptor : ElementDescriptor {
 
     }
 
-    public override MenuElementDescriptor CreateChildDescriptor(ISerializationManager serializationManager, MappingDataNode attributes) {
+    public override MenuElementDescriptor CreateChildDescriptor(MappingDataNode attributes) {
         var menuElement = serializationManager.Read<MenuElementDescriptor>(attributes, notNullableOverride: true);
 
         _elements.Add(menuElement);
         return menuElement;
     }
 
-    public override ElementDescriptor CreateCopy(ISerializationManager serializationManager, string id) {
+    public override ElementDescriptor CreateCopy(string id) {
         var copy = serializationManager.CreateCopy(this, notNullableOverride: true);
 
         copy._id = new DMFPropertyString(id);
@@ -64,7 +64,7 @@ public sealed partial class MenuElementDescriptor : ElementDescriptor {
     }
 
     // Menu elements can have other menu elements as children
-    public override MenuElementDescriptor CreateChildDescriptor(ISerializationManager serializationManager, MappingDataNode attributes) {
+    public override MenuElementDescriptor CreateChildDescriptor(MappingDataNode attributes) {
         return serializationManager.Read<MenuElementDescriptor>(attributes, notNullableOverride: true);
     }
 }

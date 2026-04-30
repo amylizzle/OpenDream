@@ -110,7 +110,7 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
         ControlDescriptors = new();
     }
 
-    public override ControlDescriptor? CreateChildDescriptor(ISerializationManager serializationManager, MappingDataNode attributes) {
+    public override ControlDescriptor? CreateChildDescriptor(MappingDataNode attributes) {
         if (!attributes.TryGet("type", out var elementType) || elementType is not ValueDataNode elementTypeValue)
             return null;
 
@@ -159,7 +159,7 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
         return child;
     }
 
-    public override ElementDescriptor CreateCopy(ISerializationManager serializationManager, string id) {
+    public override ElementDescriptor CreateCopy(string id) {
         var copy = serializationManager.CreateCopy(this, notNullableOverride: true);
 
         copy._id = new DMFPropertyString(id);
@@ -168,7 +168,7 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
         return copy;
     }
 
-    public WindowDescriptor WithVisible(ISerializationManager serializationManager, bool visible) {
+    public WindowDescriptor WithVisible(bool visible) {
         WindowDescriptor copy = (WindowDescriptor)CreateCopy(serializationManager, Id.AsRaw());
 
         copy.IsVisible = new DMFPropertyBool(visible);

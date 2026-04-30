@@ -82,7 +82,7 @@ public sealed class DreamObjectDefinition {
             Verbs = new Dictionary<string, int>(copyFrom.Verbs);
     }
 
-    public DreamObjectDefinition(DreamManager dreamManager, DreamRefManager dreamRefManager, DreamObjectTree objectTree, AtomManager atomManager, IDreamMapManager dreamMapManager, IMapManager mapManager, DreamResourceManager dreamResourceManager, WalkManager walkManager, EntityManager entityManager, ISerializationManager serializationManager, ServerAppearanceSystem? appearanceSystem, TransformSystem? transformSystem, PvsOverrideSystem? pvsOverrideSystem, MetaDataSystem? metaDataSystem, ServerVerbSystem? verbSystem, ServerDreamParticlesSystem? particlesSystem, TreeEntry? treeEntry) {
+    public DreamObjectDefinition(DreamManager dreamManager, DreamRefManager dreamRefManager, DreamObjectTree objectTree, AtomManager atomManager, IDreamMapManager dreamMapManager, IMapManager mapManager, DreamResourceManager dreamResourceManager, WalkManager walkManager, EntityManager entityManager, ServerAppearanceSystem? appearanceSystem, TransformSystem? transformSystem, PvsOverrideSystem? pvsOverrideSystem, MetaDataSystem? metaDataSystem, ServerVerbSystem? verbSystem, ServerDreamParticlesSystem? particlesSystem, TreeEntry? treeEntry) {
         DreamManager = dreamManager;
         DreamRefManager = dreamRefManager;
         ObjectTree = objectTree;

@@ -51,11 +51,11 @@ public partial class ElementDescriptor {
         protected init => _type = value;
     }
 
-    public virtual ElementDescriptor? CreateChildDescriptor(ISerializationManager serializationManager, MappingDataNode attributes) {
+    public virtual ElementDescriptor? CreateChildDescriptor(MappingDataNode attributes) {
         throw new InvalidOperationException($"{this} cannot create a child descriptor");
     }
 
-    public ElementDescriptor? CreateChildDescriptor(ISerializationManager serializationManager, Dictionary<string, string> attributes) {
+    public ElementDescriptor? CreateChildDescriptor(Dictionary<string, string> attributes) {
         var node = new MappingDataNode();
 
         foreach (var pair in attributes) {
@@ -65,7 +65,7 @@ public partial class ElementDescriptor {
         return CreateChildDescriptor(serializationManager, node);
     }
 
-    public virtual ElementDescriptor CreateCopy(ISerializationManager serializationManager, string id) {
+    public virtual ElementDescriptor CreateCopy(string id) {
         throw new InvalidOperationException($"{this} cannot create a copy of itself");
     }
 
