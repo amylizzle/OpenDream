@@ -20,7 +20,7 @@ public sealed class DreamConnection {
     private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
-    private readonly ISharedPlayerManager _playerManager = IoCManager.Resolve<ISharedPlayerManager>();
+    private readonly IPlayerManager _playerManager = IoCManager.Resolve<IPlayerManager>();
 
     private readonly ServerScreenOverlaySystem? _screenOverlaySystem;
     private readonly ServerClientImagesSystem? _clientImagesSystem;

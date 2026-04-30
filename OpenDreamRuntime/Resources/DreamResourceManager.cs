@@ -16,7 +16,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace OpenDreamRuntime.Resources;
 
 public sealed class DreamResourceManager {
-    private readonly IServerNetManager _netManager = IoCManager.Resolve<IServerNetManager>();
+    private readonly INetManager _netManager = IoCManager.Resolve<INetManager>();
     private readonly IStatusHost _statusHost = IoCManager.Resolve<IStatusHost>();
     private readonly IDependencyCollection _dependencyCollection = IoCManager.Resolve<IDependencyCollection>();
     private readonly ISerializationManager _serializationManager = IoCManager.Resolve<ISerializationManager>();

@@ -9,6 +9,7 @@ using System.Threading;
 using OpenDreamRuntime.Objects.Types;
 using SharedAppearanceSystem = OpenDreamShared.Rendering.SharedAppearanceSystem;
 using System.Linq;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Rendering;
 

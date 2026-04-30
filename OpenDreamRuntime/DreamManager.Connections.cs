@@ -19,13 +19,12 @@ using OpenDreamShared.Network.Messages;
 
 
 
-
 namespace OpenDreamRuntime {
     public sealed partial class DreamManager {
         private static readonly byte[] ByondTopicHeaderRaw = { 0x00, 0x83 };
         private static readonly byte[] ByondTopicHeaderEncrypted = { 0x00, 0x15 };
 
-        private readonly IServerNetManager _netManager = IoCManager.Resolve<IServerNetManager>();
+        private readonly INetManager _netManager = IoCManager.Resolve<INetManager>();
         private readonly Dictionary<NetUserId, DreamConnection> _connections = new();
 
         public IEnumerable<DreamConnection> Connections => _connections.Values;

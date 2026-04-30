@@ -14,3 +14,5 @@ public sealed class NetChannel : INetChannel {
         throw new System.NotImplementedException();
     }
 }
+
+public abstract class EntityEventArgs { }

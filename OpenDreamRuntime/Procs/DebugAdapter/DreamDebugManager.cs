@@ -432,7 +432,7 @@ internal sealed class DreamDebugManager : IDreamDebugManager {
         _dreamManager.StartWorld();
         reqConfigDone.Respond(client);
         if (!_terminated) {
-            client.SendMessage(new ODReadyEvent(IoCManager.Resolve<Robust.Shared.Network.IServerNetManager>().Port));
+            client.SendMessage(new ODReadyEvent(IoCManager.Resolve<Robust.Shared.Network.INetManager>().Port));
         }
     }
 

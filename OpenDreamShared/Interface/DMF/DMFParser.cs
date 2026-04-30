@@ -9,7 +9,7 @@ using TokenType = OpenDreamShared.Interface.DMF.DMFLexer.TokenType;
 
 namespace OpenDreamShared.Interface.DMF;
 
-public sealed class DMFParser(DMFLexer lexer, ISerializationManager serializationManager) {
+public sealed class DMFParser(DMFLexer lexer) {
     public List<string> Errors = new();
 
     private readonly TokenType[] _attributeTokenTypes = {
@@ -108,7 +108,7 @@ public sealed class DMFParser(DMFLexer lexer, ISerializationManager serializatio
             var attributes = Attributes();
             attributes.Add("id", elementId);
 
-            var control = window.CreateChildDescriptor(serializationManager, attributes);
+            var control = window.CreateChildDescriptor(attributes);
             if (control == null) {
                 Error($"Element '{elementId}' does not have a valid 'type' attribute");
                 return false;
@@ -146,7 +146,7 @@ public sealed class DMFParser(DMFLexer lexer, ISerializationManager serializatio
             if (hasId) attributes.Add("id", macroIdToken.Text);
             else attributes.Add("id", attributes.Get("name"));
 
-            macroSet.CreateChildDescriptor(serializationManager, attributes);
+            macroSet.CreateChildDescriptor(attributes);
             return true;
         }
 
@@ -179,7 +179,7 @@ public sealed class DMFParser(DMFLexer lexer, ISerializationManager serializatio
             if (hasId) attributes.Add("id", elementIdToken.Text);
             else attributes.Add("id", attributes.Get("name"));
 
-            menu.CreateChildDescriptor(serializationManager, attributes);
+            menu.CreateChildDescriptor(attributes);
             return true;
         }
 
@@ -251,8 +251,8 @@ public sealed class DMFParser(DMFLexer lexer, ISerializationManager serializatio
         return false;
     }
 
-    public MappingDataNode Attributes() {
-        var node = new MappingDataNode();
+    public Dictionary<string, string> Attributes() {
+        var node = new Dictionary<string, string>();
 
         while (TryGetAttribute(out var winset)) {
             if (winset.Element != null) {
