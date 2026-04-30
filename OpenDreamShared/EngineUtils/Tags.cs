@@ -12,4 +12,4 @@ public class AutoNetworkedFieldAttribute : Attribute { }
 
 
 [AttributeUsage(AttributeTargets.Property|AttributeTargets.Field)]
-public class DataField(string name, bool required=false) : Attribute { string _name = name; bool required = required; }
+public class DataField(string name, bool required=false) : Attribute { public string ParsingName = name; public bool Required = required; }

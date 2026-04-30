@@ -1,5 +1,5 @@
 ﻿using OpenDreamShared.Dream;
-
+using OpenDreamShared.EngineUtils;
 
 
 namespace OpenDreamRuntime.Objects.Types;
@@ -31,9 +31,9 @@ public sealed class DreamObjectFilter(DreamObjectDefinition objectDefinition) : 
             Type filterType = Filter.GetType();
 
             // Create a new mapping with the modified value and replace the DreamFilter with it
-            MappingDataNode mapping = (MappingDataNode)SerializationManager.WriteValue(filterType, Filter);
+            Dictionary<string, object> mapping = SerializationManager.ToKeyValueMap(filterType, Filter);
             mapping.Remove(varName);
-            mapping.Add(varName, new DreamValueDataNode(value));
+            mapping.Add(varName, value);
             if (SerializationManager.Read(filterType, mapping) is not DreamFilter newFilter)
                 return;
             if (newFilter.Equals(Filter)) // No change
@@ -46,7 +46,7 @@ public sealed class DreamObjectFilter(DreamObjectDefinition objectDefinition) : 
 
     public static DreamObjectFilter? TryCreateFilter(DreamObjectTree objectTree, IEnumerable<(string Name, DreamValue Value)> properties) {
         Type? filterType = null;
-        MappingDataNode attributes = new();
+        Dictionary<string, object> attributes = new();
 
         foreach (var property in properties) {
             if (property.Value.IsNull)
@@ -56,15 +56,13 @@ public sealed class DreamObjectFilter(DreamObjectDefinition objectDefinition) : 
                 filterType = DreamFilter.GetType(filterTypeName);
             }
 
-            attributes.Add(property.Name, new DreamValueDataNode(property.Value));
+            attributes.Add(property.Name, property.Value);
         }
 
         if (filterType == null)
             return null;
 
-        var serializationManager = IoCManager.Resolve<ISerializationManager>();
-
-        DreamFilter? filter = serializationManager.Read(filterType, attributes) as DreamFilter;
+        DreamFilter? filter = SerializationManager.Read(filterType, attributes) as DreamFilter;
         if (filter is null)
             throw new Exception($"Failed to create filter of type {filterType}");
 

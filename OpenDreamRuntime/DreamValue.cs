@@ -1,4 +1,3 @@
-using Dependency = Robust.Shared.IoC.DependencyAttribute;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -9,11 +8,6 @@ using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
-
-
-
-
-
 using OpenDreamRuntime.Procs.Native;
 
 
@@ -77,7 +71,7 @@ public struct DreamValue : IEquatable<DreamValue> {
     #endif
 
     public DreamValue(string value) {
-        DebugTools.Assert(value != null);
+        // DebugTools.Assert(value != null);
         Type = DreamValueType.String;
         #if TOOLS
         _tracyMemoryId = Profiler.BeginMemoryZone((ulong) (1+value.Length*sizeof(char)), "string");
@@ -492,7 +486,6 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
 
     public DreamValueJsonConverter() {
-        IoCManager.InjectDependencies(this);
     }
 
     public override void Write(Utf8JsonWriter writer, DreamValue value, JsonSerializerOptions options) {
@@ -583,223 +576,223 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
     }
 }
 
-// The following allows for serializing using DreamValues with ISerializationManager
-// Currently only implemented to the point that they can be used for DreamFilters
+// // The following allows for serializing using DreamValues with ISerializationManager
+// // Currently only implemented to the point that they can be used for DreamFilters
 
-public sealed class DreamValueDataNode(DreamValue value)
-    : DataNode<DreamValueDataNode>(NodeMark.Invalid, NodeMark.Invalid), IEquatable<DreamValueDataNode> {
-    public DreamValue Value { get; set; } = value;
-    public override bool IsEmpty => false;
+// public sealed class DreamValueDataNode(DreamValue value)
+//     : DataNode<DreamValueDataNode>(NodeMark.Invalid, NodeMark.Invalid), IEquatable<DreamValueDataNode> {
+//     public DreamValue Value { get; set; } = value;
+//     public override bool IsEmpty => false;
 
-    public override DreamValueDataNode Copy() {
-        return new DreamValueDataNode(Value) {Tag = Tag, Start = Start, End = End};
-    }
+//     public override DreamValueDataNode Copy() {
+//         return new DreamValueDataNode(Value) {Tag = Tag, Start = Start, End = End};
+//     }
 
-    public override DreamValueDataNode? Except(DreamValueDataNode node) {
-        return Value == node.Value ? null : Copy();
-    }
+//     public override DreamValueDataNode? Except(DreamValueDataNode node) {
+//         return Value == node.Value ? null : Copy();
+//     }
 
-    public override DreamValueDataNode PushInheritance(DreamValueDataNode node) {
-        return Copy();
-    }
+//     public override DreamValueDataNode PushInheritance(DreamValueDataNode node) {
+//         return Copy();
+//     }
 
-    public bool Equals(DreamValueDataNode? other) {
-        return Value == other?.Value;
-    }
-}
+//     public bool Equals(DreamValueDataNode? other) {
+//         return Value == other?.Value;
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueStringSerializer : ITypeReader<string, DreamValueDataNode> {
-    public string Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<string>? instanceProvider = null) {
-        if (!node.Value.TryGetValueAsString(out var strValue))
-            throw new Exception($"Value {node.Value} was not a string");
+// [TypeSerializer]
+// public sealed class DreamValueStringSerializer : ITypeReader<string, DreamValueDataNode> {
+//     public string Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<string>? instanceProvider = null) {
+//         if (!node.Value.TryGetValueAsString(out var strValue))
+//             throw new Exception($"Value {node.Value} was not a string");
 
-        return strValue;
-    }
+//         return strValue;
+//     }
 
-    public ValidationNode Validate(DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (node.Value.TryGetValueAsString(out _))
-            return new ValidatedValueNode(node);
+//     public ValidationNode Validate(DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (node.Value.TryGetValueAsString(out _))
+//             return new ValidatedValueNode(node);
 
-        return new ErrorNode(node, $"Value {node.Value} is not a string");
-    }
-}
+//         return new ErrorNode(node, $"Value {node.Value} is not a string");
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueFloatSerializer : ITypeReader<float, DreamValueDataNode> {
-    public float Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<float>? instanceProvider = null) {
-        if (!node.Value.TryGetValueAsFloat(out var floatValue))
-            throw new Exception($"Value {node.Value} was not a float");
+// [TypeSerializer]
+// public sealed class DreamValueFloatSerializer : ITypeReader<float, DreamValueDataNode> {
+//     public float Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<float>? instanceProvider = null) {
+//         if (!node.Value.TryGetValueAsFloat(out var floatValue))
+//             throw new Exception($"Value {node.Value} was not a float");
 
-        return floatValue;
-    }
+//         return floatValue;
+//     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (node.Value.TryGetValueAsFloat(out _))
-            return new ValidatedValueNode(node);
+//     public ValidationNode Validate(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (node.Value.TryGetValueAsFloat(out _))
+//             return new ValidatedValueNode(node);
 
-        return new ErrorNode(node, $"Value {node.Value} is not a float");
-    }
-}
+//         return new ErrorNode(node, $"Value {node.Value} is not a float");
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueColorSerializer : ITypeReader<Color, DreamValueDataNode> {
-    public Color Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<Color>? instanceProvider = null) {
-        if (!node.Value.TryGetValueAsString(out var strValue) || !ColorHelpers.TryParseColor(strValue, out var color))
-            throw new Exception($"Value {node.Value} was not a color");
+// [TypeSerializer]
+// public sealed class DreamValueColorSerializer : ITypeReader<Color, DreamValueDataNode> {
+//     public Color Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<Color>? instanceProvider = null) {
+//         if (!node.Value.TryGetValueAsString(out var strValue) || !ColorHelpers.TryParseColor(strValue, out var color))
+//             throw new Exception($"Value {node.Value} was not a color");
 
-        return color;
-    }
+//         return color;
+//     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (node.Value.TryGetValueAsString(out var strValue) && ColorHelpers.TryParseColor(strValue, out _))
-            return new ValidatedValueNode(node);
+//     public ValidationNode Validate(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (node.Value.TryGetValueAsString(out var strValue) && ColorHelpers.TryParseColor(strValue, out _))
+//             return new ValidatedValueNode(node);
 
-        return new ErrorNode(node, $"Value {node.Value} is not a color");
-    }
-}
+//         return new ErrorNode(node, $"Value {node.Value} is not a color");
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueMatrix3Serializer : ITypeReader<Matrix3x2, DreamValueDataNode> {
-    public Matrix3x2 Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<Matrix3x2>? instanceProvider = null) {
-        if (!node.Value.TryGetValueAsDreamObject<DreamObjectMatrix>(out var matrixObject))
-            throw new Exception($"Value {node.Value} was not a matrix");
+// [TypeSerializer]
+// public sealed class DreamValueMatrix3Serializer : ITypeReader<Matrix3x2, DreamValueDataNode> {
+//     public Matrix3x2 Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<Matrix3x2>? instanceProvider = null) {
+//         if (!node.Value.TryGetValueAsDreamObject<DreamObjectMatrix>(out var matrixObject))
+//             throw new Exception($"Value {node.Value} was not a matrix");
 
-        // Matrix3 except not really because DM matrix is actually 3x2
-        matrixObject.GetVariable("a").TryGetValueAsFloat(out var a);
-        matrixObject.GetVariable("b").TryGetValueAsFloat(out var b);
-        matrixObject.GetVariable("c").TryGetValueAsFloat(out var c);
-        matrixObject.GetVariable("d").TryGetValueAsFloat(out var d);
-        matrixObject.GetVariable("e").TryGetValueAsFloat(out var e);
-        matrixObject.GetVariable("f").TryGetValueAsFloat(out var f);
-        return new Matrix3x2(a, d, b, e, c, f);
-    }
+//         // Matrix3 except not really because DM matrix is actually 3x2
+//         matrixObject.GetVariable("a").TryGetValueAsFloat(out var a);
+//         matrixObject.GetVariable("b").TryGetValueAsFloat(out var b);
+//         matrixObject.GetVariable("c").TryGetValueAsFloat(out var c);
+//         matrixObject.GetVariable("d").TryGetValueAsFloat(out var d);
+//         matrixObject.GetVariable("e").TryGetValueAsFloat(out var e);
+//         matrixObject.GetVariable("f").TryGetValueAsFloat(out var f);
+//         return new Matrix3x2(a, d, b, e, c, f);
+//     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (node.Value.TryGetValueAsDreamObject<DreamObjectMatrix>(out _))
-            return new ValidatedValueNode(node);
+//     public ValidationNode Validate(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (node.Value.TryGetValueAsDreamObject<DreamObjectMatrix>(out _))
+//             return new ValidatedValueNode(node);
 
-        return new ErrorNode(node, $"Value {node.Value} is not a matrix");
-    }
-}
+//         return new ErrorNode(node, $"Value {node.Value} is not a matrix");
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueIconSerializer : ITypeReader<int, DreamValueDataNode> {
-    private readonly DreamResourceManager _dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
+// [TypeSerializer]
+// public sealed class DreamValueIconSerializer : ITypeReader<int, DreamValueDataNode> {
+//     private readonly DreamResourceManager _dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
 
-    public int Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<int>? instanceProvider = null) {
-        if (!_dreamResourceManager.TryLoadIcon(node.Value, out var icon))
-            throw new Exception($"Value {node.Value} was not a valid IconResource type");
+//     public int Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<int>? instanceProvider = null) {
+//         if (!_dreamResourceManager.TryLoadIcon(node.Value, out var icon))
+//             throw new Exception($"Value {node.Value} was not a valid IconResource type");
 
-        return icon.Id;
-    }
+//         return icon.Id;
+//     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (_dreamResourceManager.TryLoadIcon(node.Value, out _))
-            return new ValidatedValueNode(node);
+//     public ValidationNode Validate(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (_dreamResourceManager.TryLoadIcon(node.Value, out _))
+//             return new ValidatedValueNode(node);
 
-        return new ErrorNode(node, $"Value {node.Value} is not an Icon");
-    }
-}
+//         return new ErrorNode(node, $"Value {node.Value} is not an Icon");
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueFlagsSerializer : ITypeReader<short, DreamValueDataNode> {
-    public short Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<short>? instanceProvider = null) {
-        return (short) node.Value.MustGetValueAsInteger();
-    }
+// [TypeSerializer]
+// public sealed class DreamValueFlagsSerializer : ITypeReader<short, DreamValueDataNode> {
+//     public short Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<short>? instanceProvider = null) {
+//         return (short) node.Value.MustGetValueAsInteger();
+//     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (node.Value.TryGetValueAsInteger(out int val) && val < short.MaxValue)
-            return new ValidatedValueNode(node);
+//     public ValidationNode Validate(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (node.Value.TryGetValueAsInteger(out int val) && val < short.MaxValue)
+//             return new ValidatedValueNode(node);
 
-        return new ErrorNode(node, $"Value {node.Value} is not a valid flag set");
-    }
-}
+//         return new ErrorNode(node, $"Value {node.Value} is not a valid flag set");
+//     }
+// }
 
-[TypeSerializer]
-public sealed class DreamValueColorMatrixSerializer : ITypeReader<ColorMatrix, DreamValueDataNode>, ITypeCopyCreator<ColorMatrix> {
-    public ColorMatrix Read(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null,
-        ISerializationManager.InstantiationDelegate<ColorMatrix>? instanceProvider = null) {
-        if (node.Value.TryGetValueAsString(out var maybeColorString)) {
-            if (ColorHelpers.TryParseColor(maybeColorString, out Color basicColor)) {
-                return new ColorMatrix(basicColor);
-            }
-        } else if (node.Value.TryGetValueAsDreamList(out var matrixList)) {
-            if (DreamProcNativeHelpers.TryParseColorMatrix(matrixList, out ColorMatrix matrix)) {
-                return matrix;
-            }
-        }
+// [TypeSerializer]
+// public sealed class DreamValueColorMatrixSerializer : ITypeReader<ColorMatrix, DreamValueDataNode>, ITypeCopyCreator<ColorMatrix> {
+//     public ColorMatrix Read(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null,
+//         ISerializationManager.InstantiationDelegate<ColorMatrix>? instanceProvider = null) {
+//         if (node.Value.TryGetValueAsString(out var maybeColorString)) {
+//             if (ColorHelpers.TryParseColor(maybeColorString, out Color basicColor)) {
+//                 return new ColorMatrix(basicColor);
+//             }
+//         } else if (node.Value.TryGetValueAsDreamList(out var matrixList)) {
+//             if (DreamProcNativeHelpers.TryParseColorMatrix(matrixList, out ColorMatrix matrix)) {
+//                 return matrix;
+//             }
+//         }
 
-        throw new Exception($"Value {node.Value} was not a color matrix");
-    }
+//         throw new Exception($"Value {node.Value} was not a color matrix");
+//     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager,
-        DreamValueDataNode node,
-        IDependencyCollection dependencies,
-        ISerializationContext? context = null) {
-        if (node.Value.TryGetValueAsDreamList(out var _))
-            return new ValidatedValueNode(node);
-        //TODO: Improve validation
-        return new ErrorNode(node, $"Value {node.Value} is not a color matrix");
-    }
+//     public ValidationNode Validate(ISerializationManager serializationManager,
+//         DreamValueDataNode node,
+//         IDependencyCollection dependencies,
+//         ISerializationContext? context = null) {
+//         if (node.Value.TryGetValueAsDreamList(out var _))
+//             return new ValidatedValueNode(node);
+//         //TODO: Improve validation
+//         return new ErrorNode(node, $"Value {node.Value} is not a color matrix");
+//     }
 
-    public ColorMatrix CreateCopy(ColorMatrix source,
-        IDependencyCollection dependencies,
-        SerializationHookContext hookCtx,
-        ISerializationContext? context = null) {
-        return new(source);
-    }
-}
+//     public ColorMatrix CreateCopy(ColorMatrix source,
+//         IDependencyCollection dependencies,
+//         SerializationHookContext hookCtx,
+//         ISerializationContext? context = null) {
+//         return new(source);
+//     }
+// }
 
 #endregion Serialization

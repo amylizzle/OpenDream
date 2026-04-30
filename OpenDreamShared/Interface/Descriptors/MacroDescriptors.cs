@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Interface.DMF;
 
 
@@ -21,15 +22,15 @@ public sealed partial class MacroSetDescriptor : ElementDescriptor {
 
     }
 
-    public override MacroDescriptor CreateChildDescriptor(MappingDataNode attributes) {
-        var macro = serializationManager.Read<MacroDescriptor>(attributes, notNullableOverride: true);
+    public override MacroDescriptor CreateChildDescriptor(Dictionary<string, string> attributes) {
+        var macro = SerializationManager.Read<MacroDescriptor>(attributes);
 
         _macros.Add(macro);
         return macro;
     }
 
     public override ElementDescriptor CreateCopy(string id) {
-        var copy = serializationManager.CreateCopy(this, notNullableOverride: true);
+        var copy = SerializationManager.CreateCopy(this);
 
         copy._id = new DMFPropertyString(id);
         return copy;

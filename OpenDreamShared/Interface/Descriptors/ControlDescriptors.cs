@@ -110,16 +110,16 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
         ControlDescriptors = new();
     }
 
-    public override ControlDescriptor? CreateChildDescriptor(MappingDataNode attributes) {
-        if (!attributes.TryGet("type", out var elementType) || elementType is not ValueDataNode elementTypeValue)
+    public override ControlDescriptor? CreateChildDescriptor(Dictionary<string, string> attributes) {
+        if (!attributes.TryGetValue("type", out var elementType) || elementType is not DMFPropertyString elementTypeValue)
             return null;
 
         if (elementTypeValue.Value == "MAIN") {
             attributes.Remove("name");
-            attributes["name"] = new ValueDataNode(Name.Value);
+            attributes["name"] = (Name.Value);
 
             // Read the attributes into this descriptor
-            serializationManager.Read(attributes, notNullableOverride: true, instanceProvider: () => this);
+            SerializationManager.Read(attributes);
             return this;
         }
 
@@ -151,7 +151,7 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
                 attributes["right"] = bottomValue;
         }
 
-        var child = (ControlDescriptor?)serializationManager.Read(descriptorType, attributes);
+        var child = (ControlDescriptor?)SerializationManager.Read(descriptorType, attributes);
         if (child == null)
             return null;
 
@@ -160,11 +160,11 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
     }
 
     public override ElementDescriptor CreateCopy(string id) {
-        var copy = serializationManager.CreateCopy(this, notNullableOverride: true);
+        var copy = SerializationManager.CreateCopy(this, notNullableOverride: true);
 
         copy._id = new DMFPropertyString(id);
         foreach(var child in this.ControlDescriptors)
-            copy.ControlDescriptors.Add(serializationManager.CreateCopy(child, notNullableOverride: false));
+            copy.ControlDescriptors.Add(SerializationManager.CreateCopy(child, notNullableOverride: false));
         return copy;
     }
 

@@ -30,7 +30,6 @@ public class DreamObject {
     protected DreamResourceManager DreamResourceManager => ObjectDefinition.DreamResourceManager;
     protected WalkManager WalkManager => ObjectDefinition.WalkManager;
     protected EntityManager EntityManager => ObjectDefinition.EntityManager;
-    protected ISerializationManager SerializationManager => ObjectDefinition.SerializationManager;
     protected ServerAppearanceSystem? AppearanceSystem => ObjectDefinition.AppearanceSystem;
     protected TransformSystem? TransformSystem => ObjectDefinition.TransformSystem;
     protected PvsOverrideSystem? PvsOverrideSystem => ObjectDefinition.PvsOverrideSystem;

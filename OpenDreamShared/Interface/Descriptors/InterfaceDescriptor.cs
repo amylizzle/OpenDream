@@ -51,18 +51,8 @@ public partial class ElementDescriptor {
         protected init => _type = value;
     }
 
-    public virtual ElementDescriptor? CreateChildDescriptor(MappingDataNode attributes) {
+    public virtual ElementDescriptor? CreateChildDescriptor(Dictionary<string, string> attributes) {
         throw new InvalidOperationException($"{this} cannot create a child descriptor");
-    }
-
-    public ElementDescriptor? CreateChildDescriptor(Dictionary<string, string> attributes) {
-        var node = new MappingDataNode();
-
-        foreach (var pair in attributes) {
-            node.Add(pair.Key, pair.Value);
-        }
-
-        return CreateChildDescriptor(serializationManager, node);
     }
 
     public virtual ElementDescriptor CreateCopy(string id) {

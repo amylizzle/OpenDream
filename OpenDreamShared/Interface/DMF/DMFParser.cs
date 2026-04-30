@@ -144,7 +144,7 @@ public sealed class DMFParser(DMFLexer lexer) {
             var attributes = Attributes();
 
             if (hasId) attributes.Add("id", macroIdToken.Text);
-            else attributes.Add("id", attributes.Get("name"));
+            else attributes.Add("id", attributes.GetValueOrDefault("name", string.Empty));
 
             macroSet.CreateChildDescriptor(attributes);
             return true;
@@ -177,7 +177,7 @@ public sealed class DMFParser(DMFLexer lexer) {
             var attributes = Attributes();
 
             if (hasId) attributes.Add("id", elementIdToken.Text);
-            else attributes.Add("id", attributes.Get("name"));
+            else attributes.Add("id", attributes.GetValueOrDefault("name",string.Empty));
 
             menu.CreateChildDescriptor(attributes);
             return true;
