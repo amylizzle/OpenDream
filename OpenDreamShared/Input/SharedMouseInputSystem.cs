@@ -7,7 +7,7 @@ using OpenDreamShared.EngineUtils;
 namespace OpenDreamShared.Input;
 
 
-public class SharedMouseInputSystem : EntitySystem {
+public class SharedMouseInputSystem : NetworkSystem {
     protected interface IAtomMouseEvent {
         public ClickParams Params { get; }
     }

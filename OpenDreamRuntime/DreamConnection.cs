@@ -7,6 +7,7 @@ using OpenDreamRuntime.Procs.Native;
 using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Network.Messages;
 
 
@@ -19,7 +20,6 @@ public sealed class DreamConnection {
     private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
-    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
     private readonly ISharedPlayerManager _playerManager = IoCManager.Resolve<ISharedPlayerManager>();
 
     private readonly ServerScreenOverlaySystem? _screenOverlaySystem;
@@ -97,12 +97,11 @@ public sealed class DreamConnection {
     }
 
     public DreamConnection(string key) {
-        IoCManager.InjectDependencies(this);
         Key = key;
 
-        _entitySystemManager.TryGetEntitySystem(out _screenOverlaySystem);
-        _entitySystemManager.TryGetEntitySystem(out _clientImagesSystem);
-        _entitySystemManager.TryGetEntitySystem(out _verbSystem);
+        _screenOverlaySystem = IoCManager.Resolve<ServerScreenOverlaySystem>();
+        _clientImagesSystem = IoCManager.Resolve<ServerClientImagesSystem>();
+        _verbSystem = IoCManager.Resolve<ServerVerbSystem>();
     }
 
     public void HandleConnection(ICommonSession session) {

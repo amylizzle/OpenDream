@@ -1,11 +1,12 @@
-﻿
-
-namespace OpenDreamServer;
+﻿namespace OpenDreamServer;
 
 internal static class Program {
     private static void Main(string[] args) {
-        ContentStart.StartLibrary(args, new ServerOptions {
-            ContentModulePrefix = "OpenDream"
-        });
+        using var content = new OpenDreamRuntime.GameServer();
+        content.Init();
+        content.PostInit();
+        content.Update();
+        IoCManager.Register<INetManager, NetManager>();
+
     }
 }

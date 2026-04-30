@@ -4,7 +4,7 @@ using OpenDreamShared.Rendering;
 
 namespace OpenDreamRuntime.Rendering;
 
-public sealed class DMISpriteSystem : EntitySystem {
+public sealed class DMISpriteSystem : NetworkSystem {
     private readonly ServerAppearanceSystem _appearance = IoCManager.Resolve<ServerAppearanceSystem>();
 
     public override void Initialize() {

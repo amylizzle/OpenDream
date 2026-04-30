@@ -3,7 +3,7 @@
 
 namespace OpenDreamShared.Rendering;
 
-public sealed class DreamMobSightSystem : EntitySystem {
+public sealed class DreamMobSightSystem : NetworkSystem {
     public override void Initialize() {
         SubscribeLocalEvent<DreamMobSightComponent, ComponentGetState>(GetComponentState);
         SubscribeLocalEvent<DreamMobSightComponent, ComponentHandleState>(HandleComponentState);

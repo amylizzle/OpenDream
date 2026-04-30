@@ -18,7 +18,6 @@ public sealed class DreamRefManager {
 
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
-    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
     private ServerAppearanceSystem? _appearanceSystem;
 
     private readonly Dictionary<RefType, Bucket> _buckets = new();
@@ -136,7 +135,7 @@ public sealed class DreamRefManager {
             return (uint)RefType.Proc | (uint)proc.Id;
 
         if (value.TryGetValueAsAppearance(out var appearance)) {
-            _appearanceSystem ??= _entitySystemManager.GetEntitySystem<ServerAppearanceSystem>();
+            _appearanceSystem ??= IoCManager.Resolve<ServerAppearanceSystem>();
             var appearanceId = _appearanceSystem.AddAppearance(appearance).MustGetId();
 
             return (uint)RefType.DreamAppearance | appearanceId;
@@ -250,7 +249,7 @@ public sealed class DreamRefManager {
 
                 return new DreamValue(resource);
             case RefType.DreamAppearance:
-                _appearanceSystem ??= _entitySystemManager.GetEntitySystem<ServerAppearanceSystem>();
+                _appearanceSystem ??= IoCManager.Resolve<ServerAppearanceSystem>();
                 return _appearanceSystem.TryGetAppearanceById(refId, out var appearance)
                     ? new DreamValue(appearance.ToMutable())
                     : DreamValue.Null;

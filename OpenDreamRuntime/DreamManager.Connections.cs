@@ -454,8 +454,7 @@ public sealed class DumpDataCommand : IConsoleCommand {
             return;
         }
 
-        var entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
-        var appearanceSystem = entitySystemManager.GetEntitySystem<ServerAppearanceSystem>();
+        var appearanceSystem = IoCManager.Resolve<ServerAppearanceSystem>();
 
 
 

@@ -22,6 +22,7 @@ using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Rendering;
 using DreamValueType = OpenDreamRuntime.DreamValue.DreamValueType;
 using DreamValueTypeFlag = OpenDreamRuntime.DreamValue.DreamValueTypeFlag;
+using OpenDreamShared.EngineUtils;
 
 
 
@@ -104,7 +105,7 @@ internal static class DreamProcNativeRoot {
         for (int z = startZ; z <= endZ; z++) {
             for (int y = startY; y <= endY; y++) {
                 for (int x = startX; x <= endX; x++) {
-                    if (mapManager.TryGetTurfAt((x, y), z, out var turf)) {
+                    if (mapManager.TryGetTurfAt(new (x, y), z, out var turf)) {
                         turfs.AddValue(new DreamValue(turf));
                     }
                 }
@@ -760,9 +761,7 @@ internal static class DreamProcNativeRoot {
             return DreamValue.Null;
         }
 
-        var entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
-        if (!entitySystemManager.TryGetEntitySystem(out ServerAppearanceSystem? appearanceSystem))
-            return DreamValue.Null;
+        var appearanceSystem = IoCManager.Resolve<ServerAppearanceSystem>();
 
         appearanceSystem.Flick(atom, iconId, iconState);
         return DreamValue.Null;
@@ -1821,7 +1820,7 @@ internal static class DreamProcNativeRoot {
         foreach (var tile in DreamProcNativeHelpers.MakeViewSpiral(viewData, false)) {
             if (tile == null || tile.IsVisible == false)
                 continue;
-            if (!mapManager.TryGetCellAt((eyePos.X + tile.DeltaX, eyePos.Y + tile.DeltaY), eyePos.Z, out var cell))
+            if (!mapManager.TryGetCellAt(new(eyePos.X + tile.DeltaX, eyePos.Y + tile.DeltaY), eyePos.Z, out var cell))
                 continue;
 
             view.AddValue(new(cell.Turf));
@@ -3222,7 +3221,7 @@ internal static class DreamProcNativeRoot {
         foreach (var tile in DreamProcNativeHelpers.MakeViewSpiral(viewData, true)) {
             if (tile == null || tile.IsVisible == false)
                 continue;
-            if (!bundle.MapManager.TryGetCellAt((eyePos.X + tile.DeltaX, eyePos.Y + tile.DeltaY), eyePos.Z, out var cell))
+            if (!bundle.MapManager.TryGetCellAt(new (eyePos.X + tile.DeltaX, eyePos.Y + tile.DeltaY), eyePos.Z, out var cell))
                 continue;
 
             view.AddValue(new(cell.Turf));

@@ -2,4 +2,4 @@
 
 namespace OpenDreamShared.Rendering;
 
-public abstract class SharedDreamParticlesSystem : EntitySystem;
+public abstract class SharedDreamParticlesSystem : NetworkSystem;

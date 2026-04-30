@@ -31,7 +31,6 @@ public sealed class AtomManager {
     }
 
     private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
-    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
@@ -44,7 +43,7 @@ public sealed class AtomManager {
     private ServerAppearanceSystem? AppearanceSystem {
         get {
             if(field is null)
-                _entitySystemManager.TryGetEntitySystem(out field);
+                field = IoCManager.Resolve<ServerAppearanceSystem>();
             return field;
         }
     }
@@ -52,7 +51,7 @@ public sealed class AtomManager {
     private DMISpriteSystem? DMISpriteSystem {
         get {
             if(field is null)
-                _entitySystemManager.TryGetEntitySystem(out field);
+                field = IoCManager.Resolve<DMISpriteSystem>();
             return field;
         }
     }
@@ -60,7 +59,7 @@ public sealed class AtomManager {
     private ServerVerbSystem? VerbSystem {
         get {
             if(field is null)
-                _entitySystemManager.TryGetEntitySystem(out field);
+                field = IoCManager.Resolve<ServerVerbSystem>();
             return field;
         }
     }

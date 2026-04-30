@@ -13,6 +13,7 @@ using OpenDreamRuntime.Procs.Native;
 using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 
 using FormatSuffix = DMCompiler.Bytecode.StringFormatEncoder.FormatSuffix;
 
@@ -610,9 +611,7 @@ namespace OpenDreamRuntime.Procs {
                         if (!state.Proc.AtomManager.TryGetAppearance(atom, out var appearance))
                             continue;
 
-                        var entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
-                        if (!entitySystemManager.TryGetEntitySystem(out ServerAppearanceSystem? appearanceSystem))
-                            continue;
+                        var appearanceSystem = IoCManager.Resolve<ServerAppearanceSystem>();
                         if (!appearanceSystem.AddAppearance(appearance).TryGetId(out var appearanceId))
                             continue;
 
@@ -2394,7 +2393,7 @@ suffix
             var y = (int)state.Pop().UnsafeGetValueAsFloat();
             var x = (int)state.Pop().UnsafeGetValueAsFloat();
 
-            state.Proc.DreamMapManager.TryGetTurfAt((x, y), z, out var turf);
+            state.Proc.DreamMapManager.TryGetTurfAt(new (x, y), z, out var turf);
             state.Push(new DreamValue(turf));
             return ProcStatus.Continue;
         }

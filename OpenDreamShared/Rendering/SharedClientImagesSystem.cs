@@ -8,7 +8,7 @@ using OpenDreamShared.EngineUtils;
 namespace OpenDreamShared.Rendering;
 
 
-public class SharedClientImagesSystem : EntitySystem {
+public class SharedClientImagesSystem : NetworkSystem {
     [Serializable, NetSerializable]
     public sealed class AddClientImageEvent(EntityUid attachedEntity, Vector3 turfCoords, EntityUid imageEntity)
         : EntityEventArgs {

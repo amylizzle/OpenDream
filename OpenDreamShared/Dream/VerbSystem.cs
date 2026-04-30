@@ -8,7 +8,7 @@ using OpenDreamShared.EngineUtils;
 namespace OpenDreamShared.Dream;
 
 
-public class VerbSystem : EntitySystem {
+public class VerbSystem : NetworkSystem {
     [Serializable, NetSerializable]
     public struct VerbInfo {
         /// <summary>

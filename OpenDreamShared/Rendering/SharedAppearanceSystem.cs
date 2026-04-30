@@ -5,7 +5,7 @@ using System;
 
 namespace OpenDreamShared.Rendering;
 
-public abstract class SharedAppearanceSystem : EntitySystem {
+public abstract class SharedAppearanceSystem : NetworkSystem {
     public abstract ImmutableAppearance MustGetAppearanceById(uint appearanceId);
     public abstract void RemoveAppearance(ImmutableAppearance appearance);
 

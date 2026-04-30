@@ -1,6 +1,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
+using OpenDreamShared.EngineUtils;
 
 public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid> {
     /// <summary>
@@ -12,7 +13,7 @@ public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid>
     /// <para>
     ///     An entity is a unique identifier (this type) and a collection of assorted <see cref="Component"/>s that are
     ///     attached to it. Components provide data to describe the entity, and entities+components are operated on by
-    ///     <see cref="EntitySystem"/>s.
+    ///     <see cref="NetworkSystem"/>s.
     /// </para>
     /// <para>
     ///     EntityUids are not guaranteed to be unique across individual instances of the game, or individual instances
@@ -136,6 +137,10 @@ public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid>
     }
 }
 
-public sealed class Entity {
+public struct Entity {
     EntityUid Id;
+    //x,y pos, use MapID for Z
+    Vector2i Position;
+    int MapID;
+
 }

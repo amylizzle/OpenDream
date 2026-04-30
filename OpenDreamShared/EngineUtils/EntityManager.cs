@@ -7,13 +7,13 @@ using System.Diagnostics.CodeAnalysis;
 //manager holds uid -> component list mapping
 //*everything* clientside is an entity OR an appearance (appearances can be attached to entities)
 
-//EntitySystem will be renamed to just NetworkSystem or something, and that will handle the adding of extensions to manage
+//NetworkSystem will be renamed to just NetworkSystem or something, and that will handle the adding of extensions to manage
 //network propagation
 
 //should this extend NetworkSystem?
-//other NetworkSystems: ClientImages, Appearance
+//other NetworkSystems: ClientImages, Appearance, verbs
 
-public sealed class EntityManager {
+public sealed class EntityManager : NetworkSystem {
     private Dictionary<EntityUid, Entity> _entityTable = new();
 
     public Entity SpawnEntity() {
@@ -36,7 +36,7 @@ public sealed class EntityManager {
 
     }
 
-    public Component AddComponent<Component>() {
+    public Component AddComponent<Component>(Entity entity) {
 
     }
 

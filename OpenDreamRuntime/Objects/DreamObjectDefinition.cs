@@ -24,11 +24,7 @@ public sealed class DreamObjectDefinition {
     public readonly DreamResourceManager DreamResourceManager;
     public readonly WalkManager WalkManager;
     public readonly EntityManager EntityManager;
-    public readonly ISerializationManager SerializationManager;
     public readonly ServerAppearanceSystem? AppearanceSystem;
-    public readonly TransformSystem? TransformSystem;
-    public readonly PvsOverrideSystem? PvsOverrideSystem;
-    public readonly MetaDataSystem? MetaDataSystem;
     public readonly ServerVerbSystem? VerbSystem;
     public readonly ServerDreamParticlesSystem? ParticlesSystem;
 
@@ -69,11 +65,7 @@ public sealed class DreamObjectDefinition {
         DreamResourceManager = copyFrom.DreamResourceManager;
         WalkManager = copyFrom.WalkManager;
         EntityManager = copyFrom.EntityManager;
-        SerializationManager = copyFrom.SerializationManager;
         AppearanceSystem = copyFrom.AppearanceSystem;
-        TransformSystem = copyFrom.TransformSystem;
-        PvsOverrideSystem = copyFrom.PvsOverrideSystem;
-        MetaDataSystem = copyFrom.MetaDataSystem;
         VerbSystem = copyFrom.VerbSystem;
         ParticlesSystem = copyFrom.ParticlesSystem;
 
@@ -100,11 +92,7 @@ public sealed class DreamObjectDefinition {
         DreamResourceManager = dreamResourceManager;
         WalkManager = walkManager;
         EntityManager = entityManager;
-        SerializationManager = serializationManager;
         AppearanceSystem = appearanceSystem;
-        TransformSystem = transformSystem;
-        PvsOverrideSystem = pvsOverrideSystem;
-        MetaDataSystem = metaDataSystem;
         VerbSystem = verbSystem;
         ParticlesSystem = particlesSystem;
 

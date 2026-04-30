@@ -20,7 +20,6 @@ public sealed partial class DreamMapManager : IDreamMapManager {
     private readonly AtomManager _atomManager = IoCManager.Resolve<AtomManager>();
     private readonly IMapManager _mapManager = IoCManager.Resolve<IMapManager>();
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
-    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
 
     // Set in Initialize
     private ServerAppearanceSystem _appearanceSystem = default!;
@@ -43,9 +42,9 @@ public sealed partial class DreamMapManager : IDreamMapManager {
     private readonly HashSet<EntityUid> _entityLookupSet = new();
 
     public void Initialize() {
-        _appearanceSystem = _entitySystemManager.GetEntitySystem<ServerAppearanceSystem>();
-        _mapSystem = _entitySystemManager.GetEntitySystem<MapSystem>();
-        _lookupSystem = _entitySystemManager.GetEntitySystem<EntityLookupSystem>();
+        _appearanceSystem = _IoCManager.Resolve<ServerAppearanceSystem>();
+        _mapSystem = _IoCManager.Resolve<MapSystem>();
+        _lookupSystem = _IoCManager.Resolve<EntityLookupSystem>();
 
         DreamObjectDefinition worldDefinition = _objectTree.World.ObjectDefinition;
 

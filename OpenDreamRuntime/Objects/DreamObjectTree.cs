@@ -62,16 +62,11 @@ public sealed class DreamObjectTree {
     private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
     private readonly IMapManager _mapManager = IoCManager.Resolve<IMapManager>();
     private readonly IDreamDebugManager _dreamDebugManager = IoCManager.Resolve<IDreamDebugManager>();
-    private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
     private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
     private readonly DreamResourceManager _dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
     private readonly WalkManager _walkManager = IoCManager.Resolve<WalkManager>();
-    private readonly ISerializationManager _serializationManager = IoCManager.Resolve<ISerializationManager>();
     private readonly ProcScheduler _procScheduler = IoCManager.Resolve<ProcScheduler>();
     private ServerAppearanceSystem? _appearanceSystem;
-    private TransformSystem? _transformSystem;
-    private PvsOverrideSystem? _pvsOverrideSystem;
-    private MetaDataSystem? _metaDataSystem;
     private ServerVerbSystem? _verbSystem;
     private ServerDreamParticlesSystem? _particlesSystem;
 
@@ -82,12 +77,9 @@ public sealed class DreamObjectTree {
 
         Root = new("/", 0);
 
-        _entitySystemManager.TryGetEntitySystem(out _appearanceSystem);
-        _entitySystemManager.TryGetEntitySystem(out _transformSystem);
-        _entitySystemManager.TryGetEntitySystem(out _pvsOverrideSystem);
-        _entitySystemManager.TryGetEntitySystem(out _metaDataSystem);
-        _entitySystemManager.TryGetEntitySystem(out _verbSystem);
-        _entitySystemManager.TryGetEntitySystem(out _particlesSystem);
+        _appearanceSystem = IoCManager.Resolve<ServerAppearanceSystem>();
+        _verbSystem = IoCManager.Resolve<ServerVerbSystem>();
+        _particlesSystem = IoCManager.Resolve<ServerDreamParticlesSystem>();
 
         Strings = json.Strings;
 

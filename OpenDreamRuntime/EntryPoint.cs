@@ -8,60 +8,56 @@ using System.Linq;
 
 [module: System.Runtime.CompilerServices.SkipLocalsInit]
 
-namespace OpenDreamRuntime {
-    public sealed class EntryPoint : GameServer {
-        private readonly IEntitySystemManager _entitySystemManager = IoCManager.Resolve<IEntitySystemManager>();
-        private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
-        private readonly IConfigurationManager _configManager = IoCManager.Resolve<IConfigurationManager>();
-        private readonly IPrototypeManager _prototypeManager = IoCManager.Resolve<IPrototypeManager>();
-        private readonly IDreamDebugManager _debugManager = IoCManager.Resolve<IDreamDebugManager>();
-        private readonly ServerInfoManager _serverInfoManager = IoCManager.Resolve<ServerInfoManager>();
+namespace OpenDreamRuntime;
 
-        private ServerVerbSystem? _serverVerbSystem;
+public sealed class GameServer : IDisposable {
+    private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
+    private readonly IDreamDebugManager _debugManager = IoCManager.Resolve<IDreamDebugManager>();
+    private readonly ServerInfoManager _serverInfoManager = IoCManager.Resolve<ServerInfoManager>();
 
-        public override void Init() {
-            ServerContentIoC.Register();
+    private ServerVerbSystem? _serverVerbSystem;
 
-            if(OpenDreamConfig.TracyEnable)
-                Profiler.Activate();
+    public void Init() {
+        ServerContentIoC.Register();
 
-            _serverInfoManager.Initialize();
-        }
+        if (OpenDreamConfig.TracyEnable)
+            Profiler.Activate();
 
-        public override void PostInit() {
-            _serverVerbSystem = _entitySystemManager.GetEntitySystem<ServerVerbSystem>();
+        _serverInfoManager.Initialize();
+    }
 
-            int debugAdapterPort = OpenDreamConfig.DebugAdapterLaunched;
-            if (debugAdapterPort == 0) {
-                _dreamManager.PreInitialize(OpenDreamConfig.JsonPath);
-                _dreamManager.StartWorld();
-            } else {
-                // The debug manager is responsible for running _dreamManager.PreInitialize() and .StartWorld()
-                _debugManager.Initialize(debugAdapterPort);
-            }
-        }
+    public void PostInit() {
+        _serverVerbSystem = IoCManager.Resolve<ServerVerbSystem>();
 
-        protected override void Dispose(bool disposing) {
-            // Write every savefile to disk
-            foreach (var savefile in DreamObjectSavefile.Savefiles.ToArray()) { //ToArray() to avoid modifying the collection while iterating over it
-                try {
-                    savefile.Close();
-                } catch (Exception e) {
-                    Logger.GetSawmill("opendream").Error($"Exception while flushing savefile '{savefile.Resource.ResourcePath}', data has been lost. {e}");
-                }
-            }
-
-            _dreamManager.Shutdown();
-            _debugManager.Shutdown();
-            ByondApi.ByondApi.Shutdown();
-        }
-
-        public override void Update(ModUpdateLevel level, FrameEventArgs frameEventArgs) {
-            if (level == ModUpdateLevel.PostEngine) {
-                _serverVerbSystem?.RunRepeatingVerbs();
-                _dreamManager.Update();
-                _debugManager.Update();
-            }
+        int debugAdapterPort = OpenDreamConfig.DebugAdapterLaunched;
+        if (debugAdapterPort == 0) {
+            _dreamManager.PreInitialize(OpenDreamConfig.JsonPath);
+            _dreamManager.StartWorld();
+        } else {
+            // The debug manager is responsible for running _dreamManager.PreInitialize() and .StartWorld()
+            _debugManager.Initialize(debugAdapterPort);
         }
     }
+
+    public void Dispose() {
+        // Write every savefile to disk
+        foreach (var savefile in DreamObjectSavefile.Savefiles.ToArray()) { //ToArray() to avoid modifying the collection while iterating over it
+            try {
+                savefile.Close();
+            } catch (Exception e) {
+                Logger.GetSawmill("opendream").Error($"Exception while flushing savefile '{savefile.Resource?.ResourcePath}', data has been lost. {e}");
+            }
+        }
+
+        _dreamManager.Shutdown();
+        _debugManager.Shutdown();
+        ByondApi.ByondApi.Shutdown();
+    }
+
+    public void Update() {
+        _serverVerbSystem?.RunRepeatingVerbs();
+        _dreamManager.Update();
+        _debugManager.Update();
+    }
 }
+
