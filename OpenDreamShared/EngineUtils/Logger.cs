@@ -1,11 +1,24 @@
 using System;
+using System.Collections.Generic;
 
 namespace OpenDreamShared.EngineUtils;
 
 public static class Logger {
 
+    private static Dictionary<LogLevel, string> logLevelNameLookup = new(){
+        {LogLevel.Debug, "Debug"},
+        {LogLevel.Info, "Info"},
+        {LogLevel.Warning, "Warning"},
+        {LogLevel.Error, "Error"},
+        {LogLevel.Fatal, "Fatal"}
+    };
+
     public static ISawmill GetSawmill(string name) {
         return new ConsoleLog();
+    }
+
+    public static string LogLevelToName(LogLevel level) {
+        return logLevelNameLookup.GetValueOrDefault(level, "Invalid Log Level");
     }
 }
 

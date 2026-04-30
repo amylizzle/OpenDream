@@ -7,13 +7,15 @@ using OpenDreamRuntime.Map;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
+using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 namespace OpenDreamRuntime.Objects;
 
 
 public class DreamObject {
     public DreamObjectDefinition ObjectDefinition;
 
-    [Access(typeof(DreamObject))]
+    // [Access(typeof(DreamObject))]
     public bool Deleted;
 
     public readonly uint RefId;
@@ -26,14 +28,10 @@ public class DreamObject {
     protected DreamObjectTree ObjectTree => ObjectDefinition.ObjectTree;
     protected AtomManager AtomManager => ObjectDefinition.AtomManager;
     protected IDreamMapManager DreamMapManager => ObjectDefinition.DreamMapManager;
-    protected IMapManager MapManager => ObjectDefinition.MapManager;
     protected DreamResourceManager DreamResourceManager => ObjectDefinition.DreamResourceManager;
     protected WalkManager WalkManager => ObjectDefinition.WalkManager;
     protected EntityManager EntityManager => ObjectDefinition.EntityManager;
     protected ServerAppearanceSystem? AppearanceSystem => ObjectDefinition.AppearanceSystem;
-    protected TransformSystem? TransformSystem => ObjectDefinition.TransformSystem;
-    protected PvsOverrideSystem? PvsOverrideSystem => ObjectDefinition.PvsOverrideSystem;
-    protected MetaDataSystem? MetaDataSystem => ObjectDefinition.MetaDataSystem;
     protected ServerVerbSystem? VerbSystem => ObjectDefinition.VerbSystem;
     protected ServerDreamParticlesSystem? ParticlesSystem => ObjectDefinition.ParticlesSystem;
 

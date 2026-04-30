@@ -21,15 +21,15 @@ public sealed partial class MenuDescriptor : ElementDescriptor {
 
     }
 
-    public override MenuElementDescriptor CreateChildDescriptor(Dictionary<string, string> attributes) {
-        var menuElement = SerializationManager.Read<MenuElementDescriptor>(attributes, notNullableOverride: true);
+    public override MenuElementDescriptor CreateChildDescriptor(Dictionary<string, object> attributes) {
+        var menuElement = SerializationManager.Read<MenuElementDescriptor>(attributes);
 
         _elements.Add(menuElement);
         return menuElement;
     }
 
     public override ElementDescriptor CreateCopy(string id) {
-        var copy = SerializationManager.CreateCopy(this, notNullableOverride: true);
+        var copy = SerializationManager.CreateCopy(this);
 
         copy._id = new DMFPropertyString(id);
         return copy;
@@ -56,15 +56,15 @@ public sealed partial class MenuElementDescriptor : ElementDescriptor {
     [DataField("index")]
     public DMFPropertyNum Index { get; private set; }
 
-    public MenuElementDescriptor WithCategory(ISerializationManager serialization, DMFPropertyString category) {
-        var copy = serialization.CreateCopy(this, notNullableOverride: true);
+    public MenuElementDescriptor WithCategory(DMFPropertyString category) {
+        var copy = SerializationManager.CreateCopy(this);
 
         copy.Category = category;
         return copy;
     }
 
     // Menu elements can have other menu elements as children
-    public override MenuElementDescriptor CreateChildDescriptor(Dictionary<string, string> attributes) {
-        return SerializationManager.Read<MenuElementDescriptor>(attributes, notNullableOverride: true);
+    public override MenuElementDescriptor CreateChildDescriptor(Dictionary<string, object> attributes) {
+        return SerializationManager.Read<MenuElementDescriptor>(attributes);
     }
 }

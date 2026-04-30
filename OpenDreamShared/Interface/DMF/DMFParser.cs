@@ -251,8 +251,8 @@ public sealed class DMFParser(DMFLexer lexer) {
         return false;
     }
 
-    public Dictionary<string, string> Attributes() {
-        var node = new Dictionary<string, string>();
+    public Dictionary<string, object> Attributes() {
+        var node = new Dictionary<string, object>();
 
         while (TryGetAttribute(out var winset)) {
             if (winset.Element != null) {

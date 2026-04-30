@@ -51,7 +51,7 @@ public partial class ElementDescriptor {
         protected init => _type = value;
     }
 
-    public virtual ElementDescriptor? CreateChildDescriptor(Dictionary<string, string> attributes) {
+    public virtual ElementDescriptor? CreateChildDescriptor(Dictionary<string, object> attributes) {
         throw new InvalidOperationException($"{this} cannot create a child descriptor");
     }
 

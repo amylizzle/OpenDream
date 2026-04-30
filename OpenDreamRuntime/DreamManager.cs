@@ -38,7 +38,7 @@ public sealed partial class DreamManager {
     public int ListPoolThreshold, ListPoolSize;
     public Dictionary<WarningCode, ErrorLevel> OptionalErrors { get; private set; } = new();
     public bool Initialized { get; private set; }
-    public GameTick InitializedTick { get; private set; }
+    public uint InitializedTick { get; private set; }
     public bool IsShutDown { get; private set; }
 
     /// <summary>
@@ -55,8 +55,6 @@ public sealed partial class DreamManager {
     private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
     private readonly ProcScheduler _procScheduler = IoCManager.Resolve<ProcScheduler>();
     private readonly DreamResourceManager _dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
-    private readonly ITaskManager _taskManager = IoCManager.Resolve<ITaskManager>();
-    private readonly IGameTiming _gameTiming = IoCManager.Resolve<IGameTiming>();
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
 
@@ -71,7 +69,7 @@ public sealed partial class DreamManager {
         _dreamResourceManager.PreInitialize();
 
         if (!LoadJson(jsonPath)) {
-            _taskManager.RunOnMainThread(() => { IoCManager.Resolve<IBaseServer>().Shutdown("Error while loading the compiled json. The opendream.json_path CVar may be empty, or points to a file that doesn't exist"); });
+            Shutdown("Error while loading the compiled json. The opendream.json_path CVar may be empty, or points to a file that doesn't exist");
         }
     }
 
@@ -79,7 +77,7 @@ public sealed partial class DreamManager {
         using (Profiler.BeginZone("StartWorld", color: (uint)Color.OrangeRed.ToArgb())) {
             // It is now OK to call user code, like /New procs.
             Initialized = true;
-            InitializedTick = _gameTiming.CurTick;
+            InitializedTick = 0;
             CurrentTickStart = Environment.TickCount64;
 
             // Call global <init> with waitfor=FALSE
@@ -100,6 +98,11 @@ public sealed partial class DreamManager {
         ShutdownConnectionManager();
         Initialized = false;
         IsShutDown = true;
+    }
+
+    public void Shutdown(string message) {
+        Logger.GetSawmill("SHUTDOWN").Fatal(message);
+        Shutdown();
     }
 
     public void Update() {
@@ -187,13 +190,13 @@ public sealed partial class DreamManager {
         if (!WorldInstance.GetVariable("log").TryGetValueAsDreamResource(out var logRsc)) {
             logRsc = new ConsoleOutputResource();
             WorldInstance.SetVariableValue("log", new DreamValue(logRsc));
-            _sawmill.Log(LogLevel.Error, $"Failed to write to the world log, falling back to console output. Original log message follows: [{LogMessage.LogLevelToName(level)}] world.log: {message}");
+            _sawmill.Log(LogLevel.Error, $"Failed to write to the world log, falling back to console output. Original log message follows: [{Logger.LogLevelToName(level)}] world.log: {message}");
         }
 
         if (logRsc is ConsoleOutputResource consoleOut) { // Output() on ConsoleOutputResource uses LogLevel.Info
             consoleOut.WriteConsole(level, sawmill, message);
         } else {
-            logRsc.Output(new DreamValue($"[{LogMessage.LogLevelToName(level)}] {sawmill}: {message}"));
+            logRsc.Output(new DreamValue($"[{Logger.LogLevelToName(level)}] {sawmill}: {message}"));
 
             if (OpenDreamConfig.AlwaysShowExceptions) {
                 Logger.GetSawmill(sawmill).Log(level, message);
@@ -206,10 +209,10 @@ public sealed partial class DreamManager {
             case ClientObjectReference.RefType.Client:
                 return connection.Client;
             case ClientObjectReference.RefType.Entity:
-                _atomManager.TryGetMovableFromEntity(_entityManager.GetEntity(reference.Entity), out var atom);
+                _atomManager.TryGetMovableFromEntity(reference.Entity, out var atom);
                 return atom;
             case ClientObjectReference.RefType.Turf:
-                _dreamMapManager.TryGetTurfAt((reference.TurfX, reference.TurfY), reference.TurfZ, out var turf);
+                _dreamMapManager.TryGetTurfAt(new(reference.TurfX, reference.TurfY), reference.TurfZ, out var turf);
                 return turf;
         }
 
@@ -218,7 +221,7 @@ public sealed partial class DreamManager {
 
     public ClientObjectReference GetClientReference(DreamObjectAtom atom) {
         if (atom is DreamObjectMovable movable) {
-            return new(_entityManager.GetEntityUid(movable.Entity));
+            return new(movable.Entity);
         } else if (atom is DreamObjectTurf turf) {
             return new((turf.X, turf.Y), turf.Z);
         } else {

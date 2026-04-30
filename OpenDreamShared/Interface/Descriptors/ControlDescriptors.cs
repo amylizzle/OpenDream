@@ -110,7 +110,7 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
         ControlDescriptors = new();
     }
 
-    public override ControlDescriptor? CreateChildDescriptor(Dictionary<string, string> attributes) {
+    public override ControlDescriptor? CreateChildDescriptor(Dictionary<string, object> attributes) {
         if (!attributes.TryGetValue("type", out var elementType) || elementType is not DMFPropertyString elementTypeValue)
             return null;
 
@@ -145,9 +145,9 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
             // CHILD's top/bottom attributes alias to left/right
             // Code is duplicated in InterfaceElement.PopulateElementDescriptor()
             // TODO: A bit hacky. Remove this (may be worth abandoning RT's serialization manager)
-            if (attributes.TryGet("top", out var topValue))
+            if (attributes.TryGetValue("top", out var topValue))
                 attributes["left"] = topValue;
-            if (attributes.TryGet("bottom", out var bottomValue))
+            if (attributes.TryGetValue("bottom", out var bottomValue))
                 attributes["right"] = bottomValue;
         }
 
@@ -160,16 +160,16 @@ public sealed partial class WindowDescriptor : ControlDescriptor {
     }
 
     public override ElementDescriptor CreateCopy(string id) {
-        var copy = SerializationManager.CreateCopy(this, notNullableOverride: true);
+        var copy = SerializationManager.CreateCopy(this);
 
         copy._id = new DMFPropertyString(id);
         foreach(var child in this.ControlDescriptors)
-            copy.ControlDescriptors.Add(SerializationManager.CreateCopy(child, notNullableOverride: false));
+            copy.ControlDescriptors.Add(SerializationManager.CreateCopy(child));
         return copy;
     }
 
     public WindowDescriptor WithVisible(bool visible) {
-        WindowDescriptor copy = (WindowDescriptor)CreateCopy(serializationManager, Id.AsRaw());
+        WindowDescriptor copy = (WindowDescriptor)CreateCopy(Id.AsRaw());
 
         copy.IsVisible = new DMFPropertyBool(visible);
         return copy;

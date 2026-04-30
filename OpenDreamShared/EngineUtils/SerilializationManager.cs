@@ -25,6 +25,11 @@ public static class SerializationManager {
         return (T)Read(valuePairs);
     }
 
+    public static object Read(Type type, Dictionary<string, object> valuePairs) {
+        valuePairs["type"] = type.AssemblyQualifiedName!;
+        return Read(valuePairs);
+    }
+
     public static Dictionary<string, object> ToKeyValueMap(object serializableObject) {
         Dictionary<string, object> result = new();
         Type type = serializableObject.GetType();

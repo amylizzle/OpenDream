@@ -2,13 +2,8 @@ using System.Numerics;
 using OpenDreamShared.Dream;
 using OpenDreamShared.EngineUtils;
 
-
-
-
-
 namespace OpenDreamShared.Rendering;
 
-// [RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
 public sealed partial class DreamParticlesComponent : Component {
     [AutoNetworkedField] public partial int Width {get;set;}
     [AutoNetworkedField] public partial int Height {get;set;}

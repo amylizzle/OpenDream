@@ -22,7 +22,7 @@ public sealed partial class MacroSetDescriptor : ElementDescriptor {
 
     }
 
-    public override MacroDescriptor CreateChildDescriptor(Dictionary<string, string> attributes) {
+    public override MacroDescriptor CreateChildDescriptor(Dictionary<string, object> attributes) {
         var macro = SerializationManager.Read<MacroDescriptor>(attributes);
 
         _macros.Add(macro);
