@@ -39,7 +39,7 @@ namespace OpenDreamShared.EngineUtils;
 /// </summary>
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct Color : IEquatable<Color>, ISpanFormattable
+public struct Color : IEquatable<Color>
 {
     /// <summary>
     ///     The red component of this Color structure.
@@ -249,18 +249,6 @@ public struct Color : IEquatable<Color>, ISpanFormattable
     public readonly string ToString(string? format, IFormatProvider? formatProvider)
     {
         return ToString();
-    }
-
-    public readonly bool TryFormat(
-        Span<char> destination,
-        out int charsWritten,
-        ReadOnlySpan<char> format,
-        IFormatProvider? provider)
-    {
-        return FormatHelpers.TryFormatInto(
-            destination,
-            out charsWritten,
-            $"{{(R, G, B, A) = ({R}, {G}, {B}, {A})}}");
     }
 
     public readonly Color WithRed(float newR)
@@ -905,7 +893,7 @@ public struct Color : IEquatable<Color>, ISpanFormattable
 
     public static Color FromCmyk(Vector4 cmyk)
     {
-        var (c, m, y, k) = cmyk;
+        var (c, m, y, k) = (cmyk.W,cmyk.X,cmyk.Y,cmyk.Z);
         var r = (1 - c) * (1 - k);
         var g = (1 - m) * (1 - k);
         var b = (1 - y) * (1 - k);

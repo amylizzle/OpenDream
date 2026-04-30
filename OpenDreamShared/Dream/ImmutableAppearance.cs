@@ -419,7 +419,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
                         var filterLength = buffer.ReadVariableInt32();
                         var filterData = buffer.ReadBytes(filterLength);
                         using var filterStream = new MemoryStream(filterData);
-                        var filter = serializer.Deserialize<DreamFilter>(filterStream);
+                        var filter = SerializationManager.Deserialize<DreamFilter>(filterStream);
 
                         Filters[filtersI] = filter;
                     }
@@ -550,7 +550,7 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
 
         if (Desc != MutableAppearance.Default.Desc) {
             buffer.Write((byte)IconAppearanceProperty.Desc);
-            buffer.Write(Desc);
+            buffer.Write(Desc!);
         }
 
         if (Icon != null) {
@@ -693,10 +693,10 @@ public sealed class ImmutableAppearance : IEquatable<ImmutableAppearance> {
             foreach (var filter in Filters) {
                 using var filterStream = new MemoryStream();
 
-                serializer.Serialize(filterStream, filter);
+                SerializationManager.Serialize(filterStream, filter);
                 buffer.WriteVariableInt32((int)filterStream.Length);
                 filterStream.TryGetBuffer(out var filterBuffer);
-                buffer.Write(filterBuffer);
+                buffer.Write(filterBuffer.Array!);
             }
         }
 

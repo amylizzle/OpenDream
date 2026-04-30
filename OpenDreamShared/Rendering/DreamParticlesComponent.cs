@@ -12,9 +12,9 @@ public sealed partial class DreamParticlesComponent : Component {
     [AutoNetworkedField] public partial Vector3 Bound1 {get;set;}
     [AutoNetworkedField] public partial Vector3 Bound2 {get;set;}
     [AutoNetworkedField] public partial Vector3 Gravity {get;set;}
-    [AutoNetworkedField] public partial Color[] Gradient {get;set;} = [];
+    [AutoNetworkedField] public partial Color[] Gradient {get;set;}
     [AutoNetworkedField] public partial Matrix3x2 Transform {get;set;}
-    [AutoNetworkedField] public partial ImmutableAppearance[] TextureList {get;set;} = [];
+    [AutoNetworkedField] public partial ImmutableAppearance[] TextureList {get;set;}
     [AutoNetworkedField] public partial IGeneratorNum? Lifespan {get;set;}
     [AutoNetworkedField] public partial IGeneratorNum? FadeIn {get;set;}
     [AutoNetworkedField] public partial IGeneratorNum? FadeOut {get;set;}
@@ -28,7 +28,7 @@ public sealed partial class DreamParticlesComponent : Component {
     [AutoNetworkedField] public partial IGeneratorVector? Friction {get;set;}
 
 	//Scaling applied to the particles in (x,y)
-    [AutoNetworkedField] public partial IGeneratorVector Scale {get;set;}= new GeneratorNum(1);
+    [AutoNetworkedField] public partial IGeneratorVector Scale {get;set;} //= new GeneratorNum(1);
 
 	//Rotation applied to the particles in degrees
     [AutoNetworkedField] public partial IGeneratorNum? Rotation {get;set;}

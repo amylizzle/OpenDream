@@ -29,7 +29,7 @@ public sealed class MsgAllAppearances(Dictionary<uint, ImmutableAppearance> allA
         AllAppearances = new(count);
 
         for (int i = 0; i < count; i++) {
-            var appearance = new ImmutableAppearance(decompressed, serializer);
+            var appearance = new ImmutableAppearance(decompressed);
             AllAppearances.Add(appearance.MustGetId(), appearance);
         }
     }
@@ -38,7 +38,7 @@ public sealed class MsgAllAppearances(Dictionary<uint, ImmutableAppearance> allA
         var beforeCompress = new NetBuffer();
         beforeCompress.Write(AllAppearances.Count);
         foreach (var pair in AllAppearances) {
-            pair.Value.WriteToBuffer(beforeCompress, serializer);
+            pair.Value.WriteToBuffer(beforeCompress);
         }
 
         var compressBound = ZStd.CompressBound(beforeCompress.LengthBytes);

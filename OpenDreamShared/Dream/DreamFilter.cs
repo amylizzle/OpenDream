@@ -18,7 +18,7 @@ public partial record DreamFilter {
     public bool Used = false;
 
     [DataField("type")]
-    public string FilterType;
+    public string FilterType = default!;
 
     [DataField("name")]
     public string? FilterName;

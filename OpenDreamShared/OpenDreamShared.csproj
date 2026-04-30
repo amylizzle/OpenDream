@@ -11,12 +11,10 @@
     <NoWarn>NU1507</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="System.CommandLine" />
-    <!-- <PackageReference Include="YamlDotNet" /> -->
     <ProjectReference Include="..\OpenDreamCodeGenerators\OpenDreamCodeGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />  
   </ItemGroup>  
 </Project>

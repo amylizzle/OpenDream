@@ -16,6 +16,10 @@ public abstract class NetMessage {
     public abstract void ReadFromBuffer(NetIncomingMessage buffer);
     public abstract void WriteToBuffer(NetOutgoingMessage buffer);
 
+    public NetMessage(INetChannel netChannel) {
+        MsgChannel = netChannel;
+    }
+
 }
 
 public abstract class NetBuffer {
@@ -64,6 +68,7 @@ public abstract class NetBuffer {
     public abstract void ReadPadBits();
     public abstract void WritePadBits();
 
+    public void Write(bool value) { WriteBooelan(value); }
     public void Write(byte value) { WriteByte(value); }
     public void Write(sbyte value) { WriteSByte(value); }
     public void Write(int value) { WriteInt32(value); }

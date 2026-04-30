@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
+using System.Linq;
 
 //genuinely can't believe this is what you have to do to get the equivalent of a fucking macro
 //stupid fucking language
@@ -31,13 +32,27 @@ public class NetworkPropertyGenerator : IIncrementalGenerator
             foreach (var attr in attrList.Attributes)
             {
                 if (ctx.SemanticModel.GetSymbolInfo(attr).Symbol is IMethodSymbol attrSymbol &&
-                    attrSymbol.ContainingType.Name == "AutoNetworkedAttribute")
+                    attrSymbol.ContainingType.Name == "AutoNetworkedFieldAttribute")
                 {
                     return property;
                 }
             }
         }
         return null;
+    }
+
+    public static string GetClassUsings(ClassDeclarationSyntax classDeclaration)
+{
+        // 1. Find the CompilationUnit (the root of the file)
+        var root = classDeclaration.SyntaxTree.GetRoot();
+
+        // 2. Extract all using directives
+        var usings = root.DescendantNodes()
+                        .OfType<UsingDirectiveSyntax>()
+                        .Select(u => u.ToString());
+
+        // 3. Join them into a single string with newlines
+        return string.Join("\n", usings);
     }
 
     private void Execute(SourceProductionContext context, PropertyDeclarationSyntax property)
@@ -57,8 +72,10 @@ public class NetworkPropertyGenerator : IIncrementalGenerator
         var propertyType = property.Type.ToString();
         var fieldName = $"_{propertyName.ToLower()}";
 
+        var usings = GetClassUsings(classDecl);
         // The C# 13 magic: We provide the implementation for the 'partial' property
         var source = $@"
+{usings}
 namespace {namespaceName}
 {{
     partial class {className}

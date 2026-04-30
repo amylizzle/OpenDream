@@ -1,6 +1,6 @@
 
-public class MapCoordinates(uint X, uint Y, uint Z) {
-    uint X;
-    uint Y;
-    uint Z;
+public struct MapCoordinates(uint X, uint Y, uint Z) {
+    public uint X = X;
+    public uint Y = Y;
+    public uint Z = Z;
 }
