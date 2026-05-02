@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization.Metadata;
 using OpenDreamShared.EngineUtils;
 
 public static class SerializationManager {
@@ -33,6 +37,7 @@ public static class SerializationManager {
     public static Dictionary<string, object> ToKeyValueMap(object serializableObject) {
         Dictionary<string, object> result = new();
         Type type = serializableObject.GetType();
+        result.Add("type", type.AssemblyQualifiedName!);
         FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         foreach (FieldInfo field in fields) {
@@ -61,6 +66,19 @@ public static class SerializationManager {
         return result;
     }
 
+    public static void Serialize(MemoryStream memoryStream, object target) {
+        var kvDict = ToKeyValueMap(target);
+        string serilaized = JsonSerializer.Serialize(kvDict);
+        BinaryWriter writer = new(memoryStream);
+        writer.Write(serilaized);
+    }
+
+    public static T Deserialize<T>(MemoryStream memoryStream) {
+        BinaryReader reader = new(memoryStream);
+        string jsonString = reader.ReadString();
+        var kvJson = (Dictionary<string, object>) JsonSerializer.Deserialize(jsonString, JsonTypeInfo.CreateJsonTypeInfo(typeof(Dictionary<string,object>), new()))!;
+        return Read<T>(kvJson);
+    }
 
     public static T CreateCopy<T>(T copiedObject) {
         if (copiedObject is null)

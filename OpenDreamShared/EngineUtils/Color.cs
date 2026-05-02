@@ -879,7 +879,6 @@ public struct Color : IEquatable<Color>
         return new Vector4(hue, c, luminance, rgb.A);
     }
 
-
     public static Vector4 ToCmyk(Color rgb)
     {
         var (r, g, b) = rgb;

@@ -13,7 +13,7 @@ public sealed class MsgSoundQueryResponse : NetMessage {
 
     public override void ReadFromBuffer(NetIncomingMessage buffer) {
         PromptId = buffer.ReadVariableInt32();
-        var soundCount = buffer.ReadUInt16();
+        var soundCount = (int)buffer.ReadUInt16();
 
         Sounds = new List<SoundData>(soundCount);
 

@@ -75,6 +75,8 @@ public class NetworkPropertyGenerator : IIncrementalGenerator
         var usings = GetClassUsings(classDecl);
         // The C# 13 magic: We provide the implementation for the 'partial' property
         var source = $@"
+#nullable enable
+
 {usings}
 namespace {namespaceName}
 {{
@@ -90,7 +92,7 @@ namespace {namespaceName}
                 if (!Equals({fieldName}, value))
                 {{
                     {fieldName} = value;
-                    NetworkManager.MarkDirty(this, ""{propertyName}"");
+                    _netManager.MarkDirty(this, ""{propertyName}"");
                 }}
             }}
         }}

@@ -69,6 +69,10 @@ public sealed class NetManager : INetManager {
             //inc counter, add to dicts, then add callback
         }
     }
+
+    public void MarkDirty(Component c, string fieldName) {
+        throw new NotImplementedException();
+    }
 }
 
 

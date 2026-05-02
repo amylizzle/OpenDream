@@ -20,6 +20,11 @@ public abstract class NetMessage {
         MsgChannel = netChannel;
     }
 
+    public NetMessage() {
+        MsgChannel = null!;
+        throw new ArgumentException("NetMessage must be constructed with the NetChannel");
+    }
+
 }
 
 public abstract class NetBuffer {
@@ -276,6 +281,7 @@ public class NetOutgoingMessage : NetBuffer {
     }
 
     public override void WriteBooelan(bool b) {
+        binaryWriter.Write(b);
         throw new System.NotImplementedException();
     }
 
