@@ -12,9 +12,9 @@ public class DreamObjectMovable : DreamObjectAtom {
     public readonly DMISpriteComponent SpriteComponent;
     public DreamObjectAtom? Loc;
     public MapCoordinates Position => _transformComponent.Position;
-    public uint X => Position.X;
-    public uint Y => Position.Y;
-    public uint Z => Position.Z;
+    public int X => Position.X;
+    public int Y => Position.Y;
+    public int Z => Position.Z;
 
     private readonly TransformComponent _transformComponent;
     private readonly MetaDataComponent _metaDataComponent;
@@ -111,9 +111,9 @@ public class DreamObjectMovable : DreamObjectAtom {
             case "x":
             case "y":
             case "z": {
-                uint x = (varName == "x") ? (uint)value.MustGetValueAsInteger() : X;
-                uint y = (varName == "y") ? (uint)value.MustGetValueAsInteger() : Y;
-                uint z = (varName == "z") ? (uint)value.MustGetValueAsInteger() : Z;
+                int x = (varName == "x") ? value.MustGetValueAsInteger() : X;
+                int y = (varName == "y") ? value.MustGetValueAsInteger() : Y;
+                int z = (varName == "z") ? value.MustGetValueAsInteger() : Z;
 
                 DreamMapManager.TryGetTurfAt(new(x, y), z, out var newLoc);
                 SetLoc(newLoc);
@@ -176,9 +176,9 @@ public class DreamObjectMovable : DreamObjectAtom {
             // We don't actually keep track of area turfs currently
             // So do the classic BYOND trick of looping through every turf and checking its area :)
             // TODO: Remove this monstrosity
-            for (uint z = 1; z <= DreamMapManager.Levels; z++) {
-                for (uint x = 1; x <= DreamMapManager.Size.X; x++) {
-                    for (uint y = 1; y <= DreamMapManager.Size.Y; y++) {
+            for (int z = 1; z <= DreamMapManager.Levels; z++) {
+                for (int x = 1; x <= DreamMapManager.Size.X; x++) {
+                    for (int y = 1; y <= DreamMapManager.Size.Y; y++) {
                         if (!DreamMapManager.TryGetCellAt(new(x, y), z, out var cell))
                             continue;
 

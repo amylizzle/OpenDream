@@ -3,21 +3,21 @@
 namespace OpenDreamRuntime.Objects.Types;
 
 public sealed class DreamObjectArea : DreamObjectAtom {
-    public uint X {
+    public int X {
         get {
             UpdateCoordinateCache();
             return _cachedX!.Value;
         }
     }
 
-    public uint Y {
+    public int Y {
         get {
             UpdateCoordinateCache();
             return _cachedY!.Value;
         }
     }
 
-    public uint Z {
+    public int Z {
         get {
             UpdateCoordinateCache();
             return _cachedZ!.Value;
@@ -30,7 +30,7 @@ public sealed class DreamObjectArea : DreamObjectAtom {
     private readonly AreaContentsList _contents;
 
     // Iterating all our turfs to find the one with the lowest coordinates is slow business
-    private uint? _cachedX, _cachedY, _cachedZ;
+    private int? _cachedX, _cachedY, _cachedZ;
 
     public DreamObjectArea(DreamObjectDefinition objectDefinition) : base(objectDefinition) {
         Appearance = AppearanceSystem!.DefaultAppearance;

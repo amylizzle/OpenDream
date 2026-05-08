@@ -38,12 +38,12 @@ public sealed class DummyDreamMapManager : IDreamMapManager {
         return false;
     }
 
-    public bool TryGetCellAt(Vector2u pos, uint z, [NotNullWhen(true)] out IDreamMapManager.Cell? cell) {
+    public bool TryGetCellAt(Vector2i pos, int z, [NotNullWhen(true)] out IDreamMapManager.Cell? cell) {
         cell = null;
         return false;
     }
 
-    public bool TryGetTurfAt(Vector2u pos, uint z, [NotNullWhen(true)] out DreamObjectTurf? turf) {
+    public bool TryGetTurfAt(Vector2i pos, int z, [NotNullWhen(true)] out DreamObjectTurf? turf) {
         turf = null;
         return false;
     }
@@ -52,19 +52,19 @@ public sealed class DummyDreamMapManager : IDreamMapManager {
 
     public void SetWorldSize(Vector2i size) { }
 
-    public EntityUid GetZLevelEntity(uint z) {
+    public EntityUid GetZLevelEntity(int z) {
         return EntityUid.Invalid;
     }
 
-    public IEnumerable<DreamObjectMob> GetMobsInRange((uint X, uint Y, uint Z) loc, int distance) {
+    public IEnumerable<DreamObjectMob> GetMobsInRange((int X, int Y, int Z) loc, int distance) {
         yield break;
     }
 
-    public IEnumerable<AtomDirection> CalculateSteps((uint X, uint Y, uint Z) loc, (uint X, uint Y, uint Z) dest, int distance) {
+    public IEnumerable<AtomDirection> CalculateSteps((int X, int Y, int Z) loc, (int X, int Y, int Z) dest, int distance) {
         yield break;
     }
 
-    public uint[,] GetMapAsTileIds(uint Z) {
+    public int[,] GetMapAsTileIds(int Z) {
         throw new System.NotImplementedException();
     }
 }

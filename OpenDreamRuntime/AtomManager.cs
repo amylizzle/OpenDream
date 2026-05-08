@@ -710,7 +710,7 @@ public sealed class AtomManager {
     }
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public (uint X, uint Y, uint Z) GetAtomPosition(DreamObjectAtom atom) {
+    public (int X, int Y, int Z) GetAtomPosition(DreamObjectAtom atom) {
         return atom switch {
             DreamObjectMovable { Position: var pos, Z: var z } => (pos.X, pos.Y, z),
             DreamObjectTurf turf => (turf.X, turf.Y, turf.Z),
@@ -720,7 +720,7 @@ public sealed class AtomManager {
     }
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-    private static (uint X, uint Y, uint) ThrowCantGetPosition(DreamObjectAtom atom) {
+    private static (int X, int Y, int) ThrowCantGetPosition(DreamObjectAtom atom) {
         throw new Exception($"Cannot get the position of {atom}");
     }
 }

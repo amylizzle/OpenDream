@@ -3,8 +3,8 @@ using System.Collections.Generic;
 namespace OpenDreamShared.EngineUtils;
 
 public interface IMapManager {
-    public abstract Entity<MapGridComponent> CreateGridEntity(uint z);
-    public abstract void DeleteMap(uint z);
+    public abstract Entity<MapGridComponent> CreateGridEntity(int z);
+    public abstract void DeleteMap(int z);
     public abstract void SetTiles(Entity<MapGridComponent> grid, List<(Vector2u, Tile)> tiles);
     public abstract void SetTile(Entity<MapGridComponent> grid, Vector2u pos, Tile tile);
     public abstract List<(Vector2u, Tile)> GetAllTiles(Entity<MapGridComponent> grid);
@@ -24,11 +24,11 @@ public sealed class MapManager : NetworkSystem, IMapManager {
         throw new System.NotImplementedException();
     }
 
-    Entity<MapGridComponent> IMapManager.CreateGridEntity(uint z) {
+    Entity<MapGridComponent> IMapManager.CreateGridEntity(int z) {
         throw new System.NotImplementedException();
     }
 
-    public void DeleteMap(uint z) {
+    public void DeleteMap(int z) {
         throw new System.NotImplementedException();
     }
 }

@@ -40,15 +40,15 @@ public partial class DreamMapManager {
         }
     }
 
-    public IEnumerable<AtomDirection> CalculateSteps((uint X, uint Y, uint Z) loc, (uint X, uint Y, uint Z) dest, int distance) {
-        uint z = loc.Z;
+    public IEnumerable<AtomDirection> CalculateSteps((int X, int Y, int Z) loc, (int X, int Y, int Z) dest, int distance) {
+        int z = loc.Z;
         if (z != dest.Z) // Different Z-levels are unreachable
             yield break;
 
         HashSet<PathFindNode> explored = new();
         Queue<PathFindNode> toExplore = new();
 
-        toExplore.Enqueue(PathFindNode.GetNode((int)loc.X, (int)loc.Y));
+        toExplore.Enqueue(PathFindNode.GetNode(loc.X, loc.Y));
 
         void Explore(PathFindNode current, int offsetX, int offsetY) {
             var nextX = current.X + offsetX;
@@ -59,7 +59,7 @@ public partial class DreamMapManager {
             var next = PathFindNode.GetNode(nextX, nextY);
             if (explored.Contains(next))
                 return;
-            if (!TryGetCellAt(new((uint)next.X, (uint)next.Y), z, out var cell) || cell.Turf.IsDense)
+            if (!TryGetCellAt(new(next.X, next.Y), z, out var cell) || cell.Turf.IsDense)
                 return;
 
             if (!toExplore.Contains(next))
@@ -78,7 +78,7 @@ public partial class DreamMapManager {
                 Stack<AtomDirection> path = new(node.NeededSteps);
 
                 while (node.Parent != null) {
-                    var stepDir = DreamProcNativeHelpers.GetDir(((uint)node.Parent.X, (uint)node.Parent.Y, z), ((uint)node.X, (uint)node.Y, z));
+                    var stepDir = DreamProcNativeHelpers.GetDir((node.Parent.X, node.Parent.Y, z), (node.X, node.Y, z));
 
                     node = node.Parent;
                     path.Push(stepDir);

@@ -105,7 +105,7 @@ internal static class DreamProcNativeRoot {
         for (int z = startZ; z <= endZ; z++) {
             for (int y = startY; y <= endY; y++) {
                 for (int x = startX; x <= endX; x++) {
-                    if (mapManager.TryGetTurfAt(new ((uint)x, (uint)y), (uint)z, out var turf)) {
+                    if (mapManager.TryGetTurfAt(new (x, y), z, out var turf)) {
                         turfs.AddValue(new DreamValue(turf));
                     }
                 }
@@ -1330,7 +1330,7 @@ internal static class DreamProcNativeRoot {
         JsonEncode(jsonWriter, bundle.GetArgument(0, "Value"));
         jsonWriter.Flush();
 
-        return new DreamValue(Encoding.UTF8.GetString(stream.AsSpan()));
+        return new DreamValue(Encoding.UTF8.GetString(stream.ToArray()));
     }
 
     public static DreamValue _length(DreamValue value, bool countBytes) {
@@ -1915,7 +1915,7 @@ internal static class DreamProcNativeRoot {
     [DreamProcParameter("H", Type = DreamValueTypeFlag.Float)]
     public static DreamValue NativeProc_rand(NativeProc.Bundle bundle, DreamObject? src, DreamObject? usr) {
         if (bundle.Arguments.Length == 0) {
-            return new DreamValue(bundle.DreamManager.Random.NextSingle());
+            return new DreamValue(bundle.DreamManager.Random.NextFloat());
         } else if (bundle.Arguments.Length == 1) {
             bundle.GetArgument(0, "L").TryGetValueAsInteger(out var high);
 
@@ -2307,9 +2307,10 @@ internal static class DreamProcNativeRoot {
         DreamValue addrValue = bundle.GetArgument(0, "Addr");
 
         if (addrValue.IsNull) {
-            IoCManager.Resolve<ITaskManager>().RunOnMainThread(() => {
-                IoCManager.Resolve<IBaseServer>().Shutdown("shutdown() was called from DM code");
-            });
+            IoCManager.Resolve<DreamManager>().Shutdown("shutdown() was called from DM code");
+            // IoCManager.Resolve<ITaskManager>().RunOnMainThread(() => {
+            //     IoCManager.Resolve<IBaseServer>().Shutdown("shutdown() was called from DM code");
+            // });
         } else {
             throw new NotImplementedException();
         }
@@ -3221,7 +3222,7 @@ internal static class DreamProcNativeRoot {
         foreach (var tile in DreamProcNativeHelpers.MakeViewSpiral(viewData, true)) {
             if (tile == null || tile.IsVisible == false)
                 continue;
-            if (!bundle.MapManager.TryGetCellAt(new ((uint)(eyePos.X + tile.DeltaX), (uint)(eyePos.Y + tile.DeltaY)), eyePos.Z, out var cell))
+            if (!bundle.MapManager.TryGetCellAt(new ((eyePos.X + tile.DeltaX), (eyePos.Y + tile.DeltaY)), eyePos.Z, out var cell))
                 continue;
 
             view.AddValue(new(cell.Turf));

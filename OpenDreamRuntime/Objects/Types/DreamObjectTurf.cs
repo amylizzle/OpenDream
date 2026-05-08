@@ -6,9 +6,9 @@ namespace OpenDreamRuntime.Objects.Types;
 
 public sealed class DreamObjectTurf : DreamObjectAtom {
     public readonly MapCoordinates Position;
-    public uint X => Position.X;
-    public uint Y => Position.Y;
-    public uint Z => Position.Z;
+    public int X => Position.X;
+    public int Y => Position.Y;
+    public int Z => Position.Z;
 
     public readonly TurfContentsList Contents;
     public ImmutableAppearance Appearance;
@@ -16,7 +16,7 @@ public sealed class DreamObjectTurf : DreamObjectAtom {
 
     public bool IsDense => GetVariable("density").IsTruthy();
 
-    public DreamObjectTurf(DreamObjectDefinition objectDefinition, uint x, uint y, uint z) : base(objectDefinition) {
+    public DreamObjectTurf(DreamObjectDefinition objectDefinition, int x, int y, int z) : base(objectDefinition) {
         Position = new(x,y,z);
 
         Cell = default!; // NEEDS to be set by DreamMapManager after creation

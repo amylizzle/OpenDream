@@ -801,7 +801,7 @@ public static unsafe partial class ByondApi {
 
         return RunOnMainThread<byte>(() => {
             try {
-                if (_dreamMapManager!.TryGetTurfAt(new Vector2i(xyz->x, xyz->y), (uint)xyz->z, out var turf)) {
+                if (_dreamMapManager!.TryGetTurfAt(new Vector2i(xyz->x, xyz->y), xyz->z, out var turf)) {
                     DreamValue val = new(turf);
                     *result = ValueToByondApi(val);
                 } else {
