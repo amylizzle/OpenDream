@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamShared.EngineUtils;
+using OpenDreamShared.Network;
 using OpenDreamShared.Network.Messages;
 using OpenDreamShared.Resources;
 

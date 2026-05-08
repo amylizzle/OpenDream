@@ -314,8 +314,16 @@ public class PlayerManger : IPlayerManager {
         throw new NotImplementedException();
     }
 
-    public void SetStatus(ICommonSession session, SessionStatus status) {
-        throw new NotImplementedException();
+    public void SetStatus(ICommonSession session, SessionStatus status)
+    {
+        if (session.Status == status)
+            return;
+
+        var old = session.Status;
+        session.SetStatus(status);
+
+        UpdateState(session);
+        PlayerStatusChanged?.Invoke(this, new SessionStatusEventArgs(session, old, status));
     }
 
     public void Shutdown() {

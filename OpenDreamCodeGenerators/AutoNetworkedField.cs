@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
 
 //genuinely can't believe this is what you have to do to get the equivalent of a fucking macro
 //stupid fucking language
@@ -70,7 +71,13 @@ public class NetworkPropertyGenerator : IIncrementalGenerator
         var className = classDecl.Identifier.Text;
         var propertyName = property.Identifier.Text;
         var propertyType = property.Type.ToString();
-        var fieldName = $"_{propertyName.ToLower()}";
+
+    var accessibilityModifiers = property.Modifiers
+        .Where(m => m.IsKind(SyntaxKind.PublicKeyword) ||
+                m.IsKind(SyntaxKind.PrivateKeyword) ||
+                m.IsKind(SyntaxKind.ProtectedKeyword) ||
+                m.IsKind(SyntaxKind.InternalKeyword));
+        string access = string.Join(" ", accessibilityModifiers.Select(m => m.Text));
 
         var usings = GetClassUsings(classDecl);
         // The C# 13 magic: We provide the implementation for the 'partial' property

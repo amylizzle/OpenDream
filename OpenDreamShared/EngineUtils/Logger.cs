@@ -6,6 +6,7 @@ namespace OpenDreamShared.EngineUtils;
 public static class Logger {
 
     private static Dictionary<LogLevel, string> logLevelNameLookup = new(){
+        {LogLevel.Debug, "Verbose"},
         {LogLevel.Debug, "Debug"},
         {LogLevel.Info, "Info"},
         {LogLevel.Warning, "Warning"},
@@ -36,6 +37,7 @@ class ConsoleLog : ISawmill {
 public interface ISawmill {
     public void Log(LogLevel logLevel, string message);
     public void Log(LogLevel logLevel, Exception e, string message);
+    public void Verbose(string message) { Log(LogLevel.Verbose, message); }
     public void Debug(string message) { Log(LogLevel.Debug, message); }
     public void Info(string message) { Log(LogLevel.Info, message); }
     public void Warning(string message) { Log(LogLevel.Warning, message); }
@@ -44,6 +46,7 @@ public interface ISawmill {
 }
 
 public enum LogLevel {
+    Verbose,
     Debug,
     Info,
     Warning,

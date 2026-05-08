@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DMCompiler.DM;
 using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Resources;
-using Dependency = Robust.Shared.IoC.DependencyAttribute;
 
 namespace OpenDreamRuntime.Procs {
     public sealed class AsyncNativeProc(
@@ -46,7 +45,6 @@ namespace OpenDreamRuntime.Procs {
             private bool _inResume;
 
             public AsyncNativeProcState() {
-                IoCManager.InjectDependencies(this);
             }
 
             public void Initialize(AsyncNativeProc? proc, Func<AsyncNativeProcState, Task<DreamValue>> taskFunc, DreamThread thread, DreamObject? src, DreamObject? usr, DreamProcArguments arguments) {

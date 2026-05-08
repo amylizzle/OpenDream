@@ -2,7 +2,7 @@
   <PropertyGroup>
     <!-- Work around https://github.com/dotnet/project-system/issues/4314 -->
     <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>13</LangVersion>
+    <LangVersion>14</LangVersion>
     <IsPackable>false</IsPackable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>../bin/Content.Shared</OutputPath>
@@ -14,7 +14,7 @@
   </PropertyGroup>
 <PropertyGroup>
   <!-- Allows you to see the generated files on disk -->
-  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  <EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
   <!-- Optional: Sets the specific directory for generated files -->
   <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 </PropertyGroup>  

@@ -1,6 +1,6 @@
 using OpenDreamShared.Dream;
 using OpenDreamShared.Rendering;
-
+using OpenDreamShared.EngineUtils;
 namespace OpenDreamRuntime.Objects.Types;
 
 public sealed class DreamObjectParticles : DreamObject {

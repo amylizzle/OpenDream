@@ -4,6 +4,7 @@ using OpenDreamRuntime.Map;
 using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
+using OpenDreamShared.EngineUtils;
 
 
 
@@ -26,7 +27,6 @@ public sealed class DreamObjectDefinition {
     public readonly EntityManager EntityManager;
     public readonly ServerAppearanceSystem? AppearanceSystem;
     public readonly ServerVerbSystem? VerbSystem;
-    public readonly ServerDreamParticlesSystem? ParticlesSystem;
 
     public readonly TreeEntry TreeEntry;
     public string Type => TreeEntry.Path;
@@ -67,7 +67,6 @@ public sealed class DreamObjectDefinition {
         EntityManager = copyFrom.EntityManager;
         AppearanceSystem = copyFrom.AppearanceSystem;
         VerbSystem = copyFrom.VerbSystem;
-        ParticlesSystem = copyFrom.ParticlesSystem;
 
         TreeEntry = copyFrom.TreeEntry;
         InitializationProc = copyFrom.InitializationProc;
@@ -82,7 +81,7 @@ public sealed class DreamObjectDefinition {
             Verbs = new Dictionary<string, int>(copyFrom.Verbs);
     }
 
-    public DreamObjectDefinition(DreamManager dreamManager, DreamRefManager dreamRefManager, DreamObjectTree objectTree, AtomManager atomManager, IDreamMapManager dreamMapManager, IMapManager mapManager, DreamResourceManager dreamResourceManager, WalkManager walkManager, EntityManager entityManager, ServerAppearanceSystem? appearanceSystem, ServerVerbSystem? verbSystem, ServerDreamParticlesSystem? particlesSystem, TreeEntry? treeEntry) {
+    public DreamObjectDefinition(DreamManager dreamManager, DreamRefManager dreamRefManager, DreamObjectTree objectTree, AtomManager atomManager, IDreamMapManager dreamMapManager, IMapManager mapManager, DreamResourceManager dreamResourceManager, WalkManager walkManager, EntityManager entityManager, ServerAppearanceSystem? appearanceSystem, ServerVerbSystem? verbSystem, TreeEntry? treeEntry) {
         DreamManager = dreamManager;
         DreamRefManager = dreamRefManager;
         ObjectTree = objectTree;
@@ -94,7 +93,6 @@ public sealed class DreamObjectDefinition {
         EntityManager = entityManager;
         AppearanceSystem = appearanceSystem;
         VerbSystem = verbSystem;
-        ParticlesSystem = particlesSystem;
 
         TreeEntry = treeEntry;
 

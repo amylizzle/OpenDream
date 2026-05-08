@@ -17,6 +17,7 @@ using OpenDreamShared.EngineUtils;
 
 
 using System.Diagnostics.CodeAnalysis;
+using OpenDreamShared.Network;
 
 namespace OpenDreamRuntime;
 
@@ -223,7 +224,7 @@ public sealed partial class DreamManager {
         if (atom is DreamObjectMovable movable) {
             return new(movable.Entity);
         } else if (atom is DreamObjectTurf turf) {
-            return new((turf.X, turf.Y), turf.Z);
+            return new(new((int)turf.X, (int)turf.Y), (int)turf.Z);
         } else {
             throw new NotImplementedException($"Cannot create a client reference for {atom}");
         }

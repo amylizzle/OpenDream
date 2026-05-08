@@ -33,7 +33,6 @@ public class DreamObject {
     protected EntityManager EntityManager => ObjectDefinition.EntityManager;
     protected ServerAppearanceSystem? AppearanceSystem => ObjectDefinition.AppearanceSystem;
     protected ServerVerbSystem? VerbSystem => ObjectDefinition.VerbSystem;
-    protected ServerDreamParticlesSystem? ParticlesSystem => ObjectDefinition.ParticlesSystem;
 
     protected Dictionary<string, DreamValue>? Variables;
 

@@ -9,10 +9,11 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Png.Chunks;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Color = Robust.Shared.Maths.Color;
 using ParsedDMIDescription = OpenDreamShared.Resources.DMIParser.ParsedDMIDescription;
 using ParsedDMIState = OpenDreamShared.Resources.DMIParser.ParsedDMIState;
 using ParsedDMIFrame = OpenDreamShared.Resources.DMIParser.ParsedDMIFrame;
+using OpenDreamShared.EngineUtils;
+using Color = OpenDreamShared.EngineUtils.Color;
 
 namespace OpenDreamRuntime.Objects;
 

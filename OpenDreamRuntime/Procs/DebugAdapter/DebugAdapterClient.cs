@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using OpenDreamRuntime.Procs.DebugAdapter.Protocol;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Procs.DebugAdapter;
 

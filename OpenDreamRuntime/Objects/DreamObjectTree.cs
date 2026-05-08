@@ -10,11 +10,7 @@ using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Procs.DebugAdapter;
 using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
-
-
-
-
-
+using OpenDreamShared.EngineUtils;
 using MethodImplAttribute = System.Runtime.CompilerServices.MethodImplAttribute;
 using MethodImplOptions = System.Runtime.CompilerServices.MethodImplOptions;
 
@@ -69,7 +65,6 @@ public sealed class DreamObjectTree {
     private readonly ProcScheduler _procScheduler = IoCManager.Resolve<ProcScheduler>();
     private ServerAppearanceSystem? _appearanceSystem;
     private ServerVerbSystem? _verbSystem;
-    private ServerDreamParticlesSystem? _particlesSystem;
 
     public void LoadJson(DreamCompiledJson json) {
         var types = json.Types;
@@ -80,7 +75,6 @@ public sealed class DreamObjectTree {
 
         _appearanceSystem = IoCManager.Resolve<ServerAppearanceSystem>();
         _verbSystem = IoCManager.Resolve<ServerVerbSystem>();
-        _particlesSystem = IoCManager.Resolve<ServerDreamParticlesSystem>();
 
         Strings = json.Strings;
 
@@ -364,7 +358,7 @@ public sealed class DreamObjectTree {
         foreach (TreeEntry type in GetAllDescendants(Root)) {
             int typeId = type.Id;
             DreamTypeJson jsonType = types[typeId];
-            var definition = new DreamObjectDefinition(_dreamManager, _refManager, this, _atomManager, _dreamMapManager, _mapManager, _dreamResourceManager, _walkManager, _entityManager, _appearanceSystem,  _verbSystem, _particlesSystem, type);
+            var definition = new DreamObjectDefinition(_dreamManager, _refManager, this, _atomManager, _dreamMapManager, _mapManager, _dreamResourceManager, _walkManager, _entityManager, _appearanceSystem,  _verbSystem, type);
 
             type.ObjectDefinition = definition;
             type.TreeIndex = treeIndex++;

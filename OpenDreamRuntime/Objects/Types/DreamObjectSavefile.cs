@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using DMCompiler;
 using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Resources;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Objects.Types;
 

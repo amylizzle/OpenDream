@@ -4,6 +4,8 @@ using OpenDreamRuntime.Procs.Native;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
+using OpenDreamShared.Network;
 
 
 
@@ -25,10 +27,8 @@ public sealed class DreamObjectWorld : DreamObject {
     public float Cpu { get; set; }
     public readonly int IconSize;
 
-    private readonly IBaseServer _server = IoCManager.Resolve<IBaseServer>();
     private readonly IGameTiming _gameTiming = IoCManager.Resolve<IGameTiming>();
     private readonly INetManager _netManager = IoCManager.Resolve<INetManager>();
-    private readonly IConfigurationManager _cfg = IoCManager.Resolve<IConfigurationManager>();
 
     private readonly ISawmill _sawmill = Logger.GetSawmill("opendream.world");
 
@@ -69,7 +69,6 @@ public sealed class DreamObjectWorld : DreamObject {
 
     public DreamObjectWorld(DreamObjectDefinition objectDefinition) :
         base(objectDefinition) {
-        IoCManager.InjectDependencies(this);
 
         SetTicklag(objectDefinition.Variables["tick_lag"]);
         SetLog(objectDefinition.Variables["log"]);
@@ -113,7 +112,7 @@ public sealed class DreamObjectWorld : DreamObject {
 
         base.HandleDeletion(possiblyThreaded);
         if (isServerWorld)
-            _server.Shutdown("world was deleted");
+            DreamManager.Shutdown("world was deleted");
     }
 
     protected override bool TryGetVar(string varName, out DreamValue value) {
@@ -345,12 +344,12 @@ public sealed class DreamObjectWorld : DreamObject {
 
     private void SetSleepOffline(DreamValue sleepOffline) {
         if (sleepOffline.IsTruthy()) {
-            _cfg.OverrideDefault(CVars.GameAutoPauseEmpty, true);
+            OpenDreamConfig.OverrideDefault(OpenDreamConfig.GameAutoPauseEmpty, true);
             SetVariableValue("sleep_offline", DreamValue.True);
             return;
         }
 
         SetVariableValue("sleep_offline", DreamValue.False);
-        _cfg.OverrideDefault(CVars.GameAutoPauseEmpty, false);
+        OpenDreamConfig.OverrideDefault(OpenDreamConfig.GameAutoPauseEmpty, false);
     }
 }

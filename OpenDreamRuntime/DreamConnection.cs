@@ -8,6 +8,7 @@ using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
 using OpenDreamShared.EngineUtils;
+using OpenDreamShared.Network;
 using OpenDreamShared.Network.Messages;
 
 

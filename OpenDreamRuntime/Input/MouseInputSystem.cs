@@ -3,6 +3,7 @@ using OpenDreamRuntime.Map;
 using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Input;
 
 
