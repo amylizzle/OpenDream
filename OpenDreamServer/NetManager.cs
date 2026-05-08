@@ -5,14 +5,18 @@ using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Network;
 using OpenDreamShared.Network.Messages;
 
 public sealed class NetManager : INetManager {
     private Task websockTask;
-    private int msgIdCounter = 0;
+    // private int msgIdCounter = 0;
     private readonly Dictionary<Type, int> _msgTypeToId = new();
     private readonly Dictionary<int, Type> _idToMsgType = new();
+
+    public int Port { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     //websocket
     //spin up async listen on socket for message processing
     // handle login, register player with player manager, pass messages to/from player manager/socket

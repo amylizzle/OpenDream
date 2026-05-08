@@ -34,6 +34,11 @@ public static class OpenDreamConfig {
             throw new ArgumentException($"{parseResult.Errors.Count} error(s) occurred while parsing args.");
         }
     }
+
+    public static void OverrideDefault() {
+
+    }
+
     private static readonly Option<string> optionJsonPath = new("opendream.json_path") {
         Description = "The compiled JSON file containing the OpenDream bytecode.",
         Required = true
@@ -152,4 +157,25 @@ public static class OpenDreamConfig {
         Required = false
     };
     public static string InfoLinksWiki => parseResult?.GetValue(optionInfoLinksWiki) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
+
+    /// <summary>
+    /// Bind server to address
+    /// </summary>
+    private static readonly Option<string> optionNetBindTo = new("opendream.netbindto") {
+        Description = "IP address to bind the server to.",
+        DefaultValueFactory = (_) => string.Empty,
+        Required = false
+    };
+    public static string NetBindTo => parseResult?.GetValue(optionNetBindTo) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
+
+    /// <summary>
+    /// Pause game automatically when server is empty
+    /// </summary>
+    private static readonly Option<bool> optionGameAutoPauseEmpty = new("opendream.gameautopauseempty") {
+        Description = "Pause game automatically when server is empty.",
+        DefaultValueFactory = (_) => false,
+        Required = false
+    };
+    public static bool GameAutoPauseEmpty => parseResult?.GetValue(optionGameAutoPauseEmpty) ?? throw new InvalidDataException("Could not get arg value, did parse fail?");
+
 }

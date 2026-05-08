@@ -343,13 +343,13 @@ public sealed class DreamObjectWorld : DreamObject {
     }
 
     private void SetSleepOffline(DreamValue sleepOffline) {
-        if (sleepOffline.IsTruthy()) {
-            OpenDreamConfig.OverrideDefault(OpenDreamConfig.GameAutoPauseEmpty, true);
-            SetVariableValue("sleep_offline", DreamValue.True);
-            return;
-        }
+        // if (sleepOffline.IsTruthy()) {
+        //     OpenDreamConfig.OverrideDefault(OpenDreamConfig.GameAutoPauseEmpty, true);
+        //     SetVariableValue("sleep_offline", DreamValue.True);
+        //     return;
+        // }
 
-        SetVariableValue("sleep_offline", DreamValue.False);
-        OpenDreamConfig.OverrideDefault(OpenDreamConfig.GameAutoPauseEmpty, false);
+        // SetVariableValue("sleep_offline", DreamValue.False);
+        // OpenDreamConfig.OverrideDefault(OpenDreamConfig.GameAutoPauseEmpty, false);
     }
 }

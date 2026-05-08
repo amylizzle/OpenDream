@@ -1,4 +1,7 @@
-﻿namespace OpenDreamServer;
+﻿using OpenDreamShared.EngineUtils;
+using OpenDreamShared.Network;
+
+namespace OpenDreamServer;
 
 internal static class Program {
     private static void Main(string[] args) {
