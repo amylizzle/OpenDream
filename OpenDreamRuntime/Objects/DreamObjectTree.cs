@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DMCompiler.Json;
@@ -220,7 +221,7 @@ public sealed class DreamObjectTree {
             case JsonValueKind.String:
                 var str = jsonElement.GetString();
                 if (str == null)
-                    throw new NullNotAllowedException();
+                    throw new InvalidDataException("Null not allowed");
 
                 return new DreamValue(str);
             case JsonValueKind.Number:
@@ -232,7 +233,7 @@ public sealed class DreamObjectTree {
                     case JsonVariableType.Resource: {
                         var resourcePath = jsonElement.GetProperty("resourcePath").GetString();
                         if (resourcePath == null)
-                            throw new NullNotAllowedException();
+                            throw new InvalidDataException("Null not allowed");
 
                         var resM = IoCManager.Resolve<DreamResourceManager>();
                         DreamResource resource = resM.LoadResource(resourcePath);
@@ -363,7 +364,7 @@ public sealed class DreamObjectTree {
         foreach (TreeEntry type in GetAllDescendants(Root)) {
             int typeId = type.Id;
             DreamTypeJson jsonType = types[typeId];
-            var definition = new DreamObjectDefinition(_dreamManager, _refManager, this, _atomManager, _dreamMapManager, _mapManager, _dreamResourceManager, _walkManager, _entityManager, _serializationManager, _appearanceSystem, _transformSystem, _pvsOverrideSystem, _metaDataSystem, _verbSystem, _particlesSystem, type);
+            var definition = new DreamObjectDefinition(_dreamManager, _refManager, this, _atomManager, _dreamMapManager, _mapManager, _dreamResourceManager, _walkManager, _entityManager, _appearanceSystem,  _verbSystem, _particlesSystem, type);
 
             type.ObjectDefinition = definition;
             type.TreeIndex = treeIndex++;

@@ -13,7 +13,6 @@ namespace OpenDreamRuntime;
 public sealed class GameServer : IDisposable {
     private readonly DreamManager _dreamManager = IoCManager.Resolve<DreamManager>();
     private readonly IDreamDebugManager _debugManager = IoCManager.Resolve<IDreamDebugManager>();
-    private readonly ServerInfoManager _serverInfoManager = IoCManager.Resolve<ServerInfoManager>();
 
     private ServerVerbSystem? _serverVerbSystem;
 
@@ -23,7 +22,6 @@ public sealed class GameServer : IDisposable {
         if (OpenDreamConfig.TracyEnable)
             Profiler.Activate();
 
-        _serverInfoManager.Initialize();
     }
 
     public void PostInit() {

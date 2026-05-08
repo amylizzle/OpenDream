@@ -11,7 +11,7 @@ public class DreamObjectAtom : DreamObject {
     public DreamObjectAtom(DreamObjectDefinition objectDefinition) : base(objectDefinition) {
         Overlays = new(ObjectTree.List.ObjectDefinition, this, AppearanceSystem, false);
         Underlays = new(ObjectTree.List.ObjectDefinition, this, AppearanceSystem, true);
-        VisContents = new(ObjectTree.List.ObjectDefinition, PvsOverrideSystem, this);
+        VisContents = new(ObjectTree.List.ObjectDefinition, this);
         Filters = new(ObjectTree.List.ObjectDefinition, this);
     }
 

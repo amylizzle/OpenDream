@@ -49,13 +49,13 @@ internal sealed class MouseInputSystem : SharedMouseInputSystem {
             ? _dreamManager.GetFromClientReference(connection, e.OverAtom.Value) as DreamObjectAtom
             : null;
 
-        _mapManager.TryGetTurfAt((srcPos.X, srcPos.Y), srcPos.Z, out var srcLoc);
+        _mapManager.TryGetTurfAt(new(srcPos.X, srcPos.Y), srcPos.Z, out var srcLoc);
 
         DreamValue overLocValue = DreamValue.Null;
         if (over != null) {
             var overPos = _atomManager.GetAtomPosition(over);
 
-            _mapManager.TryGetTurfAt((overPos.X, overPos.Y), overPos.Z, out var overLoc);
+            _mapManager.TryGetTurfAt(new(overPos.X, overPos.Y), overPos.Z, out var overLoc);
             overLocValue = new(overLoc);
         }
 

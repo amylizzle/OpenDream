@@ -20,9 +20,9 @@ public sealed class ServerClientImagesSystem : SharedClientImagesSystem {
         else if(loc is DreamObjectTurf turf)
             turfCoords = new Vector3(turf.X, turf.Y, turf.Z);
 
-        EntityUid ent = GetEntityUid(locEntity);
+        EntityUid ent = locEntity;
         EntityUid imageObjectEntity = imageObject.Entity;
-        EntityUid imageObjectEntityUid = GetEntityUid(imageObjectEntity);
+        EntityUid imageObjectEntityUid = imageObjectEntity;
         if (imageObjectEntity != EntityUid.Invalid)
             _pvsOverrideSystem.AddSessionOverride(imageObjectEntity, connection.Session);
         RaiseNetworkEvent(new AddClientImageEvent(ent, turfCoords, imageObjectEntityUid), connection.Session.Channel);
@@ -40,11 +40,11 @@ public sealed class ServerClientImagesSystem : SharedClientImagesSystem {
         else if (loc is DreamObjectTurf turf)
             turfCoords = new Vector3(turf.X, turf.Y, turf.Z);
 
-        EntityUid ent = GetEntityUid(locEntity);
+        EntityUid ent = locEntity;
         EntityUid imageObjectEntity = imageObject.Entity;
         if (imageObjectEntity != EntityUid.Invalid)
             _pvsOverrideSystem.RemoveSessionOverride(imageObjectEntity, connection.Session);
-        EntityUid imageObjectEntityUid = GetEntityUid(imageObject.Entity);
+        EntityUid imageObjectEntityUid = imageObject.Entity;
         RaiseNetworkEvent(new RemoveClientImageEvent(ent, turfCoords, imageObjectEntityUid), connection.Session.Channel);
     }
 }

@@ -15,8 +15,7 @@ public struct Vector2i :
     ISubtractionOperators<Vector2i, Vector2i, Vector2i>,
     IMultiplyOperators<Vector2i, Vector2i, Vector2i>,
     IMultiplyOperators<Vector2i, int, Vector2i>,
-    IComparisonOperators<Vector2i, Vector2i, bool>
-{
+    IComparisonOperators<Vector2i, Vector2i, bool> {
     public static readonly Vector2i Zero = (0, 0);
     public static readonly Vector2i One = (1, 1);
 
@@ -45,27 +44,23 @@ public struct Vector2i :
     /// </summary>
     /// <param name="x">X coordinate</param>
     /// <param name="y">Y coordinate</param>
-    public Vector2i(int x, int y)
-    {
+    public Vector2i(int x, int y) {
         X = x;
         Y = y;
     }
 
-    public static Vector2i ComponentMax(Vector2i a, Vector2i b)
-    {
+    public static Vector2i ComponentMax(Vector2i a, Vector2i b) {
         return new(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
     }
 
-    public static Vector2i ComponentMin(Vector2i a, Vector2i b)
-    {
+    public static Vector2i ComponentMin(Vector2i a, Vector2i b) {
         return new(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
     }
 
     /// <summary>
     ///     Gets the length (magnitude) of the vector.
     /// </summary>
-    public readonly float Length
-    {
+    public readonly float Length {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => MathF.Sqrt(LengthSquared);
     }
@@ -73,8 +68,7 @@ public struct Vector2i :
     /// <summary>
     ///     Gets the squared length of the vector.
     /// </summary>
-    public readonly float LengthSquared
-    {
+    public readonly float LengthSquared {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => X * X + Y * Y;
     }
@@ -84,8 +78,7 @@ public struct Vector2i :
     /// </summary>
     /// <param name="other">Other vector to check.</param>
     /// <returns>True if the two vectors are equal.</returns>
-    public readonly bool Equals(Vector2i other)
-    {
+    public readonly bool Equals(Vector2i other) {
         return X == other.X && Y == other.Y;
     }
 
@@ -94,8 +87,7 @@ public struct Vector2i :
     /// </summary>
     /// <param name="obj">Other object to check.</param>
     /// <returns>True if Object and vector are equal.</returns>
-    public readonly override bool Equals(object? obj)
-    {
+    public readonly override bool Equals(object? obj) {
         if (ReferenceEquals(null, obj)) return false;
         return obj is Vector2i vector && Equals(vector);
     }
@@ -104,102 +96,78 @@ public struct Vector2i :
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A unique hash code for this instance.</returns>
-    public readonly override int GetHashCode()
-    {
-        unchecked
-        {
+    public readonly override int GetHashCode() {
+        unchecked {
             return (X * 397) ^ Y;
         }
     }
 
-    public Vector2i Rotate(float angle)
-    {
-        return new((int) Math.Round(this.X * Math.Sin(angle)), (int) Math.Round(this.Y * Math.Cos(angle)));
-    }
-
-    public static Vector2i operator -(Vector2i a, Vector2i b)
-    {
+    public static Vector2i operator -(Vector2i a, Vector2i b) {
         return new(a.X - b.X, a.Y - b.Y);
     }
 
-    public static Vector2i operator -(Vector2i a, int b)
-    {
+    public static Vector2i operator -(Vector2i a, int b) {
         return new(a.X - b, a.Y - b);
     }
 
-    public static Vector2i operator -(Vector2i a)
-    {
+    public static Vector2i operator -(Vector2i a) {
         return new(-a.X, -a.Y);
     }
 
-    public static Vector2i operator +(Vector2i a, Vector2i b)
-    {
+    public static Vector2i operator +(Vector2i a, Vector2i b) {
         return new(a.X + b.X, a.Y + b.Y);
     }
 
-    public static Vector2i operator +(Vector2i a, int b)
-    {
+    public static Vector2i operator +(Vector2i a, int b) {
         return new(a.X + b, a.Y + b);
     }
 
-    public static Vector2i operator *(Vector2i a, Vector2i b)
-    {
+    public static Vector2i operator *(Vector2i a, Vector2i b) {
         return new(a.X * b.X, a.Y * b.Y);
     }
 
-    public static Vector2i operator *(Vector2i a, int scale)
-    {
+    public static Vector2i operator *(Vector2i a, int scale) {
         return new(a.X * scale, a.Y * scale);
     }
 
-    public static Vector2 operator *(Vector2i a, float scale)
-    {
+    public static Vector2 operator *(Vector2i a, float scale) {
         return new(a.X * scale, a.Y * scale);
     }
 
-    public static Vector2i operator /(Vector2i a, Vector2i b)
-    {
+    public static Vector2i operator /(Vector2i a, Vector2i b) {
         return new(a.X / b.X, a.Y / b.Y);
     }
 
-    public static Vector2i operator /(Vector2i a, int scale)
-    {
+    public static Vector2i operator /(Vector2i a, int scale) {
         return new(a.X / scale, a.Y / scale);
     }
 
-    public static Vector2 operator /(Vector2i a, float scale)
-    {
+    public static Vector2 operator /(Vector2i a, float scale) {
         return new(a.X / scale, a.Y / scale);
     }
 
-    public static bool operator ==(Vector2i a, Vector2i b)
-    {
+    public static bool operator ==(Vector2i a, Vector2i b) {
         return a.Equals(b);
     }
 
-    public static bool operator !=(Vector2i a, Vector2i b)
-    {
+    public static bool operator !=(Vector2i a, Vector2i b) {
         return !a.Equals(b);
     }
 
-    public readonly void Deconstruct(out int x, out int y)
-    {
+    public readonly void Deconstruct(out int x, out int y) {
         x = X;
         y = Y;
     }
 
-    public static implicit operator Vector2(Vector2i vector)
-    {
+    public static implicit operator Vector2(Vector2i vector) {
         return new(vector.X, vector.Y);
     }
 
-    public static explicit operator Vector2i(Vector2 vector)
-    {
-        return new((int) vector.X, (int) vector.Y);
+    public static explicit operator Vector2i(Vector2 vector) {
+        return new((int)vector.X, (int)vector.Y);
     }
 
-    public static implicit operator Vector2i((int x, int y) tuple)
-    {
+    public static implicit operator Vector2i((int x, int y) tuple) {
         var (x, y) = tuple;
         return new Vector2i(x, y);
     }
@@ -207,41 +175,34 @@ public struct Vector2i :
     /// <summary>
     ///     Returns a string that represents the current Vector2i.
     /// </summary>
-    public override readonly string ToString()
-    {
+    public override readonly string ToString() {
         return $"({X}, {Y})";
     }
 
-    public string ToString(string? format, IFormatProvider? formatProvider)
-    {
+    public string ToString(string? format, IFormatProvider? formatProvider) {
         return ToString();
     }
 
-    public static bool operator >(Vector2i left, Vector2i right)
-    {
+    public static bool operator >(Vector2i left, Vector2i right) {
         return left.LengthSquared > right.LengthSquared;
     }
 
-    public static bool operator >=(Vector2i left, Vector2i right)
-    {
+    public static bool operator >=(Vector2i left, Vector2i right) {
         return left.LengthSquared >= right.LengthSquared;
     }
 
-    public static bool operator <(Vector2i left, Vector2i right)
-    {
+    public static bool operator <(Vector2i left, Vector2i right) {
         return left.LengthSquared < right.LengthSquared;
     }
 
-    public static bool operator <=(Vector2i left, Vector2i right)
-    {
+    public static bool operator <=(Vector2i left, Vector2i right) {
         return left.LengthSquared <= right.LengthSquared;
     }
 }
 
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct Vector2u : IEquatable<Vector2u>
-{
+public struct Vector2u : IEquatable<Vector2u> {
     /// <summary>
     /// The X component of the Vector2i.
     /// </summary>
@@ -257,14 +218,12 @@ public struct Vector2u : IEquatable<Vector2u>
     /// </summary>
     /// <param name="x">X coordinate</param>
     /// <param name="y">Y coordinate</param>
-    public Vector2u(uint x, uint y)
-    {
+    public Vector2u(uint x, uint y) {
         X = x;
         Y = y;
     }
 
-    public readonly void Deconstruct(out uint x, out uint y)
-    {
+    public readonly void Deconstruct(out uint x, out uint y) {
         x = X;
         y = Y;
     }
@@ -274,8 +233,7 @@ public struct Vector2u : IEquatable<Vector2u>
     /// </summary>
     /// <param name="other">Other vector to check.</param>
     /// <returns>True if the two vectors are equal.</returns>
-    public readonly bool Equals(Vector2u other)
-    {
+    public readonly bool Equals(Vector2u other) {
         return X == other.X && Y == other.Y;
     }
 
@@ -284,8 +242,7 @@ public struct Vector2u : IEquatable<Vector2u>
     /// </summary>
     /// <param name="obj">Other object to check.</param>
     /// <returns>True if Object and vector are equal.</returns>
-    public override readonly bool Equals(object? obj)
-    {
+    public override readonly bool Equals(object? obj) {
         if (ReferenceEquals(null, obj)) return false;
         return obj is Vector2u vec && Equals(vec);
     }
@@ -294,31 +251,42 @@ public struct Vector2u : IEquatable<Vector2u>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A unique hash code for this instance.</returns>
-    public override readonly int GetHashCode()
-    {
-        unchecked
-        {
-            return ((int) X * 397) ^ (int) Y;
+    public override readonly int GetHashCode() {
+        unchecked {
+            return ((int)X * 397) ^ (int)Y;
         }
     }
 
-    public static Vector2u operator /(Vector2u vector, uint divider)
-    {
+    public static Vector2u operator /(Vector2u vector, uint divider) {
         return new(vector.X / divider, vector.Y / divider);
     }
 
-    public static implicit operator Vector2(Vector2u vector)
-    {
+    public static implicit operator Vector2(Vector2u vector) {
         return new(vector.X, vector.Y);
     }
 
-    public static explicit operator Vector2u(Vector2 vector)
-    {
-        return new((uint) vector.X, (uint) vector.Y);
+    public static explicit operator Vector2u(Vector2 vector) {
+        return new((uint)vector.X, (uint)vector.Y);
     }
 
-    public static explicit operator Vector2i(Vector2u vector)
+    public static explicit operator Vector2i(Vector2u vector) {
+        return new((int)vector.X, (int)vector.Y);
+    }
+}
+
+public static class VectorExt
+{
+    private const float DegToRad = MathF.PI/180;
+
+    public static Vector2 Rotate(this Vector2 v, float degrees)
     {
-        return new((int) vector.X, (int) vector.Y);
+        return v.RotateRadians(degrees * DegToRad);
+    }
+
+    public static Vector2 RotateRadians(this Vector2 v, float radians)
+    {
+        var ca = MathF.Cos(radians);
+        var sa = MathF.Sin(radians);
+        return new Vector2(ca*v.X - sa*v.Y, sa*v.X + ca*v.Y);
     }
 }

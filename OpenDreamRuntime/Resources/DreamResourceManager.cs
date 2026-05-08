@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using OpenDreamRuntime.Objects.Types;
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Network.Messages;
 using OpenDreamShared.Resources;
 
@@ -17,14 +18,8 @@ namespace OpenDreamRuntime.Resources;
 
 public sealed class DreamResourceManager {
     private readonly INetManager _netManager = IoCManager.Resolve<INetManager>();
-    private readonly IStatusHost _statusHost = IoCManager.Resolve<IStatusHost>();
-    private readonly IDependencyCollection _dependencyCollection = IoCManager.Resolve<IDependencyCollection>();
-    private readonly ISerializationManager _serializationManager = IoCManager.Resolve<ISerializationManager>();
-
     public string RootPath { get; private set; } = default!;
     public DMFResource? InterfaceFile { get; private set; }
-
-    private DreamAczProvider _aczProvider = default!;
     private readonly List<DreamResource> _resourceCache = new();
     private readonly Dictionary<string, int> _resourcePathToId = new();
     private readonly Dictionary<string, IconResource> _md5ToGeneratedIcon = new();
@@ -63,10 +58,6 @@ public sealed class DreamResourceManager {
             DebugTools.Assert(loaded.Id == i + 1, "Resource IDs not consistent!");
         }
 
-        _aczProvider = new DreamAczProvider(_dependencyCollection, rootPath, resources);
-        _statusHost.SetMagicAczProvider(_aczProvider);
-        _statusHost.SetFullHybridAczProvider(_aczProvider);
-
         if (!string.IsNullOrWhiteSpace(interfaceFile)) {
             if (DoesFileExist(interfaceFile))
                 InterfaceFile = (DMFResource)LoadResource(interfaceFile);
@@ -87,7 +78,7 @@ public sealed class DreamResourceManager {
             // Create a new type of resource based on its extension
             switch (Path.GetExtension(resourcePath)) {
                 case ".dmf":
-                    resource = new DMFResource(resourceId, resourcePath, resourcePath, _serializationManager);
+                    resource = new DMFResource(resourceId, resourcePath, resourcePath);
                     break;
                 case ".dmi":
                 case ".png":
@@ -179,7 +170,6 @@ public sealed class DreamResourceManager {
         DreamResource resource = new DreamResource(resourceId, data);
 
         _resourceCache.Add(resource);
-        _aczProvider.AddResource(resourceId, data);
         return resource;
     }
 
@@ -200,7 +190,6 @@ public sealed class DreamResourceManager {
         IconResource resource = new IconResource(resourceId, data, texture, dmi);
         _resourceCache.Add(resource);
         _md5ToGeneratedIcon[md5] = resource; // Would override in the case of collisions, but whatever
-        _aczProvider.AddResource(resourceId, data);
         return resource;
     }
 
@@ -219,7 +208,6 @@ public sealed class DreamResourceManager {
         IconResource resource = new IconResource(resourceId, data);
         _resourceCache.Add(resource);
         _md5ToGeneratedIcon[md5] = resource;  // Would override in the case of collisions, but whatever
-        _aczProvider.AddResource(resourceId, data);
         return resource;
     }
 

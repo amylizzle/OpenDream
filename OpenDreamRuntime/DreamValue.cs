@@ -603,7 +603,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 
 // [TypeSerializer]
 // public sealed class DreamValueStringSerializer : ITypeReader<string, DreamValueDataNode> {
-//     public string Read(ISerializationManager serializationManager,
+//     public string Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -627,7 +627,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 
 // [TypeSerializer]
 // public sealed class DreamValueFloatSerializer : ITypeReader<float, DreamValueDataNode> {
-//     public float Read(ISerializationManager serializationManager,
+//     public float Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -639,7 +639,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 //         return floatValue;
 //     }
 
-//     public ValidationNode Validate(ISerializationManager serializationManager,
+//     public ValidationNode Validate(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         ISerializationContext? context = null) {
@@ -652,7 +652,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 
 // [TypeSerializer]
 // public sealed class DreamValueColorSerializer : ITypeReader<Color, DreamValueDataNode> {
-//     public Color Read(ISerializationManager serializationManager,
+//     public Color Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -664,7 +664,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 //         return color;
 //     }
 
-//     public ValidationNode Validate(ISerializationManager serializationManager,
+//     public ValidationNode Validate(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         ISerializationContext? context = null) {
@@ -677,7 +677,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 
 // [TypeSerializer]
 // public sealed class DreamValueMatrix3Serializer : ITypeReader<Matrix3x2, DreamValueDataNode> {
-//     public Matrix3x2 Read(ISerializationManager serializationManager,
+//     public Matrix3x2 Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -696,7 +696,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 //         return new Matrix3x2(a, d, b, e, c, f);
 //     }
 
-//     public ValidationNode Validate(ISerializationManager serializationManager,
+//     public ValidationNode Validate(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         ISerializationContext? context = null) {
@@ -711,7 +711,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 // public sealed class DreamValueIconSerializer : ITypeReader<int, DreamValueDataNode> {
 //     private readonly DreamResourceManager _dreamResourceManager = IoCManager.Resolve<DreamResourceManager>();
 
-//     public int Read(ISerializationManager serializationManager,
+//     public int Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -723,7 +723,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 //         return icon.Id;
 //     }
 
-//     public ValidationNode Validate(ISerializationManager serializationManager,
+//     public ValidationNode Validate(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         ISerializationContext? context = null) {
@@ -736,7 +736,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 
 // [TypeSerializer]
 // public sealed class DreamValueFlagsSerializer : ITypeReader<short, DreamValueDataNode> {
-//     public short Read(ISerializationManager serializationManager,
+//     public short Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -745,7 +745,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 //         return (short) node.Value.MustGetValueAsInteger();
 //     }
 
-//     public ValidationNode Validate(ISerializationManager serializationManager,
+//     public ValidationNode Validate(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         ISerializationContext? context = null) {
@@ -758,7 +758,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 
 // [TypeSerializer]
 // public sealed class DreamValueColorMatrixSerializer : ITypeReader<ColorMatrix, DreamValueDataNode>, ITypeCopyCreator<ColorMatrix> {
-//     public ColorMatrix Read(ISerializationManager serializationManager,
+//     public ColorMatrix Read(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         SerializationHookContext hookCtx,
@@ -777,7 +777,7 @@ public sealed class DreamValueJsonConverter : JsonConverter<DreamValue> {
 //         throw new Exception($"Value {node.Value} was not a color matrix");
 //     }
 
-//     public ValidationNode Validate(ISerializationManager serializationManager,
+//     public ValidationNode Validate(ISerializationManager SerializationManager,
 //         DreamValueDataNode node,
 //         IDependencyCollection dependencies,
 //         ISerializationContext? context = null) {

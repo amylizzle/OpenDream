@@ -100,7 +100,7 @@ public sealed class ServerAppearanceSystem : SharedAppearanceSystem {
     }
 
     //this should only be called by the ImmutableAppearance's finalizer
-    [Access(typeof(ImmutableAppearance))]
+    // [Access(typeof(ImmutableAppearance))]
     public override void RemoveAppearance(ImmutableAppearance appearance) {
         lock (_lock) {
             ProxyWeakRef proxyWeakRef = new(appearance);

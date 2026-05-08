@@ -1,3 +1,4 @@
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Interface.Descriptors;
 using OpenDreamShared.Interface.DMF;
 
@@ -5,18 +6,18 @@ using OpenDreamShared.Interface.DMF;
 namespace OpenDreamRuntime.Resources;
 
 public sealed class DMFResource : DreamResource {
-    public DMFResource(int id, byte[] data, ISerializationManager serializationManager) : base(id, data) {
-        ParseAndLoadResources(serializationManager);
+    public DMFResource(int id, byte[] data) : base(id, data) {
+        ParseAndLoadResources();
     }
 
-    public DMFResource(int id, string? filePath, string? resourcePath, ISerializationManager serializationManager) : base(id, filePath, resourcePath) {
-        ParseAndLoadResources(serializationManager);
+    public DMFResource(int id, string? filePath, string? resourcePath) : base(id, filePath, resourcePath) {
+        ParseAndLoadResources();
     }
 
-    private void ParseAndLoadResources(ISerializationManager serializationManager) {
+    private void ParseAndLoadResources() {
         //parse and extract resources, loading them into the cache
         var lexer = new DMFLexer(ReadAsString() ?? "");
-        var parser = new DMFParser(lexer, serializationManager);
+        var parser = new DMFParser(lexer);
         InterfaceDescriptor interfaceDescriptor = parser.Interface();
 
         if (parser.Errors.Count > 0) {

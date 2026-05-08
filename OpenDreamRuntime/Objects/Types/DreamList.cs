@@ -6,8 +6,6 @@ using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Rendering;
 using OpenDreamShared.Dream;
 
-using Dependency = Robust.Shared.IoC.DependencyAttribute;
-
 namespace OpenDreamRuntime.Objects.Types;
 
 
@@ -938,10 +936,7 @@ public sealed class DreamVisContentsList : DreamList {
     private readonly List<DreamObjectAtom> _visContents = new();
     private readonly DreamObject _atom;
 
-    public DreamVisContentsList(DreamObjectDefinition listDef, PvsOverrideSystem? pvsOverrideSystem, DreamObject atom) : base(listDef, 0) {
-        IoCManager.InjectDependencies(this);
-
-        _pvsOverrideSystem = pvsOverrideSystem;
+    public DreamVisContentsList(DreamObjectDefinition listDef, DreamObject atom) : base(listDef, 0) {
         _atom = atom;
     }
 
@@ -1001,7 +996,7 @@ public sealed class DreamVisContentsList : DreamList {
 
         _atomManager.UpdateAppearance(_atom, appearance => {
             // Add even an invalid UID to keep this and _visContents in sync
-            appearance.VisContents.Add(_entityManager.GetEntityUid(entity));
+            appearance.VisContents.Add(entity);
         });
     }
 
@@ -1011,7 +1006,7 @@ public sealed class DreamVisContentsList : DreamList {
 
         _visContents.Remove(movable);
         _atomManager.UpdateAppearance(_atom, appearance => {
-            appearance.VisContents.Remove(_entityManager.GetEntityUid(movable.Entity));
+            appearance.VisContents.Remove(movable.Entity);
         });
     }
 
@@ -1127,7 +1122,7 @@ public sealed class DreamFilterList(DreamObjectDefinition listDef, DreamObject o
         //This is dynamic to prevent the compiler from optimising the SerializationManager.CreateCopy() call to the DreamFilter type
         //so we can preserve the subclass information. Setting it to DreamFilter instead will cause filter parameters to stop working.
         dynamic filter = filterObject.Filter;
-        DreamFilter copy = SerializationManager.CreateCopy(filter, notNullableOverride: true); // Adding a filter creates a copy
+        DreamFilter copy = SerializationManager.CreateCopy(filter); // Adding a filter creates a copy
 
         DreamObjectFilter.FilterAttachedTo[copy] = this;
         AtomManager.UpdateAppearance(owner, appearance => {
@@ -1468,7 +1463,7 @@ public sealed class AreaContentsList(DreamObjectDefinition listDef, DreamObjectA
 }
 
 // mob.contents, obj.contents list
-public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObjectMovable owner, TransformComponent transform) : DreamList(listDef, 0) {
+public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObjectMovable owner) : DreamList(listDef, 0) {
     public override DreamValue GetValue(DreamValue key) {
         if (!key.TryGetValueAsInteger(out var index))
             throw new Exception($"Invalid index into movable contents list: {key}");

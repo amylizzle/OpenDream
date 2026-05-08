@@ -12,6 +12,7 @@ using OpenDreamShared.Dream;
 
 using Level = OpenDreamRuntime.Map.IDreamMapManager.Level;
 using Cell = OpenDreamRuntime.Map.IDreamMapManager.Cell;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Map;
 

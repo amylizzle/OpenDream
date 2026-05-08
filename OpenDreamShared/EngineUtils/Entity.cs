@@ -114,6 +114,10 @@ public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid>
         return self.Id;
     }
 
+    public static implicit operator EntityUid(Entity entity) {
+        return entity.Uid;
+    }
+
     /// <inheritdoc />
     public override string ToString() {
         return Id.ToString();
@@ -137,10 +141,24 @@ public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid>
     }
 }
 
-public struct Entity {
-    EntityUid Id;
-    //x,y pos, use MapID for Z
-    Vector2i Position;
-    int MapID;
+public struct Entity(EntityUid uid, MapCoordinates coordinates) {
+    public readonly EntityUid Uid = uid;
+    MapCoordinates Position = coordinates;
+}
 
+public record struct Entity<T>
+    where T : Component?
+{
+    public EntityUid Owner;
+    public T Comp;
+
+    public Entity(EntityUid owner, T comp)
+    {
+        Owner = owner;
+        Comp = comp;
+    }
+    public static implicit operator Entity<T>((EntityUid Owner, T Comp) tuple)
+    {
+        return new Entity<T>(tuple.Owner, tuple.Comp);
+    }
 }

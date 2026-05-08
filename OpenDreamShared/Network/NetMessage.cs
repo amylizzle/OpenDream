@@ -43,11 +43,11 @@ public abstract class NetBuffer {
     public abstract int ReadInt32();
     public abstract void WriteInt32(int value);
 
-    public abstract uint ReadUInt16();
-    public abstract void WriteUInt16(uint value);
+    public abstract ushort ReadUInt16();
+    public abstract void WriteUInt16(ushort value);
 
-    public abstract int ReadInt16();
-    public abstract void WriteInt16(int value);
+    public abstract short ReadInt16();
+    public abstract void WriteInt16(short value);
 
     public abstract float ReadFloat();
     public abstract void WriteFloat(float value);
@@ -112,7 +112,7 @@ public class NetIncomingMessage : NetBuffer {
         return binReader.ReadSingle();
     }
 
-    public override int ReadInt16() {
+    public override short ReadInt16() {
         return binReader.ReadInt16();
     }
 
@@ -136,7 +136,7 @@ public class NetIncomingMessage : NetBuffer {
         return binReader.ReadString();
     }
 
-    public override uint ReadUInt16() {
+    public override ushort ReadUInt16() {
         return binReader.ReadUInt16();
     }
 
@@ -172,7 +172,7 @@ public class NetIncomingMessage : NetBuffer {
         throw new System.NotImplementedException();
     }
 
-    public override void WriteInt16(int value) {
+    public override void WriteInt16(short value) {
         throw new System.NotImplementedException();
     }
 
@@ -196,7 +196,7 @@ public class NetIncomingMessage : NetBuffer {
         throw new System.NotImplementedException();
     }
 
-    public override void WriteUInt16(uint value) {
+    public override void WriteUInt16(ushort value) {
         throw new System.NotImplementedException();
     }
 
@@ -240,7 +240,7 @@ public class NetOutgoingMessage : NetBuffer {
         throw new System.NotImplementedException();
     }
 
-    public override int ReadInt16() {
+    public override short ReadInt16() {
         throw new System.NotImplementedException();
     }
 
@@ -264,7 +264,7 @@ public class NetOutgoingMessage : NetBuffer {
         throw new System.NotImplementedException();
     }
 
-    public override uint ReadUInt16() {
+    public override ushort ReadUInt16() {
         throw new System.NotImplementedException();
     }
 
@@ -301,7 +301,7 @@ public class NetOutgoingMessage : NetBuffer {
         throw new System.NotImplementedException();
     }
 
-    public override void WriteInt16(int value) {
+    public override void WriteInt16(short value) {
         throw new System.NotImplementedException();
     }
 
@@ -325,7 +325,7 @@ public class NetOutgoingMessage : NetBuffer {
         throw new System.NotImplementedException();
     }
 
-    public override void WriteUInt16(uint value) {
+    public override void WriteUInt16(ushort value) {
         throw new System.NotImplementedException();
     }
 

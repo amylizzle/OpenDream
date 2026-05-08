@@ -35,7 +35,6 @@ public sealed class AtomManager {
     private readonly IDreamMapManager _dreamMapManager = IoCManager.Resolve<IDreamMapManager>();
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
     private readonly DreamRefManager _refManager = IoCManager.Resolve<DreamRefManager>();
-
     private readonly Dictionary<EntityUid, DreamObjectMovable> _entityToAtom = new();
     private readonly Dictionary<DreamObjectDefinition, MutableAppearance> _definitionAppearanceCache = new();
     private readonly Dictionary<DreamObjectDefinition, AtomMouseEvents> _enabledMouseEvents = new();
@@ -44,14 +43,6 @@ public sealed class AtomManager {
         get {
             if(field is null)
                 field = IoCManager.Resolve<ServerAppearanceSystem>();
-            return field;
-        }
-    }
-
-    private DMISpriteSystem? DMISpriteSystem {
-        get {
-            if(field is null)
-                field = IoCManager.Resolve<DMISpriteSystem>();
             return field;
         }
     }
@@ -101,10 +92,10 @@ public sealed class AtomManager {
     }
 
     public EntityUid CreateMovableEntity(DreamObjectMovable movable) {
-        var entity = _entityManager.SpawnEntity(null, new MapCoordinates(0, 0, MapId.Nullspace));
+        var entity = _entityManager.SpawnEntity(new MapCoordinates(0, 0, MapId.Nullspace));
 
         DMISpriteComponent sprite = _entityManager.AddComponent<DMISpriteComponent>(entity);
-        DMISpriteSystem?.SetSpriteAppearance(new(entity, sprite), GetAppearanceFromDefinition(movable.ObjectDefinition));
+        sprite.Appearance = AppearanceSystem!.AddAppearance(GetAppearanceFromDefinition(movable.ObjectDefinition));
 
         _entityToAtom.Add(entity, movable);
         return entity;
@@ -510,7 +501,7 @@ public sealed class AtomManager {
             if(image.IsMutableAppearance)
                 image.MutableAppearance = MutableAppearance.GetCopy(appearance); //this needs to be a copy
             else
-                DMISpriteSystem?.SetSpriteAppearance(new(image.Entity, image.SpriteComponent!), appearance);
+                image.SpriteComponent!.Appearance = AppearanceSystem!.AddAppearance(appearance);
             return;
         }
 
@@ -519,18 +510,18 @@ public sealed class AtomManager {
         if (atom is DreamObjectTurf turf) {
             _dreamMapManager.SetTurfAppearance(turf, appearance);
         } else if (atom is DreamObjectMovable movable) {
-            DMISpriteSystem?.SetSpriteAppearance(new(movable.Entity, movable.SpriteComponent), appearance);
+            movable.SpriteComponent!.Appearance = AppearanceSystem!.AddAppearance(appearance);
         } else if (atom is DreamObjectArea area) {
             _dreamMapManager.SetAreaAppearance(area, appearance);
         }
     }
 
     public void SetMovableScreenLoc(DreamObjectMovable movable, ScreenLocation screenLocation) {
-        DMISpriteSystem?.SetSpriteScreenLocation(new(movable.Entity, movable.SpriteComponent), screenLocation);
+        movable.SpriteComponent.ScreenLocation = screenLocation;
     }
 
     public void SetSpriteAppearance(Entity<DMISpriteComponent> ent, MutableAppearance appearance) {
-        DMISpriteSystem?.SetSpriteAppearance(ent, appearance);
+        ent.Comp.Appearance = AppearanceSystem!.AddAppearance(appearance);
     }
 
     public void AnimateAppearance(DreamObject atom, TimeSpan duration, AnimationEasing easing, int loop, AnimationFlags flags, int delay, bool chainAnim, Action<MutableAppearance> animate) {
@@ -567,9 +558,8 @@ public sealed class AtomManager {
         animate(appearance);
 
         if(targetComponent is not null) {
-            ent = _entityManager.GetEntityUid(targetEntity);
-            // Don't send the updated appearance to clients, they will animate it
-            DMISpriteSystem?.SetSpriteAppearance(new(targetEntity, targetComponent), appearance, dirty: false);
+            targetComponent.Appearance = AppearanceSystem!.AddAppearance(appearance);
+            // TODO: undirty the component? This has probably broken animations
         } else if (atom is DreamObjectTurf turf) {
             //TODO: turf appearances are just set to the end appearance, they do not get properly animated
             _dreamMapManager.SetTurfAppearance(turf, appearance);

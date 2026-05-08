@@ -3,96 +3,95 @@ using OpenDreamShared.Network;
 
 
 
-namespace OpenDreamShared.Network.Messages {
-    public sealed class MsgSound : NetMessage {
-        public enum FormatType : byte {
-            Ogg,
-            Wav
-        }
+namespace OpenDreamShared.Network.Messages;
+public sealed class MsgSound : NetMessage {
+    public enum FormatType : byte {
+        Ogg,
+        Wav
+    }
 
 
 
-        public SoundData SoundData;
-        public int? ResourceId;
-        public FormatType? Format; // TODO: This should probably be sent along with the sound resource instead somehow
-        //TODO: Frequency and friends
+    public SoundData SoundData;
+    public int? ResourceId;
+    public FormatType? Format; // TODO: This should probably be sent along with the sound resource instead somehow
+    //TODO: Frequency and friends
 
-        public override void ReadFromBuffer(NetIncomingMessage buffer) {
-            SoundData = new SoundData(buffer);
+    public override void ReadFromBuffer(NetIncomingMessage buffer) {
+        SoundData = new SoundData(buffer);
 
-            if (buffer.ReadBoolean()) {
-                ResourceId = buffer.ReadInt32();
-                Format = (FormatType)buffer.ReadByte();
-            }
-        }
-
-        public override void WriteToBuffer(NetOutgoingMessage buffer) {
-            SoundData.WriteToBuffer(buffer);
-
-            buffer.Write(ResourceId != null);
-            if (ResourceId != null) {
-                buffer.Write(ResourceId.Value);
-
-                if (Format == null)
-                    throw new InvalidOperationException("Format cannot be null if there is a resource");
-                buffer.Write((byte)Format);
-            }
+        if (buffer.ReadBoolean()) {
+            ResourceId = buffer.ReadInt32();
+            Format = (FormatType)buffer.ReadByte();
         }
     }
 
-    public struct SoundData {
-        /// <summary>
-        /// The DreamSoundChannel channel (out of 1024) that the sound is set to play on
-        /// </summary>
-        public ushort Channel;
+    public override void WriteToBuffer(NetOutgoingMessage buffer) {
+        SoundData.WriteToBuffer(buffer);
 
-        /// <summary>
-        /// Volume as a percentage
-        /// </summary>
-        public ushort Volume;
+        buffer.Write(ResourceId != null);
+        if (ResourceId != null) {
+            buffer.Write(ResourceId.Value);
 
-        /// <summary>
-        /// Current playback position in seconds
-        /// </summary>
-        public float Offset;
-
-        /// <summary>
-        /// Total playtime of the song in seconds, adjusted for frequency
-        /// TODO: adjust for freq
-        /// </summary>
-        public float Length;
-
-        /// <summary>
-        /// Set to 0 to not repeat, 1 to repeat indefinitely, or 2 to repeat forwards and backwards
-        /// TODO: Implement repeat=2
-        /// </summary>
-        public byte Repeat;
-
-        /// <summary>
-        /// Filepath to the resource, if present
-        /// </summary>
-        public string File = string.Empty;
-
-        public SoundData(NetIncomingMessage buffer) {
-            ReadFromBuffer(buffer);
+            if (Format == null)
+                throw new InvalidOperationException("Format cannot be null if there is a resource");
+            buffer.Write((byte)Format);
         }
+    }
+}
 
-        private void ReadFromBuffer(NetIncomingMessage buffer) {
-            Channel = buffer.ReadUInt16();
-            Volume = buffer.ReadUInt16();
-            Offset = buffer.ReadFloat();
-            Length = buffer.ReadFloat();
-            Repeat = buffer.ReadByte();
-            File = buffer.ReadString();
-        }
+public struct SoundData {
+    /// <summary>
+    /// The DreamSoundChannel channel (out of 1024) that the sound is set to play on
+    /// </summary>
+    public ushort Channel;
 
-        public void WriteToBuffer(NetOutgoingMessage buffer) {
-            buffer.Write(Channel);
-            buffer.Write(Volume);
-            buffer.Write(Offset);
-            buffer.Write(Length);
-            buffer.Write(Repeat);
-            buffer.Write(File);
-        }
+    /// <summary>
+    /// Volume as a percentage
+    /// </summary>
+    public ushort Volume;
+
+    /// <summary>
+    /// Current playback position in seconds
+    /// </summary>
+    public float Offset;
+
+    /// <summary>
+    /// Total playtime of the song in seconds, adjusted for frequency
+    /// TODO: adjust for freq
+    /// </summary>
+    public float Length;
+
+    /// <summary>
+    /// Set to 0 to not repeat, 1 to repeat indefinitely, or 2 to repeat forwards and backwards
+    /// TODO: Implement repeat=2
+    /// </summary>
+    public byte Repeat;
+
+    /// <summary>
+    /// Filepath to the resource, if present
+    /// </summary>
+    public string File = string.Empty;
+
+    public SoundData(NetIncomingMessage buffer) {
+        ReadFromBuffer(buffer);
+    }
+
+    private void ReadFromBuffer(NetIncomingMessage buffer) {
+        Channel = buffer.ReadUInt16();
+        Volume = buffer.ReadUInt16();
+        Offset = buffer.ReadFloat();
+        Length = buffer.ReadFloat();
+        Repeat = buffer.ReadByte();
+        File = buffer.ReadString();
+    }
+
+    public void WriteToBuffer(NetOutgoingMessage buffer) {
+        buffer.Write(Channel);
+        buffer.Write(Volume);
+        buffer.Write(Offset);
+        buffer.Write(Length);
+        buffer.Write(Repeat);
+        buffer.Write(File);
     }
 }

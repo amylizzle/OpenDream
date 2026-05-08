@@ -135,7 +135,7 @@ namespace OpenDreamRuntime {
         public ProfilerZone? TracyZoneId { get; set; }
         #endif
 
-        [Access(typeof(ProcScheduler))]
+        // [Access(typeof(ProcScheduler))]
         public DreamValue Result = DreamValue.Null;
 
         public bool WaitFor { get; set; } = true;

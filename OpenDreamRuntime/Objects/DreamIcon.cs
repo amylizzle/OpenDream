@@ -273,7 +273,7 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
                 if (operation.AppliedFrames <= firstFrameIndex + frameIndex)
                     break; // operation.AppliedFrames should be in ascending order; we can quit now
 
-                var bounds = UIBox2i.FromDimensions(x, 0, Width, Height);
+                var bounds = Box2i.FromDimensions(x, 0, Width, Height);
                 operation.Operation.ApplyToFrame(pixels, imageSpan, frameIndex, dir, bounds);
             }
 
@@ -286,7 +286,7 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
 
 public interface IDreamIconOperation {
     public void OnApply(DreamIcon icon);
-    public void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds);
+    public void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, Box2i bounds);
 }
 
 
@@ -316,7 +316,7 @@ public class DreamIconOperationBlend : IDreamIconOperation {
 
     public virtual void OnApply(DreamIcon icon) { }
 
-    public virtual void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds) {
+    public virtual void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, Box2i bounds) {
         throw new NotImplementedException();
     }
 
@@ -420,7 +420,7 @@ public sealed class DreamIconOperationBlendImage : DreamIconOperationBlend {
         // TODO: We add frames too
     }
 
-    public override void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds) {
+    public override void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, Box2i bounds) {
         if (_blendingState?.Directions.TryGetValue(dir, out var blendingDirFrames) is not true)
             return;
         if (blendingDirFrames.Length <= frame)
@@ -430,7 +430,7 @@ public sealed class DreamIconOperationBlendImage : DreamIconOperationBlend {
 
         // Use the smaller of the two sizes if they're different
         // TODO: 1,1 should be bottom left, not top left
-        bounds = UIBox2i.FromDimensions(bounds.Left, bounds.Top, Math.Min(_blending.Width, bounds.Width),
+        bounds = Box2i.FromDimensions(bounds.Left, bounds.Top, Math.Min(_blending.Width, bounds.Width),
             Math.Min(_blending.Height, bounds.Height));
 
         _blending.ProcessPixelRows(accessor => {
@@ -453,7 +453,7 @@ public sealed class DreamIconOperationBlendImage : DreamIconOperationBlend {
 public sealed class DreamIconOperationBlendColor(DreamIconOperationBlend.BlendType type, int xOffset, int yOffset, Color color) : DreamIconOperationBlend(type, xOffset, yOffset) {
     private readonly Rgba32 _color = new(color.RByte, color.GByte, color.BByte, color.AByte);
 
-    public override void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds) {
+    public override void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, Box2i bounds) {
         // TODO: x & y offsets
 
         for (int y = bounds.Top; y < bounds.Bottom; y++) {

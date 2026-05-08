@@ -11,7 +11,6 @@ public sealed class DreamObjectMob : DreamObjectMovable {
         get => _sightComponent.SeeInvisibility;
         private set {
             _sightComponent.SeeInvisibility = (sbyte)value;
-            EntityManager.Dirty(_sightComponent);
         }
     }
 
@@ -19,7 +18,6 @@ public sealed class DreamObjectMob : DreamObjectMovable {
         get => _sightComponent.Sight;
         private set {
             _sightComponent.Sight = value;
-            EntityManager.Dirty(_sightComponent);
         }
     }
 

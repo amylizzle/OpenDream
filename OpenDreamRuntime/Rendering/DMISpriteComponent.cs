@@ -1,15 +1,14 @@
 ﻿using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 using OpenDreamShared.Rendering;
 
 namespace OpenDreamRuntime.Rendering;
 
-[RegisterComponent]
-public sealed partial class DMISpriteComponent : SharedDMISpriteComponent {
+public sealed partial class DMISpriteComponent : Component {
 
-    [Access(typeof(DMISpriteSystem))]
-    public ScreenLocation ScreenLocation;
+    [AutoNetworkedField] public partial ScreenLocation ScreenLocation {get;set;}
 
-    [Access(typeof(DMISpriteSystem))]
-    public ImmutableAppearance? Appearance;
+    [AutoNetworkedField] private partial uint _appearanceId {get; set;}
+    public ImmutableAppearance? Appearance {get => IoCManager.Resolve<ServerAppearanceSystem>().MustGetAppearanceById(_appearanceId) ; set => _appearanceId = value?.Id ?? 0; }
 }
 
