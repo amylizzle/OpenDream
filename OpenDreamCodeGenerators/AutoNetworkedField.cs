@@ -82,16 +82,14 @@ namespace {namespaceName}
 {{
     partial class {className}
     {{
-        private {propertyType} {fieldName};
-
         public partial {propertyType} {propertyName}
         {{
-            get => {fieldName};
+            get => field;
             set
             {{
-                if (!Equals({fieldName}, value))
+                if (!Equals(field, value))
                 {{
-                    {fieldName} = value;
+                    field = value;
                     _netManager.MarkDirty(this, ""{propertyName}"");
                 }}
             }}

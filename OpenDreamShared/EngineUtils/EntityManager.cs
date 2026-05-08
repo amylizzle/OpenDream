@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
+namespace OpenDreamShared.EngineUtils;
 //entity manager manages all entities, keeping track of them and their attached components
 //entity hold a position and a uid
 //manager holds uid -> component list mapping

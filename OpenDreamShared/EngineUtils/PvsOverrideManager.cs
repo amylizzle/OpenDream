@@ -1,3 +1,5 @@
+namespace OpenDreamShared.EngineUtils;
+
 public interface IPvsOverrideSystem {
     /// <summary>
     /// Forces the entity, all of its parents, and all of its children to ignore normal PVS range limitations,

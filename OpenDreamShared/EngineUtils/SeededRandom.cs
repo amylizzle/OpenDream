@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using OpenDreamShared.EngineUtils;
 
+
+namespace OpenDreamShared.EngineUtils;
 public class SeededRandom(int seed) {
     private Random random = new Random(seed);
 

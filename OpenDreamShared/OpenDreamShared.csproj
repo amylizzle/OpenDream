@@ -12,6 +12,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
+<PropertyGroup>
+  <!-- Allows you to see the generated files on disk -->
+  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  <!-- Optional: Sets the specific directory for generated files -->
+  <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+</PropertyGroup>  
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="System.CommandLine" />

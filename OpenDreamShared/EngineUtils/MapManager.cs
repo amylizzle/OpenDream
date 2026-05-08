@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using OpenDreamShared.EngineUtils;
+
+namespace OpenDreamShared.EngineUtils;
 
 public interface IMapManager {
     public abstract Entity<MapGridComponent> CreateGridEntity(uint z);

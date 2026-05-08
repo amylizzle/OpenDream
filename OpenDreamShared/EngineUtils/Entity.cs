@@ -1,8 +1,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using OpenDreamShared.EngineUtils;
-
+namespace OpenDreamShared.EngineUtils;
 public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid> {
     /// <summary>
     ///     This type contains the unique identifier for a given entity.

@@ -1,5 +1,7 @@
 using System;
 
+namespace OpenDreamShared.EngineUtils;
+
 public class NetworkSystem {
 
     public virtual void Initialize() { }

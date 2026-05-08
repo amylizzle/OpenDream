@@ -1,4 +1,4 @@
-using OpenDreamShared.EngineUtils;
+namespace OpenDreamShared.EngineUtils;
 
 public sealed partial class MetaDataComponent : Component {
     [AutoNetworkedField] public partial string Name {get; set;}

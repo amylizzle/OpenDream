@@ -7,6 +7,8 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
 using OpenDreamShared.EngineUtils;
 
+namespace OpenDreamShared.EngineUtils;
+
 public static class SerializationManager {
 
     public static object Read(Dictionary<string, object> valuePairs) {

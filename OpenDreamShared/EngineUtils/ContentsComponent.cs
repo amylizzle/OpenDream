@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using OpenDreamShared.EngineUtils;
+
+namespace OpenDreamShared.EngineUtils;
 
 public sealed partial class ContentsComponent : Component {
     [AutoNetworkedField] public HashSet<EntityUid> Contents {get; set;}

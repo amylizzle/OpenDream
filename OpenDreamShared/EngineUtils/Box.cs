@@ -1,4 +1,4 @@
-using OpenDreamShared.EngineUtils;
+namespace OpenDreamShared.EngineUtils;
 
 public struct Box2i {
     public Vector2i TopLeft;

@@ -1,6 +1,5 @@
 
-using System.Numerics;
-using OpenDreamShared.EngineUtils;
+namespace OpenDreamShared.EngineUtils;
 
 public struct MapCoordinates(uint X, uint Y, uint Z) {
     public uint X = X;

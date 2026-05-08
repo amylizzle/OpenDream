@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
 using System.Reflection;
 using JetBrains.Annotations;
+
+namespace OpenDreamShared.EngineUtils;
 
 public static class IoCManager {
     private static Dictionary<Type, object> singletonCache = new();
