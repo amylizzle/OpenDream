@@ -3,6 +3,7 @@ using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Procs.DebugAdapter;
 using OpenDreamRuntime.Resources;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime;
 
@@ -16,11 +17,10 @@ public static class ServerContentIoC {
         IoCManager.Register<DreamResourceManager>();
         IoCManager.Register<WalkManager, WalkManager>();
         IoCManager.Register<IDreamDebugManager, DreamDebugManager>();
-        IoCManager.Register<ServerInfoManager>();
 
-#if DEBUG
-        IoCManager.Register<LocalHostConGroup>();
-#endif
+// #if DEBUG
+//         IoCManager.Register<LocalHostConGroup>();
+// #endif
 
         if (!unitTests) {
             // Unit tests use their own version

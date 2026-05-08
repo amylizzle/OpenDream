@@ -9,17 +9,14 @@ namespace OpenDreamShared.EngineUtils;
 public static class IoCManager {
     private static Dictionary<Type, object> singletonCache = new();
 
-    public static void Register<TInterface, [MeansImplicitUse] TImplementation>(bool overwrite = false)
-            where TImplementation : class, TInterface
-            where TInterface : class
-    {
-            var objectType = typeof(TImplementation);
+    private static void InternalRegister<TypeRegister, TObject>(bool overwrite = false) {
+            var objectType = typeof(TypeRegister);
             var constructors =
                 objectType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (constructors.Length != 1)
                 throw new InvalidOperationException(
-                    $"Dependency '{typeof(TImplementation).FullName}' requires exactly one constructor.");
+                    $"Dependency '{typeof(TypeRegister).FullName}' requires exactly one constructor.");
 
             var chosenConstructor = constructors[0];
             var constructorParams = constructors[0].GetParameters();
@@ -36,11 +33,20 @@ public static class IoCManager {
                 else
                 {
                     throw new InvalidOperationException(
-                        $"Dependency '{typeof(TImplementation).FullName}' ctor has unknown dependency {param.ParameterType.FullName}");
+                        $"Dependency '{typeof(TypeRegister).FullName}' ctor has unknown dependency {param.ParameterType.FullName}");
                 }
             }
+            singletonCache.Add(typeof(TypeRegister), (TObject)chosenConstructor.Invoke(parameters));
+    }
+    public static void Register<[MeansImplicitUse] TImplementation>(bool overwrite = false) {
+        InternalRegister<TImplementation, TImplementation>(overwrite);
+    }
 
-            singletonCache.Add(typeof(TInterface), (TImplementation)chosenConstructor.Invoke(parameters));
+    public static void Register<TInterface, [MeansImplicitUse] TImplementation>(bool overwrite = false)
+            where TImplementation : class, TInterface
+            where TInterface : class
+    {
+            InternalRegister<TInterface, TImplementation>();
     }
 
     public static bool TryResolveType<T>([NotNullWhen(true)] out T? instance)

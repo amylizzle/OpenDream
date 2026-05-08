@@ -2,6 +2,7 @@ using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 using BlendType = OpenDreamRuntime.Objects.DreamIconOperationBlend.BlendType;
 using DreamValueTypeFlag = OpenDreamRuntime.DreamValue.DreamValueTypeFlag;
 

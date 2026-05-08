@@ -63,6 +63,11 @@ public sealed class EntityManager : NetworkSystem {
         return (T)component;
     }
 
+    public T AddComponent<T>(EntityUid entity, T component) where T: Component{
+        _entityComponentTable[entity][typeof(T)] = component;
+        return (T)component;
+    }
+
     public void RemoveComponent(EntityUid entityUid, Component component) {
         if (_entityComponentTable.TryGetValue(entityUid, out var components)) {
             components.Remove(component.GetType());

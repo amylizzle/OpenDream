@@ -10,4 +10,13 @@ public struct Box2i {
     public int Width { get => Right - Left; }
     public int Height { get => Bottom - Top; }
 
+    public Box2i(Vector2i TopLeft, Vector2i BottomRight) {
+        this.TopLeft = TopLeft;
+        this.BottomRight = BottomRight;
+    }
+
+    public static Box2i FromDimensions(int X, int Y, int Width, int Height) {
+        return new(new(X,Y), new(X+Width, Y+Height));
+    }
+
 }

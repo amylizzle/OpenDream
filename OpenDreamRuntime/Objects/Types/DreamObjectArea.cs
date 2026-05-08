@@ -3,21 +3,21 @@
 namespace OpenDreamRuntime.Objects.Types;
 
 public sealed class DreamObjectArea : DreamObjectAtom {
-    public int X {
+    public uint X {
         get {
             UpdateCoordinateCache();
             return _cachedX!.Value;
         }
     }
 
-    public int Y {
+    public uint Y {
         get {
             UpdateCoordinateCache();
             return _cachedY!.Value;
         }
     }
 
-    public int Z {
+    public uint Z {
         get {
             UpdateCoordinateCache();
             return _cachedZ!.Value;
@@ -30,7 +30,7 @@ public sealed class DreamObjectArea : DreamObjectAtom {
     private readonly AreaContentsList _contents;
 
     // Iterating all our turfs to find the one with the lowest coordinates is slow business
-    private int? _cachedX, _cachedY, _cachedZ;
+    private uint? _cachedX, _cachedY, _cachedZ;
 
     public DreamObjectArea(DreamObjectDefinition objectDefinition) : base(objectDefinition) {
         Appearance = AppearanceSystem!.DefaultAppearance;
@@ -88,7 +88,7 @@ public sealed class DreamObjectArea : DreamObjectAtom {
                 if (mob == null)
                     continue;
 
-                if (!DreamMapManager.TryGetCellAt(mob.Position, mob.Z, out var cell))
+                if (!DreamMapManager.TryGetCellAt(mob.Position.XY, mob.Z, out var cell))
                     continue;
 
                 if (cell.Area != this)
@@ -117,7 +117,7 @@ public sealed class DreamObjectArea : DreamObjectAtom {
                 if (turf.Z > _cachedZ)
                     continue;
 
-                int index = turf.Y * DreamMapManager.Size.X + turf.X;
+                int index = (int)turf.Y * DreamMapManager.Size.X + (int)turf.X;
                 if (index >= _cachedY * DreamMapManager.Size.X + _cachedX)
                     continue;
             }

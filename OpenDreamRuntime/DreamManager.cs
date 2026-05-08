@@ -34,7 +34,7 @@ public sealed partial class DreamManager {
 
     public readonly ConcurrentBag<DreamObject> DelQueue = new();
     public readonly HashSet<uint> RefDeleteQueue = new();
-    public Random Random { get; set; } = new();
+    public SeededRandom Random { get; set; } = new(new Random().Next());
     public DreamProc ImageConstructor, ImageFactoryProc;
     public int ListPoolThreshold, ListPoolSize;
     public Dictionary<WarningCode, ErrorLevel> OptionalErrors { get; private set; } = new();
@@ -213,7 +213,7 @@ public sealed partial class DreamManager {
                 _atomManager.TryGetMovableFromEntity(reference.Entity, out var atom);
                 return atom;
             case ClientObjectReference.RefType.Turf:
-                _dreamMapManager.TryGetTurfAt(new(reference.TurfX, reference.TurfY), reference.TurfZ, out var turf);
+                _dreamMapManager.TryGetTurfAt(new((uint)reference.TurfX, (uint)reference.TurfY), (uint)reference.TurfZ, out var turf);
                 return turf;
         }
 

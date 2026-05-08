@@ -19,6 +19,7 @@
   <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 </PropertyGroup>  
   <ItemGroup>
+    <Compile Remove="Generated/**/*.cs" /> 
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="System.CommandLine" />
     <ProjectReference Include="..\OpenDreamCodeGenerators\OpenDreamCodeGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />  

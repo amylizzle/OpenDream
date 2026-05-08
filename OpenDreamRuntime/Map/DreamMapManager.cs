@@ -229,8 +229,8 @@ public sealed partial class DreamMapManager : IDreamMapManager {
         }
     }
 
-    public bool TryGetCellAt(Vector2i pos, int z, [NotNullWhen(true)] out Cell? cell) {
-        if (IsInvalidCoordinate(pos, z) || !_levels.TryGetValue(z - 1, out var level)) {
+    public bool TryGetCellAt(Vector2u pos, uint z, [NotNullWhen(true)] out Cell? cell) {
+        if (IsInvalidCoordinate(pos, z) || !_levels.TryGetValue((int)z - 1, out var level)) {
             cell = null;
             return false;
         }
@@ -239,7 +239,7 @@ public sealed partial class DreamMapManager : IDreamMapManager {
         return true;
     }
 
-    public bool TryGetTurfAt(Vector2i pos, int z, [NotNullWhen(true)] out DreamObjectTurf? turf) {
+    public bool TryGetTurfAt(Vector2u pos, uint z, [NotNullWhen(true)] out DreamObjectTurf? turf) {
         if (TryGetCellAt(pos, z, out var cell)) {
             turf = cell.Turf;
             return true;
@@ -386,7 +386,7 @@ public sealed partial class DreamMapManager : IDreamMapManager {
             foreach (var cell in row) {
                 CellDefinitionJson cellDefinition = cellDefinitions[cell];
 
-                if (TryGetTurfAt((blockX, blockY), block.Z, out var turf)) {
+                if (TryGetTurfAt(new((uint)blockX, (uint)blockY), (uint)block.Z, out var turf)) {
                     foreach (MapObjectJson mapObject in cellDefinition.Objects) {
                         var objDef = CreateMapObjectDefinition(mapObject);
 
@@ -432,7 +432,7 @@ public sealed partial class DreamMapManager : IDreamMapManager {
         return _levels[(int)z - 1].Grid.Owner;
     }
 
-    public IEnumerable<DreamObjectMob> GetMobsInRange((int X, int Y, int Z) loc, int distance) {
+    public IEnumerable<DreamObjectMob> GetMobsInRange((uint X, uint Y, uint Z) loc, int distance) {
         _entityLookupSet.Clear();
         // _lookupSystem.GetEntitiesInRange(new(loc.Z), new(loc.X, loc.Y), distance, _entityLookupSet);
 
@@ -446,9 +446,9 @@ public sealed partial class DreamMapManager : IDreamMapManager {
         }
     }
 
-    public uint[,] GetMapAsTileIds(int Z) {
-        var tileRefs = _mapManager.GetAllTiles(_levels[Z].Grid);
-        uint[,] result = new uint[_levels[Z].Cells.GetLength(0), _levels[Z].Cells.GetLength(1)];
+    public uint[,] GetMapAsTileIds(uint Z) {
+        var tileRefs = _mapManager.GetAllTiles(_levels[(int)Z].Grid);
+        uint[,] result = new uint[_levels[(int)Z].Cells.GetLength(0), _levels[(int)Z].Cells.GetLength(1)];
         foreach(var tile in tileRefs) {
             result[tile.Item1.X-1, tile.Item1.Y-1] = (uint)tile.Item2.TypeId;
         }
@@ -520,13 +520,13 @@ public interface IDreamMapManager {
     public void SetTurf(DreamObjectTurf turf, DreamObjectDefinition type, DreamProcArguments creationArguments);
     public void SetTurfAppearance(DreamObjectTurf turf, MutableAppearance appearance);
     public void SetAreaAppearance(DreamObjectArea area, MutableAppearance appearance);
-    public bool TryGetCellAt(Vector2i pos, int z, [NotNullWhen(true)] out Cell? cell);
-    public bool TryGetTurfAt(Vector2i pos, int z, [NotNullWhen(true)] out DreamObjectTurf? turf);
+    public bool TryGetCellAt(Vector2u pos, uint z, [NotNullWhen(true)] out Cell? cell);
+    public bool TryGetTurfAt(Vector2u pos, uint z, [NotNullWhen(true)] out DreamObjectTurf? turf);
     public void SetZLevels(int levels);
     public void SetWorldSize(Vector2i size);
     public EntityUid GetZLevelEntity(uint z);
-    public uint[,] GetMapAsTileIds(int Z);
-    public IEnumerable<DreamObjectMob> GetMobsInRange((int X, int Y, int Z) loc, int distance);
+    public uint[,] GetMapAsTileIds(uint Z);
+    public IEnumerable<DreamObjectMob> GetMobsInRange((uint X, uint Y, uint Z) loc, int distance);
 
-    public IEnumerable<AtomDirection> CalculateSteps((int X, int Y, int Z) loc, (int X, int Y, int Z) dest, int distance);
+    public IEnumerable<AtomDirection> CalculateSteps((uint X, uint Y, uint Z) loc, (uint X, uint Y, uint Z) dest, int distance);
 }

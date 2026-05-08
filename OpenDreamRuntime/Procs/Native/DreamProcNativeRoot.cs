@@ -105,7 +105,7 @@ internal static class DreamProcNativeRoot {
         for (int z = startZ; z <= endZ; z++) {
             for (int y = startY; y <= endY; y++) {
                 for (int x = startX; x <= endX; x++) {
-                    if (mapManager.TryGetTurfAt(new (x, y), z, out var turf)) {
+                    if (mapManager.TryGetTurfAt(new ((uint)x, (uint)y), (uint)z, out var turf)) {
                         turfs.AddValue(new DreamValue(turf));
                     }
                 }
@@ -1933,7 +1933,7 @@ internal static class DreamProcNativeRoot {
     public static DreamValue NativeProc_rand_seed(NativeProc.Bundle bundle, DreamObject? src, DreamObject? usr) {
         bundle.GetArgument(0, "Seed").TryGetValueAsInteger(out var seed);
 
-        bundle.DreamManager.Random = new Random(seed);
+        bundle.DreamManager.Random = new SeededRandom(seed);
         return DreamValue.Null;
     }
 
@@ -3221,7 +3221,7 @@ internal static class DreamProcNativeRoot {
         foreach (var tile in DreamProcNativeHelpers.MakeViewSpiral(viewData, true)) {
             if (tile == null || tile.IsVisible == false)
                 continue;
-            if (!bundle.MapManager.TryGetCellAt(new (eyePos.X + tile.DeltaX, eyePos.Y + tile.DeltaY), eyePos.Z, out var cell))
+            if (!bundle.MapManager.TryGetCellAt(new ((uint)(eyePos.X + tile.DeltaX), (uint)(eyePos.Y + tile.DeltaY)), eyePos.Z, out var cell))
                 continue;
 
             view.AddValue(new(cell.Turf));

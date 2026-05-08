@@ -11,6 +11,7 @@ using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Procs.DebugAdapter;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 
 
 namespace OpenDreamRuntime.Procs;

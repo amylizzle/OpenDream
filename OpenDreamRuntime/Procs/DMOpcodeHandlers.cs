@@ -2389,9 +2389,9 @@ suffix
         }
 
         public static ProcStatus LocateCoord(DMProcState state) {
-            var z = (int)state.Pop().UnsafeGetValueAsFloat();
-            var y = (int)state.Pop().UnsafeGetValueAsFloat();
-            var x = (int)state.Pop().UnsafeGetValueAsFloat();
+            var z = (uint)state.Pop().UnsafeGetValueAsFloat();
+            var y = (uint)state.Pop().UnsafeGetValueAsFloat();
+            var x = (uint)state.Pop().UnsafeGetValueAsFloat();
 
             state.Proc.DreamMapManager.TryGetTurfAt(new (x, y), z, out var turf);
             state.Push(new DreamValue(turf));

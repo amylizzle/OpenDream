@@ -111,11 +111,11 @@ public class DreamObjectMovable : DreamObjectAtom {
             case "x":
             case "y":
             case "z": {
-                int x = (varName == "x") ? value.MustGetValueAsInteger() : (int)X;
-                int y = (varName == "y") ? value.MustGetValueAsInteger() : (int)Y;
-                int z = (varName == "z") ? value.MustGetValueAsInteger() : (int)Z;
+                uint x = (varName == "x") ? (uint)value.MustGetValueAsInteger() : X;
+                uint y = (varName == "y") ? (uint)value.MustGetValueAsInteger() : Y;
+                uint z = (varName == "z") ? (uint)value.MustGetValueAsInteger() : Z;
 
-                DreamMapManager.TryGetTurfAt((x, y), z, out var newLoc);
+                DreamMapManager.TryGetTurfAt(new(x, y), z, out var newLoc);
                 SetLoc(newLoc);
                 break;
             }
@@ -167,7 +167,7 @@ public class DreamObjectMovable : DreamObjectAtom {
     public void SetLoc(DreamObjectAtom? loc) {
         Loc = loc;
 
-        if (DreamMapManager.TryGetCellAt(Position.XY, (int)Z, out var oldMapCell))
+        if (DreamMapManager.TryGetCellAt(Position.XY, Z, out var oldMapCell))
             oldMapCell.Movables.Remove(this);
 
         if (loc is DreamObjectArea area) { // Puts the atom on the area's first turf
@@ -176,10 +176,10 @@ public class DreamObjectMovable : DreamObjectAtom {
             // We don't actually keep track of area turfs currently
             // So do the classic BYOND trick of looping through every turf and checking its area :)
             // TODO: Remove this monstrosity
-            for (int z = 1; z <= DreamMapManager.Levels; z++) {
-                for (int x = 1; x <= DreamMapManager.Size.X; x++) {
-                    for (int y = 1; y <= DreamMapManager.Size.Y; y++) {
-                        if (!DreamMapManager.TryGetCellAt((x, y), z, out var cell))
+            for (uint z = 1; z <= DreamMapManager.Levels; z++) {
+                for (uint x = 1; x <= DreamMapManager.Size.X; x++) {
+                    for (uint y = 1; y <= DreamMapManager.Size.Y; y++) {
+                        if (!DreamMapManager.TryGetCellAt(new(x, y), z, out var cell))
                             continue;
 
                         if (cell.Area == area) {

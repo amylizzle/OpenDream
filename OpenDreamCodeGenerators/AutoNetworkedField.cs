@@ -72,8 +72,8 @@ public class NetworkPropertyGenerator : IIncrementalGenerator
         var propertyName = property.Identifier.Text;
         var propertyType = property.Type.ToString();
 
-    var accessibilityModifiers = property.Modifiers
-        .Where(m => m.IsKind(SyntaxKind.PublicKeyword) ||
+        var accessibilityModifiers = property.Modifiers
+            .Where(m => m.IsKind(SyntaxKind.PublicKeyword) ||
                 m.IsKind(SyntaxKind.PrivateKeyword) ||
                 m.IsKind(SyntaxKind.ProtectedKeyword) ||
                 m.IsKind(SyntaxKind.InternalKeyword));
@@ -89,7 +89,7 @@ namespace {namespaceName}
 {{
     partial class {className}
     {{
-        public partial {propertyType} {propertyName}
+        {access} partial {propertyType} {propertyName}
         {{
             get => field;
             set

@@ -7,6 +7,7 @@ using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Procs.DebugAdapter;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime {
     public enum ProcStatus {

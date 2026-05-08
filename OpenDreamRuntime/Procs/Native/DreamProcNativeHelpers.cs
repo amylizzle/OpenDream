@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using OpenDreamRuntime.Objects.Types;
 using System.Text;
 using OpenDreamRuntime.Map;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Procs.Native;
 
@@ -49,39 +50,39 @@ internal static partial class DreamProcNativeHelpers {
         int widthRange = (distance.Width - 1) >> 1; // TODO: Make rectangles work.
         int heightRange = (distance.Height - 1) >> 1;
         int donutCount = Math.Max(widthRange, heightRange);
-        for(int d = 1; d <= donutCount; d++) { // for each donut
-            int sideLength = d + d + 1;
+        for(uint d = 1; d <= donutCount; d++) { // for each donut
+            uint sideLength = d + d + 1;
             //The left column
             {
-                int leftColumnX = centerPos.X - d;
-                int startingLeftColumnY = centerPos.Y - d;
-                for (int i = 0; i < sideLength; ++i) {
-                    if (mapMgr.TryGetTurfAt((leftColumnX, startingLeftColumnY + i), centerPos.Z, out var turf)) {
+                uint leftColumnX = centerPos.X - d;
+                uint startingLeftColumnY = centerPos.Y - d;
+                for (uint i = 0; i < sideLength; ++i) {
+                    if (mapMgr.TryGetTurfAt(new(leftColumnX, startingLeftColumnY + i), centerPos.Z, out var turf)) {
                         yield return turf;
                     }
                 }
             }
             //The criss-cross-apple-sauce
             {
-                int crissCrossLength = sideLength - 2;
-                int startingCrossX = centerPos.X - d + 1;
-                for(int i = 0; i < crissCrossLength; ++i) {
+                uint crissCrossLength = sideLength - 2;
+                uint startingCrossX = centerPos.X - d + 1;
+                for(uint i = 0; i < crissCrossLength; ++i) {
                     //the criss
-                    if (mapMgr.TryGetTurfAt((startingCrossX+i, centerPos.Y - d), centerPos.Z, out var crissTurf)) {
+                    if (mapMgr.TryGetTurfAt(new(startingCrossX+i, centerPos.Y - d), centerPos.Z, out var crissTurf)) {
                         yield return crissTurf;
                     }
                     //the cross
-                    if (mapMgr.TryGetTurfAt((startingCrossX + i, centerPos.Y + d), centerPos.Z, out var crossTurf)) {
+                    if (mapMgr.TryGetTurfAt(new(startingCrossX + i, centerPos.Y + d), centerPos.Z, out var crossTurf)) {
                         yield return crossTurf;
                     }
                 }
             }
             //The right column
             {
-                int rightColumnX = centerPos.X + d;
-                int startingRightColumnY = centerPos.Y - d;
-                for (int i = 0; i < sideLength; ++i) {
-                    if (mapMgr.TryGetTurfAt((rightColumnX, startingRightColumnY + i), centerPos.Z, out var turf)) {
+                uint rightColumnX = centerPos.X + d;
+                uint startingRightColumnY = centerPos.Y - d;
+                for (uint i = 0; i < sideLength; ++i) {
+                    if (mapMgr.TryGetTurfAt(new(rightColumnX, startingRightColumnY + i), centerPos.Z, out var turf)) {
                         yield return turf;
                     }
                 }
@@ -167,7 +168,7 @@ internal static partial class DreamProcNativeHelpers {
         return (center, range);
     }
 
-    public static ViewAlgorithm.Tile?[,] CollectViewData(AtomManager atomManager, IDreamMapManager mapManager, (int X, int Y, int Z) eyePos, ViewRange range) {
+    public static ViewAlgorithm.Tile?[,] CollectViewData(AtomManager atomManager, IDreamMapManager mapManager, (uint X, uint Y, uint Z) eyePos, ViewRange range) {
         var tiles = new ViewAlgorithm.Tile?[range.Width, range.Height];
 
         for (int viewX = 0; viewX < range.Width; viewX++) {
@@ -175,7 +176,7 @@ internal static partial class DreamProcNativeHelpers {
                 int deltaX = -(range.Width / 2) + viewX;
                 int deltaY = -(range.Height / 2) + viewY;
 
-                if (!mapManager.TryGetCellAt((eyePos.X + deltaX, eyePos.Y + deltaY), eyePos.Z, out var cell))
+                if (!mapManager.TryGetCellAt(new((uint)(eyePos.X + deltaX), (uint)(eyePos.Y + deltaY)), eyePos.Z, out var cell))
                     continue;
 
                 var appearance = atomManager.MustGetAppearance(cell.Turf);
@@ -538,7 +539,7 @@ internal static partial class DreamProcNativeHelpers {
     }
 
     /// <inheritdoc cref="GetDir(OpenDreamRuntime.AtomManager,OpenDreamRuntime.Objects.Types.DreamObjectAtom,OpenDreamRuntime.Objects.Types.DreamObjectAtom)"/>
-    public static AtomDirection GetDir((int X, int Y, int Z) loc1, (int X, int Y, int Z) loc2) {
+    public static AtomDirection GetDir((uint X, uint Y, uint Z) loc1, (uint X, uint Y, uint Z) loc2) {
         if (loc1.Z != loc2.Z) // They must be on the same z-level
             return 0;
 

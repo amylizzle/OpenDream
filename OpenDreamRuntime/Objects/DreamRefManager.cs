@@ -2,6 +2,7 @@ using System.Diagnostics;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Rendering;
 using OpenDreamRuntime.Resources;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Objects;
 

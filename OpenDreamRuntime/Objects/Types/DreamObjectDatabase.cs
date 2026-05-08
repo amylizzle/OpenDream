@@ -2,6 +2,7 @@ using System.Data;
 using System.IO;
 using Microsoft.Data.Sqlite;
 using OpenDreamRuntime.Procs;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Objects.Types;
 

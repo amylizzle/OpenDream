@@ -5,6 +5,7 @@ using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Procs;
 using OpenDreamRuntime.Procs.Native;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime;
 

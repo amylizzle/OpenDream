@@ -1,6 +1,7 @@
 ﻿using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Objects.Types;
 using OpenDreamShared.Dream;
+using OpenDreamShared.EngineUtils;
 
 
 namespace OpenDreamRuntime.Procs.Native;

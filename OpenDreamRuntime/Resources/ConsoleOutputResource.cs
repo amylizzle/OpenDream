@@ -1,4 +1,5 @@
 using OpenDreamRuntime.Procs.DebugAdapter;
+using OpenDreamShared.Dream;
 using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Resources;
