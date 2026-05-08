@@ -1,6 +1,5 @@
-using System;
-using OpenDreamShared.Network;
-
+using OpenDreamShared.EngineUtils;
+namespace OpenDreamShared.Network;
 public interface INetManager {
     public void Init();
     public void RegisterNetMessage<T>(ProcessMessage<T>? callback = null) where T:NetMessage, new();

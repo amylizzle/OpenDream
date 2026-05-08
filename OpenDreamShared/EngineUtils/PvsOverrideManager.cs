@@ -1,3 +1,5 @@
+using OpenDreamShared.Network;
+
 namespace OpenDreamShared.EngineUtils;
 
 public interface IPvsOverrideSystem {

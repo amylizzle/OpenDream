@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using OpenDreamShared.EngineUtils;
+
+namespace OpenDreamShared.Network;
 
 public interface IPlayerManager {
 
