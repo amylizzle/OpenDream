@@ -558,7 +558,6 @@ internal sealed class DreamGlobalVars : DreamList {
         true; // We don't use the associative array but, yes, we behave like an associative list
 
     public DreamGlobalVars(DreamObjectDefinition listDef) : base(listDef, 0) {
-        IoCManager.InjectDependencies(this);
     }
 
     public override List<DreamValue> GetValues() {
@@ -814,8 +813,6 @@ public sealed class DreamOverlaysList : DreamList {
     private readonly bool _isUnderlays;
 
     public DreamOverlaysList(DreamObjectDefinition listDef, DreamObject owner, ServerAppearanceSystem? appearanceSystem, bool isUnderlays) : base(listDef, 0) {
-        IoCManager.InjectDependencies(this);
-
         _owner = owner;
         _appearanceSystem = appearanceSystem;
         _isUnderlays = isUnderlays;
@@ -1463,16 +1460,16 @@ public sealed class AreaContentsList(DreamObjectDefinition listDef, DreamObjectA
 }
 
 // mob.contents, obj.contents list
-public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObjectMovable owner) : DreamList(listDef, 0) {
+public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObjectMovable owner, ContentsComponent contents) : DreamList(listDef, 0) {
     public override DreamValue GetValue(DreamValue key) {
         if (!key.TryGetValueAsInteger(out var index))
             throw new Exception($"Invalid index into movable contents list: {key}");
-        if (index < 1 || index > transform.ChildCount)
+        if (index < 1 || index > contents.ChildCount)
             throw new Exception($"Out of bounds index on movable contents list: {index}");
 
-        using var childEnumerator = transform.ChildEnumerator;
+        using var childEnumerator = contents.ChildEnumerator;
         while (index >= 1) {
-            childEnumerator.MoveNext(out EntityUid child);
+            EntityUid child  = childEnumerator.MoveNext() ? childEnumerator.Current : EntityUid.Invalid;
 
             if (index == 1) {
                 if (AtomManager.TryGetMovableFromEntity(child, out var childObject))
@@ -1492,10 +1489,10 @@ public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObje
     }
 
     public override IEnumerable<DreamValue> EnumerateValues() {
-        using var childEnumerator = transform.ChildEnumerator;
+        using var childEnumerator = contents.ChildEnumerator;
 
-        while (childEnumerator.MoveNext(out EntityUid child)) {
-            if (!AtomManager.TryGetMovableFromEntity(child, out var childObject))
+        while (childEnumerator.MoveNext()) {
+            if (!AtomManager.TryGetMovableFromEntity(childEnumerator.Current, out var childObject))
                 continue;
 
             yield return new DreamValue(childObject);
@@ -1503,13 +1500,13 @@ public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObje
     }
 
     public override int FindValue(DreamValue value, int start = 1, int end = 0) {
-        if (end == 0 || end > transform.ChildCount) end = transform.ChildCount;
+        if (end == 0 || end > contents.ChildCount) end = contents.ChildCount;
 
-        using var childEnumerator = transform.ChildEnumerator;
+        using var childEnumerator = contents.ChildEnumerator;
 
         int i = 0;
-        while (childEnumerator.MoveNext(out EntityUid child)) {
-            if (!AtomManager.TryGetMovableFromEntity(child, out var childObject))
+        while (childEnumerator.MoveNext()) {
+            if (!AtomManager.TryGetMovableFromEntity(childEnumerator.Current, out var childObject))
                 continue;
             i++;
             if (i >= start && new DreamValue(childObject).Equals(value))
@@ -1553,7 +1550,7 @@ public sealed class MovableContentsList(DreamObjectDefinition listDef, DreamObje
     }
 
     public override int GetLength() {
-        return transform.ChildCount;
+        return contents.ChildCount;
     }
 }
 

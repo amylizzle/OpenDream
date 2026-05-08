@@ -4,17 +4,19 @@ using OpenDreamShared.Dream;
 namespace OpenDreamRuntime.Objects.Types;
 
 public sealed class DreamObjectTurf : DreamObjectAtom {
-    public readonly int X, Y, Z;
+    public readonly MapCoordinates Position;
+    public uint X => Position.X;
+    public uint Y => Position.Y;
+    public uint Z => Position.Z;
+
     public readonly TurfContentsList Contents;
     public ImmutableAppearance Appearance;
     public IDreamMapManager.Cell Cell;
 
     public bool IsDense => GetVariable("density").IsTruthy();
 
-    public DreamObjectTurf(DreamObjectDefinition objectDefinition, int x, int y, int z) : base(objectDefinition) {
-        X = x;
-        Y = y;
-        Z = z;
+    public DreamObjectTurf(DreamObjectDefinition objectDefinition, uint x, uint y, uint z) : base(objectDefinition) {
+        Position = new(x,y,z);
 
         Cell = default!; // NEEDS to be set by DreamMapManager after creation
         Contents = new TurfContentsList(ObjectTree.List.ObjectDefinition, this);

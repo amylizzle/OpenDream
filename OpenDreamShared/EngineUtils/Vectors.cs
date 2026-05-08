@@ -264,14 +264,17 @@ public struct Vector2u : IEquatable<Vector2u> {
     public static implicit operator Vector2(Vector2u vector) {
         return new(vector.X, vector.Y);
     }
+    public static implicit operator Vector2i(Vector2u vector) {
+        return new((int)vector.X, (int)vector.Y);
+    }
+    public static implicit operator Vector2u(Vector2i vector) {
+        return new((uint)vector.X, (uint)vector.Y);
+    }
 
     public static explicit operator Vector2u(Vector2 vector) {
         return new((uint)vector.X, (uint)vector.Y);
     }
 
-    public static explicit operator Vector2i(Vector2u vector) {
-        return new((int)vector.X, (int)vector.Y);
-    }
 }
 
 public static class VectorExt

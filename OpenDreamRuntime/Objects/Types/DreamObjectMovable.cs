@@ -10,14 +10,14 @@ public class DreamObjectMovable : DreamObjectAtom {
     public EntityUid Entity;
     public readonly DMISpriteComponent SpriteComponent;
     public DreamObjectAtom? Loc;
-
-    // TODO: Cache this shit. GetWorldPosition is slow.
-    public Vector2i Position => (Vector2i?)TransformSystem?.GetWorldPosition(_transformComponent) ?? (0, 0);
-    public int X => Position.X;
-    public int Y => Position.Y;
-    public int Z => (int)_transformComponent.MapID;
+    public MapCoordinates Position => _transformComponent.Position;
+    public uint X => Position.X;
+    public uint Y => Position.Y;
+    public uint Z => Position.Z;
 
     private readonly TransformComponent _transformComponent;
+    private readonly MetaDataComponent _metaDataComponent;
+    private readonly ContentsComponent _contentsComponent;
     private readonly MovableContentsList _contents;
     private string? _screenLoc;
     private DreamObjectParticles? _particles;
@@ -32,8 +32,10 @@ public class DreamObjectMovable : DreamObjectAtom {
         SpriteComponent = EntityManager.GetComponent<DMISpriteComponent>(Entity);
         AtomManager.SetSpriteAppearance((Entity, SpriteComponent), AtomManager.GetAppearanceFromDefinition(ObjectDefinition));
 
-        _transformComponent = EntityManager.GetComponent<TransformComponent>(Entity);
-        _contents = new MovableContentsList(ObjectTree.List.ObjectDefinition, this, _transformComponent);
+        _contentsComponent = EntityManager.GetComponent<ContentsComponent>(Entity);
+        _contents = new MovableContentsList(ObjectTree.List.ObjectDefinition, this, _contentsComponent);
+
+        _metaDataComponent = EntityManager.GetComponent<MetaDataComponent>(Entity);
     }
 
     public override void Initialize(DreamProcArguments args) {
@@ -42,10 +44,8 @@ public class DreamObjectMovable : DreamObjectAtom {
         ObjectDefinition.Variables["screen_loc"].TryGetValueAsString(out var screenLoc);
         ScreenLoc = screenLoc;
 
-        if (EntityManager.TryGetComponent(Entity, out MetaDataComponent? metaData)) {
-            MetaDataSystem?.SetEntityName(Entity, GetDisplayName(), metaData);
-            MetaDataSystem?.SetEntityDescription(Entity, GetRTEntityDesc(), metaData);
-        }
+        _metaDataComponent.Name = GetDisplayName();
+        _metaDataComponent.Description = GetRTEntityDesc();
 
         args.GetArgument(0).TryGetValueAsDreamObject<DreamObjectAtom>(out var loc);
         SetLoc(loc); //loc is set before /New() is ever called
@@ -110,9 +110,9 @@ public class DreamObjectMovable : DreamObjectAtom {
             case "x":
             case "y":
             case "z": {
-                int x = (varName == "x") ? value.MustGetValueAsInteger() : X;
-                int y = (varName == "y") ? value.MustGetValueAsInteger() : Y;
-                int z = (varName == "z") ? value.MustGetValueAsInteger() : Z;
+                int x = (varName == "x") ? value.MustGetValueAsInteger() : (int)X;
+                int y = (varName == "y") ? value.MustGetValueAsInteger() : (int)Y;
+                int z = (varName == "z") ? value.MustGetValueAsInteger() : (int)Z;
 
                 DreamMapManager.TryGetTurfAt((x, y), z, out var newLoc);
                 SetLoc(newLoc);
@@ -130,11 +130,10 @@ public class DreamObjectMovable : DreamObjectAtom {
                 base.SetVar(varName, value); // Let DreamObjectAtom do its own name/desc handling
 
                 if (varName == "name") {
-                    MetaDataSystem?.SetEntityName(Entity, GetDisplayName());
+                    _metaDataComponent.Name = GetDisplayName();
                 } else {
                     value.TryGetValueAsString(out string? valueStr);
-
-                    MetaDataSystem?.SetEntityDescription(Entity, valueStr ?? string.Empty);
+                    _metaDataComponent.Description = valueStr ?? string.Empty;
                 }
 
                 break;
@@ -166,10 +165,8 @@ public class DreamObjectMovable : DreamObjectAtom {
 
     public void SetLoc(DreamObjectAtom? loc) {
         Loc = loc;
-        if (TransformSystem == null)
-            return;
 
-        if (DreamMapManager.TryGetCellAt(Position, Z, out var oldMapCell))
+        if (DreamMapManager.TryGetCellAt(Position.XY, (int)Z, out var oldMapCell))
             oldMapCell.Movables.Remove(this);
 
         if (loc is DreamObjectArea area) { // Puts the atom on the area's first turf
@@ -195,17 +192,17 @@ public class DreamObjectMovable : DreamObjectAtom {
 
         switch (loc) {
             case DreamObjectTurf turf:
-                TransformSystem.SetParent(Entity, DreamMapManager.GetZLevelEntity(turf.Z));
-                TransformSystem.SetWorldPosition(Entity, new Vector2(turf.X, turf.Y));
-
+                _transformComponent.Position = new MapCoordinates(turf.X, turf.Y, turf.Z);
+                _transformComponent.Parent = DreamMapManager.GetZLevelEntity(turf.Z);
                 turf.Cell.Movables.Add(this);
                 break;
             case DreamObjectMovable movable:
-                TransformSystem.SetParent(Entity, movable.Entity);
-                TransformSystem.SetLocalPosition(Entity, Vector2.Zero);
+                _transformComponent.Position = new MapCoordinates(0,0,MapId.Nullspace);
+                _transformComponent.Parent = movable.Entity;
                 break;
             case null:
-                TransformSystem.SetParent(Entity, MapManager.GetMapEntityId(MapId.Nullspace));
+                _transformComponent.Position = new MapCoordinates(0,0,MapId.Nullspace);
+                _transformComponent.Parent = EntityUid.Invalid;
                 break;
             default:
                 throw new ArgumentException($"Invalid loc {loc}");

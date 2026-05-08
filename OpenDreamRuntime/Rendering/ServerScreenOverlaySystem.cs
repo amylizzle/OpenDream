@@ -6,7 +6,7 @@ namespace OpenDreamRuntime.Rendering;
 
 public sealed class ServerScreenOverlaySystem : SharedScreenOverlaySystem {
     private readonly EntityManager _entityManager = IoCManager.Resolve<EntityManager>();
-    private readonly PvsOverrideSystem _pvsOverride = IoCManager.Resolve<PvsOverrideSystem>();
+    private readonly IPvsOverrideSystem _pvsOverride = IoCManager.Resolve<IPvsOverrideSystem>();
 
     public void AddScreenObject(DreamConnection connection, DreamObjectMovable screenObject) {
         if (connection.Session is null)

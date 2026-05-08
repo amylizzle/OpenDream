@@ -141,9 +141,10 @@ public readonly struct EntityUid : IEquatable<EntityUid>, IComparable<EntityUid>
     }
 }
 
-public struct Entity(EntityUid uid, MapCoordinates coordinates) {
+public struct Entity(EntityUid uid) {
     public readonly EntityUid Uid = uid;
-    MapCoordinates Position = coordinates;
+
+    public readonly EntityUid Parent = EntityUid.Invalid;
 }
 
 public record struct Entity<T>

@@ -20,9 +20,11 @@ public sealed class EntityManager : NetworkSystem {
 
     public Entity SpawnEntity(MapCoordinates mapCoordinates) {
         var uid = new EntityUid(Interlocked.Increment(ref _entityUidCounter));
-        var entity = new Entity(uid, mapCoordinates);
+        var entity = new Entity(uid);
         _entityTable[uid] = entity;
         _entityComponentTable[uid] = new Dictionary<Type, Component>();
+        var transform = AddComponent<TransformComponent>(entity);
+        transform.Position = mapCoordinates;
         return entity;
     }
 
@@ -46,10 +48,10 @@ public sealed class EntityManager : NetworkSystem {
         return false;
     }
 
-    public Component GetComponent<T>(EntityUid entityUid) where T : Component {
+    public T GetComponent<T>(EntityUid entityUid) where T : Component {
         if (_entityComponentTable.TryGetValue(entityUid, out var components) &&
             components.TryGetValue(typeof(T), out var component)) {
-            return component;
+            return (T)component;
         }
         throw new KeyNotFoundException($"Component of type {typeof(T).Name} not found on entity {entityUid}");
     }
