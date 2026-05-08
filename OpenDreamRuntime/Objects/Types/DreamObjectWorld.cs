@@ -155,7 +155,7 @@ public sealed class DreamObjectWorld : DreamObject {
                 return true;
 
             case "time":
-                value = new DreamValue((_gameTiming.CurTick.Value - DreamManager.InitializedTick.Value) * TickLag);
+                value = new DreamValue((_gameTiming.CurTick.Value - DreamManager.InitializedTick) * TickLag);
                 return true;
 
             case "realtime":

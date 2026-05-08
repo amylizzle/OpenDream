@@ -1,6 +1,7 @@
 using OpenDreamShared.EngineUtils;
 namespace OpenDreamShared.Network;
 public interface INetManager {
+    public int Port { get; set; }
     public void Init();
     public void RegisterNetMessage<T>(ProcessMessage<T>? callback = null) where T:NetMessage, new();
     public delegate void ProcessMessage<in T>(T message) where T : NetMessage;

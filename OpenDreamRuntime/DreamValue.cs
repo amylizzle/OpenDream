@@ -9,6 +9,7 @@ using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.Dream;
 using OpenDreamRuntime.Procs.Native;
+using OpenDreamShared.EngineUtils;
 
 
 namespace OpenDreamRuntime;
@@ -85,6 +86,7 @@ public struct DreamValue : IEquatable<DreamValue> {
     }
 
     public DreamValue(int value) : this((float)value) { }
+    public DreamValue(uint value) : this((float)value) { }
 
     public DreamValue(double value) : this((float)value) { }
 

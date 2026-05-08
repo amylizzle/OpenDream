@@ -6,6 +6,7 @@ using OpenDreamRuntime.Objects.Types;
 using OpenDreamRuntime.Procs.DebugAdapter.Protocol;
 using OpenDreamRuntime.Resources;
 using OpenDreamShared.EngineUtils;
+using OpenDreamShared.Network;
 
 namespace OpenDreamRuntime.Procs.DebugAdapter;
 
@@ -14,7 +15,6 @@ internal sealed class DreamDebugManager : IDreamDebugManager {
     private readonly DreamObjectTree _objectTree = IoCManager.Resolve<DreamObjectTree>();
     private readonly DreamResourceManager _resourceManager = IoCManager.Resolve<DreamResourceManager>();
     private readonly ProcScheduler _procScheduler = IoCManager.Resolve<ProcScheduler>();
-    private readonly IBaseServer _server = IoCManager.Resolve<IBaseServer>();
 
     private ISawmill _sawmill = default!;
 
@@ -432,14 +432,14 @@ internal sealed class DreamDebugManager : IDreamDebugManager {
         _dreamManager.StartWorld();
         reqConfigDone.Respond(client);
         if (!_terminated) {
-            client.SendMessage(new ODReadyEvent(IoCManager.Resolve<Robust.Shared.Network.INetManager>().Port));
+            client.SendMessage(new ODReadyEvent(IoCManager.Resolve<INetManager>().Port));
         }
     }
 
     private void HandleRequestDisconnect(DebugAdapterClient client, RequestDisconnect reqDisconnect) {
         // TODO: Don't terminate if launch type was "attach"
         reqDisconnect.Respond(client);
-        _server.Shutdown("A shutdown was initiated by the debug adapter");
+        _dreamManager.Shutdown("A shutdown was initiated by the debug adapter");
         _terminated = true;
         _stopped = false;
     }

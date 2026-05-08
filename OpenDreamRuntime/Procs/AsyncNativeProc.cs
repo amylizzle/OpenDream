@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DMCompiler.DM;
 using OpenDreamRuntime.Objects;
 using OpenDreamRuntime.Resources;
+using OpenDreamShared.EngineUtils;
 
 namespace OpenDreamRuntime.Procs {
     public sealed class AsyncNativeProc(
@@ -25,10 +26,10 @@ namespace OpenDreamRuntime.Procs {
             #endif
 
             // IoC dependencies instead of proc fields because _proc can be null
-            [Dependency] public readonly DreamManager DreamManager = default!;
-            [Dependency] public readonly DreamResourceManager ResourceManager = default!;
-            [Dependency] public readonly DreamObjectTree ObjectTree = default!;
-            [Dependency] public readonly ProcScheduler ProcScheduler = default!;
+            public readonly DreamManager DreamManager = IoCManager.Resolve<DreamManager>();
+            public readonly DreamResourceManager ResourceManager = IoCManager.Resolve<DreamResourceManager>();
+            public readonly DreamObjectTree ObjectTree = IoCManager.Resolve<DreamObjectTree>();
+            public readonly ProcScheduler ProcScheduler = IoCManager.Resolve<ProcScheduler>();
 
             private readonly DreamValue[] _arguments = new DreamValue[128];
 
