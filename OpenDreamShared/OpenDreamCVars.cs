@@ -35,10 +35,6 @@ public static class OpenDreamConfig {
         }
     }
 
-    public static void OverrideDefault() {
-
-    }
-
     private static readonly Option<string> optionJsonPath = new("opendream.json_path") {
         Description = "The compiled JSON file containing the OpenDream bytecode.",
         Required = true

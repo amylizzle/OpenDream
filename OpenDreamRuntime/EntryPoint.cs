@@ -17,8 +17,6 @@ public sealed class GameServer : IDisposable {
     private ServerVerbSystem? _serverVerbSystem;
 
     public void Init() {
-        ServerContentIoC.Register();
-
         if (OpenDreamConfig.TracyEnable)
             Profiler.Activate();
 
