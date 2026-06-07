@@ -102,6 +102,8 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
         if (_cachedDMI != null)
             return _cachedDMI;
 
+        string unusedVar;
+
         if(Width == 0 && Height == 0)
            Width = Height = dreamManager.WorldInstance.IconSize;
 
