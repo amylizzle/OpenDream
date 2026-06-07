@@ -240,7 +240,7 @@ public class DreamObject {
                 throw new Exception($"Cannot set var \"{varName}\"");
             case "tag":
                 value.TryGetValueAsString(out var newTag);
-
+                var oldTag = Tag;
                 Tag = newTag;
                 break;
             default:
