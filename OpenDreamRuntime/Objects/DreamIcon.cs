@@ -18,14 +18,17 @@ namespace OpenDreamRuntime.Objects;
 
 public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager resourceManager) {
     private static readonly ArrayPool<Rgba32> PixelArrayPool = ArrayPool<Rgba32>.Shared;
-    private static readonly PngEncoder PngEncoder = new() { TextCompressionThreshold = 0 }; // Always encode the description in a zTXt chunk
+
+    private static readonly PngEncoder
+        PngEncoder = new() {TextCompressionThreshold = 0}; // Always encode the description in a zTXt chunk
 
     public int Width, Height;
     public readonly Dictionary<string, IconState> States = new();
 
     private IconResource? _cachedDMI;
 
-    private int FrameCount => States.Values.Sum(state => state.Frames * DMIParser.GetExportedDirectionCount(state.Directions));
+    private int FrameCount =>
+        States.Values.Sum(state => state.Frames * DMIParser.GetExportedDirectionCount(state.Directions));
 
     /// <summary>
     /// A list of operations to be applied when generating the DMI, along with what frames to apply them on
@@ -40,7 +43,7 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
         public readonly Dictionary<AtomDirection, List<IconFrame>> Directions = new();
 
         public IconState Copy() {
-            var copy = new IconState { Frames = Frames };
+            var copy = new IconState {Frames = Frames};
 
             copy.Directions.EnsureCapacity(Directions.Count);
             foreach (var pair in Directions) {
@@ -104,8 +107,8 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
 
         string unusedVar;
 
-        if(Width == 0 && Height == 0)
-           Width = Height = dreamManager.WorldInstance.IconSize;
+        if (Width == 0 && Height == 0)
+            Width = Height = dreamManager.WorldInstance.IconSize;
 
         int frameCount = FrameCount;
 
@@ -124,7 +127,7 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
         int currentFrame = 0;
         foreach (var iconStatePair in States) {
             var iconState = iconStatePair.Value;
-            ParsedDMIState newState = new(iconStatePair.Key) { Loop = false, Rewind = false };
+            ParsedDMIState newState = new(iconStatePair.Key) {Loop = false, Rewind = false};
 
             newDescription.States.Add(newState.Name, newState);
 
@@ -153,7 +156,8 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
 
         dmiImage.SaveAsPng(dmiImageStream, PngEncoder);
 
-        IconResource newResource = resourceManager.CreateIconResource(dmiImageStream.GetBuffer(), dmiImage, newDescription);
+        IconResource newResource =
+            resourceManager.CreateIconResource(dmiImageStream.GetBuffer(), dmiImage, newDescription);
         _cachedDMI = newResource;
         return _cachedDMI;
     }
@@ -162,7 +166,7 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
         operation.OnApply(this);
 
         // The operation gets applied to every current frame, but not any inserted after this
-        _operations.Add( (FrameCount, operation) );
+        _operations.Add((FrameCount, operation));
         _cachedDMI = null;
     }
 
@@ -173,7 +177,7 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
         bool copyingAllFrames = !frame.TryGetValueAsInteger(out var copyingFrame);
         // TODO: Copy movement states?
 
-        AtomDirection copyingDirection = (AtomDirection) dirVal;
+        AtomDirection copyingDirection = (AtomDirection)dirVal;
         if (!Enum.IsDefined(copyingDirection) || copyingDirection == AtomDirection.None) {
             copyingAllDirs = true;
         }
@@ -229,7 +233,8 @@ public sealed class DreamIcon(DreamManager dreamManager, DreamResourceManager re
         _cachedDMI = null;
     }
 
-    private ParsedDMIFrame[] DrawFrames(Rgba32[] pixels, int firstFrameIndex, List<IconFrame> frames, AtomDirection dir) {
+    private ParsedDMIFrame[] DrawFrames(Rgba32[] pixels, int firstFrameIndex, List<IconFrame> frames,
+        AtomDirection dir) {
         ParsedDMIFrame[] newFrames = new ParsedDMIFrame[frames.Count];
         int x = firstFrameIndex * Width;
         int imageSpan = FrameCount * Width;
@@ -313,7 +318,8 @@ public class DreamIconOperationBlend : IDreamIconOperation {
         _yOffset = yOffset;
     }
 
-    public virtual void OnApply(DreamIcon icon) { }
+    public virtual void OnApply(DreamIcon icon) {
+    }
 
     public virtual void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds) {
         throw new NotImplementedException();
@@ -362,13 +368,13 @@ public class DreamIconOperationBlend : IDreamIconOperation {
                     break;
                 }
 
-                pixels[dstPixelPosition].R = (byte) (dst.R + (src.R - dst.R) * src.A / 255);
-                pixels[dstPixelPosition].G = (byte) (dst.G + (src.G - dst.G) * src.A / 255);
-                pixels[dstPixelPosition].B = (byte) (dst.B + (src.B - dst.B) * src.A / 255);
+                pixels[dstPixelPosition].R = (byte)(dst.R + (src.R - dst.R) * src.A / 255);
+                pixels[dstPixelPosition].G = (byte)(dst.G + (src.G - dst.G) * src.A / 255);
+                pixels[dstPixelPosition].B = (byte)(dst.B + (src.B - dst.B) * src.A / 255);
 
                 byte highAlpha = Math.Max(dst.A, src.A);
                 byte lowAlpha = Math.Min(dst.A, src.A);
-                pixels[dstPixelPosition].A = (byte) (highAlpha + (highAlpha * lowAlpha / 255));
+                pixels[dstPixelPosition].A = (byte)(highAlpha + (highAlpha * lowAlpha / 255));
                 break;
             }
 
@@ -394,7 +400,8 @@ public sealed class DreamIconOperationBlendImage : DreamIconOperationBlend {
     private readonly Image<Rgba32> _blending;
     private readonly ParsedDMIState? _blendingState;
 
-    public DreamIconOperationBlendImage(BlendType type, int xOffset, int yOffset, DreamValue blending) : base(type, xOffset, yOffset) {
+    public DreamIconOperationBlendImage(BlendType type, int xOffset, int yOffset, DreamValue blending) : base(type,
+        xOffset, yOffset) {
         //TODO: Find a way to get rid of this!
         var resourceManager = IoCManager.Resolve<DreamResourceManager>();
 
@@ -460,7 +467,11 @@ public sealed class DreamIconOperationBlendImage : DreamIconOperationBlend {
     }
 }
 
-public sealed class DreamIconOperationBlendColor(DreamIconOperationBlend.BlendType type, int xOffset, int yOffset, Color color) : DreamIconOperationBlend(type, xOffset, yOffset) {
+public sealed class DreamIconOperationBlendColor(
+    DreamIconOperationBlend.BlendType type,
+    int xOffset,
+    int yOffset,
+    Color color) : DreamIconOperationBlend(type, xOffset, yOffset) {
     private readonly Rgba32 _color = new(color.RByte, color.GByte, color.BByte, color.AByte);
 
     public override void ApplyToFrame(Rgba32[] pixels, int imageSpan, int frame, AtomDirection dir, UIBox2i bounds) {

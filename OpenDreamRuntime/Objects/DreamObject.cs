@@ -21,8 +21,7 @@ namespace OpenDreamRuntime.Objects;
 public class DreamObject {
     public DreamObjectDefinition ObjectDefinition;
 
-    [Access(typeof(DreamObject))]
-    public bool Deleting, Deleted;
+    [Access(typeof(DreamObject))] public bool Deleting, Deleted;
 
     public readonly uint RefId;
 
@@ -95,7 +94,8 @@ public class DreamObject {
 
 #if TOOLS
          //if it's not null, subclasses have done their own allocation
-        TracyMemoryId ??= Profiler.BeginMemoryZone((ulong)(Unsafe.SizeOf<DreamObject>() + ObjectDefinition.Variables.Count * Unsafe.SizeOf<DreamValue>() ), "/datum");
+        TracyMemoryId ??=
+ Profiler.BeginMemoryZone((ulong)(Unsafe.SizeOf<DreamObject>() + ObjectDefinition.Variables.Count * Unsafe.SizeOf<DreamValue>() ), "/datum");
 #endif
     }
 
@@ -165,7 +165,7 @@ public class DreamObject {
     }
 
     public bool IsSubtypeOf(TreeEntry ancestor) {
-        if(Deleted) //null deref protection, deleted objects don't have ObjectDefinition anymore
+        if (Deleted) //null deref protection, deleted objects don't have ObjectDefinition anymore
             return false;
         return ObjectDefinition.IsSubtypeOf(ancestor);
     }
@@ -224,8 +224,9 @@ public class DreamObject {
                 return true;
             default:
                 var success = (Variables?.TryGetValue(varName, out value) is true) ||
-                               (ObjectDefinition.Variables.TryGetValue(varName, out value)) ||
-                               (ObjectDefinition.GlobalVariables.TryGetValue(varName, out var globalIndex)) && ObjectDefinition.DreamManager.Globals.TryGetValue(globalIndex, out value);
+                              (ObjectDefinition.Variables.TryGetValue(varName, out value)) ||
+                              (ObjectDefinition.GlobalVariables.TryGetValue(varName, out var globalIndex)) &&
+                              ObjectDefinition.DreamManager.Globals.TryGetValue(globalIndex, out value);
 
                 value.IncRef();
                 return success;
@@ -314,7 +315,8 @@ public class DreamObject {
         thread.Resume().Dispose();
     }
 
-    public ProcState InitProc(DreamThread thread, DreamObject? usr, [HandlesResourceDisposal] DreamProcArguments arguments) {
+    public ProcState InitProc(DreamThread thread, DreamObject? usr,
+        [HandlesResourceDisposal] DreamProcArguments arguments) {
         DebugTools.Assert(!Deleted, "Cannot call InitProc() on a deleted object");
 
         if (!InitDreamObjectState.Pool.TryPop(out var state)) {
@@ -384,12 +386,14 @@ public class DreamObject {
 
         var name = GetRawName();
         bool isProper = StringIsProper(name);
-        name = StringFormatDecoder.RemoveFormatting(name); // TODO: Care about other formatting macros for obj names beyond \proper & \improper
-        if(!isProper) {
+        name = StringFormatDecoder
+            .RemoveFormatting(
+                name); // TODO: Care about other formatting macros for obj names beyond \proper & \improper
+        if (!isProper) {
             return name;
         }
 
-        switch(suffix) {
+        switch (suffix) {
             case StringFormatEncoder.FormatSuffix.UpperDefiniteArticle:
                 return isProper ? name : $"The {name}";
             case StringFormatEncoder.FormatSuffix.LowerDefiniteArticle:
