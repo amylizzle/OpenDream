@@ -53,13 +53,14 @@ internal sealed partial class ClientAppearanceSystem : SharedAppearanceSystem {
 
     private Dictionary<uint, ImmutableAppearance> _appearances = new();
     private readonly Dictionary<uint, List<Action<ImmutableAppearance>>> _appearanceLoadCallbacks = new();
-    private readonly Dictionary<uint, DreamIcon> _turfIcons = new();
+    private readonly Dictionary<uint, Entity<DMISpriteComponent>> _turfIcons = new();
     private readonly Dictionary<DreamFilter, ShaderInstance> _filterShaders = new();
     private readonly Dictionary<(int X, int Y, int Z), Flick> _turfFlicks = new();
     private readonly Dictionary<EntityUid, Flick> _movableFlicks = new();
     private bool _receivedAllAppearancesMsg;
     private float _refreshVerbRemainingTime = 0.5f;
     private readonly float _refreshVerbPeriod = 0.5f;
+    private readonly ISawmill _sawmill = Logger.GetSawmill("OpenDream.ClientAppearanceSystem");
 
     [Dependency] private IEntityManager _entityManager = default!;
     [Dependency] private IDreamResourceManager _dreamResourceManager = default!;
@@ -145,15 +146,30 @@ internal sealed partial class ClientAppearanceSystem : SharedAppearanceSystem {
         _appearanceLoadCallbacks[appearanceId].Add(loadCallback);
     }
 
-    public DreamIcon GetTurfIcon(uint turfId) {
+    public DMISpriteComponent GetTurfSprite(uint turfId) {
         uint appearanceId = turfId;
 
-        if (!_turfIcons.TryGetValue(appearanceId, out var icon)) {
-            icon = new DreamIcon(_spriteSystem.RenderTargetPool, _interfaceManager, _gameTiming, _clyde, this, appearanceId);
-            _turfIcons.Add(appearanceId, icon);
+        if (!_turfIcons.TryGetValue(appearanceId, out var sprite)) {
+            EntityUid spriteHolder = _entityManager.Spawn(); //client side entity to hold the spritecomponent
+            sprite = (spriteHolder,_entityManager.AddComponent<DMISpriteComponent>(spriteHolder));
+            sprite.Comp.Icon.SetAppearance(appearanceId);
+            LoadAppearance(appearanceId, (app) => {
+                int tbreaker = 0;
+                sprite.Comp.SpriteTree = _spriteSystem.BuildSpriteTree(MustGetAppearanceById(appearanceId),
+                            Vector2.Zero, EntityUid.Invalid,
+                            false,
+                            ref tbreaker,
+                            sbyte.MaxValue);
+                _spriteSystem.TraverseSpriteTree(sprite.Comp);
+            });
+            _turfIcons.Add(appearanceId, sprite);
         }
 
-        return icon;
+        return sprite;
+    }
+
+    public DreamIcon GetTurfIcon(uint turfId) {
+        return GetTurfSprite(turfId).Icon;
     }
 
     private void OnNewAppearances(NewAppearancesEvent e) {
@@ -179,15 +195,17 @@ internal sealed partial class ClientAppearanceSystem : SharedAppearanceSystem {
     private void OnRemoveAppearances(RemoveAppearancesEvent e) {
         foreach (var appearanceId in e.Appearances) {
             _appearances.Remove(appearanceId);
+             if(_turfIcons.Remove(appearanceId, out var dummyEntity))
+                _entityManager.DeleteEntity(dummyEntity);
             _appearanceLoadCallbacks.Remove(appearanceId);
         }
     }
 
     private void OnAnimation(AnimationEvent e) {
         if(e.Entity == NetEntity.Invalid && e.TurfId is not null) { //it's a turf or area
-            if(_turfIcons.TryGetValue(e.TurfId.Value-1, out var turfIcon))
+            if(_turfIcons.TryGetValue(e.TurfId.Value-1, out var turfSprite))
                 LoadAppearance(e.TargetAppearanceId, targetAppearance => {
-                    turfIcon.StartAppearanceAnimation(targetAppearance, e.Duration, e.Easing, e.Loop, e.Flags, e.Delay, e.ChainAnim);
+                    turfSprite.Comp.Icon.StartAppearanceAnimation(targetAppearance, e.Duration, e.Easing, e.Loop, e.Flags, e.Delay, e.ChainAnim);
                 });
         } else { //image or movable
             EntityUid ent = _entityManager.GetEntity(e.Entity);

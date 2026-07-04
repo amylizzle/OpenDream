@@ -53,33 +53,33 @@ internal sealed partial class PlanesDebugWindow : OSWindow {
             MinWidth = 30
         });
 
-        if (plane.Master?.MainIcon?.Appearance != null) {
-            var viewButton = new Button {
-                Text = plane.Master.MainIcon.Appearance.Name,
-                HorizontalAlignment = HAlignment.Center,
-                MinWidth = 92,
-                SetHeight = 38
-            };
+        // if (plane.Master?.MainIcon?.Appearance != null) {
+        //     var viewButton = new Button {
+        //         Text = plane.Master.MainIcon.Appearance.Name,
+        //         HorizontalAlignment = HAlignment.Center,
+        //         MinWidth = 92,
+        //         SetHeight = 38
+        //     };
 
-            viewButton.Label.Margin = new(4f, 0f);
-            viewButton.OnPressed += _ => {
-                if (plane.Master?.MainIcon == null) // We could theoretically lose the master by the time we're clicked
-                    return;
+        //     viewButton.Label.Margin = new(4f, 0f);
+        //     viewButton.OnPressed += _ => {
+        //         if (plane.Master?.MainIcon == null) // We could theoretically lose the master by the time we're clicked
+        //             return;
 
-                new IconDebugWindow(plane.Master.MainIcon).Show();
-            };
+        //         new IconDebugWindow(plane.Master.MainIcon).Show();
+        //     };
 
-            container.AddChild(new Control {
-                HorizontalExpand = true,
-                Children = { viewButton }
-            });
-        } else {
-            container.AddChild(new Label {
-                Text = "No plane master",
-                Align = Label.AlignMode.Center,
-                HorizontalExpand = true
-            });
-        }
+        //     container.AddChild(new Control {
+        //         HorizontalExpand = true,
+        //         Children = { viewButton }
+        //     });
+        // } else {
+        //     container.AddChild(new Label {
+        //         Text = "No plane master",
+        //         Align = Label.AlignMode.Center,
+        //         HorizontalExpand = true
+        //     });
+        // }
 
         var disableButton = new Button {
             Text = plane.Enabled ? "Disable" : "Enable",

@@ -7,4 +7,6 @@ namespace OpenDreamClient.Rendering;
 internal sealed partial class DMISpriteComponent : SharedDMISpriteComponent {
     [ViewVariables] public DreamIcon Icon { get; set; }
     [ViewVariables] public ScreenLocation? ScreenLocation { get; set; }
+    public RendererMetaData SpriteTree;
+    public Dictionary<int, SortedSet<RendererMetaData>>? SpritesByPlane; //plane num is key, pre-sorted list of renderdata as value
 }
